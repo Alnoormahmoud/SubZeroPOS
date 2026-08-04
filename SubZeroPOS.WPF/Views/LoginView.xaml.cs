@@ -1,0 +1,23 @@
+using System.Windows.Controls;
+using SubZeroPOS.WPF.ViewModels;
+
+namespace SubZeroPOS.WPF.Views
+{
+    public partial class LoginView : UserControl
+    {
+        public LoginView()
+        {
+            InitializeComponent();
+        }
+
+        private void LoginButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (DataContext is LoginViewModel vm)
+            {
+                // PasswordBox.Password can't be bound directly for security reasons,
+                // so we pass it explicitly into the RelayCommand here.
+                vm.LoginCommand.Execute(PasswordBox.Password);
+            }
+        }
+    }
+}

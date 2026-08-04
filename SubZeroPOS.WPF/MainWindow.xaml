@@ -1,0 +1,11 @@
+<Window x:Class="SubZeroPOS.WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="سوب زيرو - نظام نقاط البيع"
+        Height="650" Width="900"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BackgroundBrush}">
+
+    <Grid x:Name="RootContent" />
+
+</Window>

@@ -1,0 +1,33 @@
+## .NET / Visual Studio
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+## EF Core Migrations - keep migrations, ignore nothing here on purpose
+
+## Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Bb]in/
+[Oo]bj/
+
+## Rider / VS Code
+.idea/
+.vscode/
+
+## OS files
+.DS_Store
+Thumbs.db
+
+## Secrets - never commit real connection strings/credentials
+appsettings.Local.json
+*.pfx
+
+## NuGet
+*.nupkg
+**/packages/*
+!**/packages/build/
