@@ -40,13 +40,15 @@ namespace SubZeroPOS.WPF
 
                     // ViewModels
                     services.AddTransient<LoginViewModel>();
+                    services.AddTransient<MainDashboardViewModel>();
 
                     // Views
                     services.AddTransient<LoginView>();
+                    services.AddTransient<MainDashboardView>();
 
                     // Main window
                     services.AddSingleton<MainWindow>();
-                })
+                 })
                 .Build();
 
             var mainWindow = _host.Services.GetRequiredService<MainWindow>();

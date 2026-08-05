@@ -12,8 +12,8 @@ namespace SubZeroPOS.Data.Configurations
 
             builder.HasKey(o => o.OrderId);
 
-            builder.Property(o => o.CustomerPhone)
-                .HasMaxLength(20)
+            builder.Property(o => o.CustomerName)
+                .HasMaxLength(50)
                 .IsUnicode(false);
 
             builder.Property(o => o.OrderDate)

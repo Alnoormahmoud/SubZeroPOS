@@ -12,7 +12,7 @@ namespace SubZeroPOS.Data.Configurations
 
             builder.HasKey(i => i.ItemId);
 
-            builder.Property(i => i.NameAr)
+            builder.Property(i => i.ItemName)
                 .IsRequired()
                 .HasMaxLength(200)
                 .IsUnicode(true);

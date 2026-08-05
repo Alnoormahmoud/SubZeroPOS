@@ -7,7 +7,7 @@ namespace SubZeroPOS.Core.Entities
     {
         public int ItemId { get; set; }
         public int CategoryId { get; set; }
-        public string NameAr { get; set; } = string.Empty;
+        public string ItemName { get; set; } = string.Empty;
         public string? NameEn { get; set; }
         public decimal Price { get; set; }
         public bool IsActive { get; set; } = true;
