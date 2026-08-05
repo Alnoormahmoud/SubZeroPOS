@@ -55,7 +55,7 @@ namespace SubZeroPOS.Data.Services
                 UserId = user.UserId,
                 FullName = user.FullName,
                 RoleCode = user.Role.RoleCode,
-                RoleNameAr = user.Role.RoleNameAr
+                RoleName = user.Role.RoleName
             };
         }
     }

@@ -19,7 +19,7 @@ namespace SubZeroPOS.Data.Configurations
 
             builder.HasIndex(r => r.RoleCode).IsUnique();
 
-            builder.Property(r => r.RoleNameAr)
+            builder.Property(r => r.RoleName)
                 .IsRequired()
                 .HasMaxLength(50)
                 .IsUnicode(true); // Arabic -> NVARCHAR

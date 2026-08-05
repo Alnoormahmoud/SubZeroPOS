@@ -53,7 +53,7 @@ namespace SubZeroPOS.WPF.ViewModels
                 CurrentSession.UserId = result.UserId;
                 CurrentSession.FullName = result.FullName;
                 CurrentSession.RoleCode = result.RoleCode;
-                CurrentSession.RoleNameAr = result.RoleNameAr;
+                CurrentSession.RoleName = result.RoleName;
 
                 LoginSucceeded?.Invoke();
             }

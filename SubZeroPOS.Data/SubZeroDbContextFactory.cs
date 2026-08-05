@@ -17,8 +17,8 @@ namespace SubZeroPOS.Data
 
             // TODO: replace with your actual local SQL Server instance name
             optionsBuilder.UseSqlServer(
-                "Server=.\\SQLEXPRESS;Database=SubZeroPOS;Trusted_Connection=True;TrustServerCertificate=True;");
-
+                "Server=.\\SQLEXPRESS;Database=SubZeroPOS;User Id=sa;Password=12345;Trusted_Connection = True; TrustServerCertificate = True;");
+            
             return new SubZeroDbContext(optionsBuilder.Options);
         }
     }

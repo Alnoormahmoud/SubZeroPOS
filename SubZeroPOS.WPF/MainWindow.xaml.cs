@@ -28,7 +28,7 @@ namespace SubZeroPOS.WPF
             // For now, this confirms the full pipeline works:
             // TextBox -> LoginViewModel -> AuthService -> SubZeroDbContext -> SQL Server -> back.
             MessageBox.Show(
-                $"تم تسجيل الدخول بنجاح\nالمستخدم: {Session.CurrentSession.FullName}\nالصلاحية: {Session.CurrentSession.RoleNameAr}",
+                $"تم تسجيل الدخول بنجاح\nالمستخدم: {Session.CurrentSession.FullName}\nالصلاحية: {Session.CurrentSession.RoleName}",
                 "نجاح",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
