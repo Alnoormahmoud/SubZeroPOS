@@ -15,8 +15,9 @@ namespace SubZeroPOS.WPF
         // TODO: move this to appsettings.json once the project is stable.
         // For now it's centralized here so it's the one place to edit
         // when deploying to your friend's machine.
-        private const string ConnectionString = 
-            "Server=.\\SQLEXPRESS;Database=SubZeroPOS;User Id=sa;Password=12345;Trusted_Connection = True; TrustServerCertificate = True;";
+        private const string ConnectionString =
+            "Server=.;Database=SubZeroPOS;Trusted_Connection=True;TrustServerCertificate=True;";
+
         private IHost? _host;
 
         protected override void OnStartup(StartupEventArgs e)
@@ -27,28 +28,37 @@ namespace SubZeroPOS.WPF
                 .ConfigureServices((context, services) =>
                 {
                     // Database
-                    services.AddDbContext<SubZeroDbContext>(options =>
+                    // Using a Factory (not AddDbContext) is important for WPF specifically:
+                    // WPF has no natural per-request scope like web apps do, so a single
+                    // AddDbContext instance can end up shared/reused across ViewModels for
+                    // the app's whole lifetime. If two operations ever overlap on the same
+                    // DbContext, the SQL connection can get corrupted ("session is in the
+                    // kill state" errors). The factory gives each operation its own
+                    // short-lived context instead.
+                    services.AddDbContextFactory<SubZeroDbContext>(options =>
                         options.UseSqlServer(ConnectionString));
 
                     // Services (Core interface -> Data implementation)
                     services.AddScoped<IAuthService, AuthService>();
+                    services.AddScoped<IItemService, ItemService>();
+                    services.AddScoped<IOrderService, OrderService>();
                     // TODO as each is implemented:
-                    // services.AddScoped<IOrderService, OrderService>();
-                    // services.AddScoped<IItemService, ItemService>();
                     // services.AddScoped<IExpenseService, ExpenseService>();
                     // services.AddScoped<IReportService, ReportService>();
 
                     // ViewModels
                     services.AddTransient<LoginViewModel>();
                     services.AddTransient<MainDashboardViewModel>();
+                    services.AddTransient<OrderEntryViewModel>();
 
                     // Views
                     services.AddTransient<LoginView>();
                     services.AddTransient<MainDashboardView>();
+                    services.AddTransient<OrderEntryView>();
 
                     // Main window
                     services.AddSingleton<MainWindow>();
-                 })
+                })
                 .Build();
 
             var mainWindow = _host.Services.GetRequiredService<MainWindow>();

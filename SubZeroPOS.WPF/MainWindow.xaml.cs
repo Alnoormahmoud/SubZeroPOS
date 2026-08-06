@@ -10,12 +10,16 @@ namespace SubZeroPOS.WPF
         private readonly LoginViewModel _loginViewModel;
         private readonly MainDashboardView _dashboardView;
         private readonly MainDashboardViewModel _dashboardViewModel;
+        private readonly OrderEntryView _orderEntryView;
+        private readonly OrderEntryViewModel _orderEntryViewModel;
 
         public MainWindow(
             LoginView loginView,
             LoginViewModel loginViewModel,
             MainDashboardView dashboardView,
-            MainDashboardViewModel dashboardViewModel)
+            MainDashboardViewModel dashboardViewModel,
+            OrderEntryView orderEntryView,
+            OrderEntryViewModel orderEntryViewModel)
         {
             InitializeComponent();
 
@@ -23,22 +27,26 @@ namespace SubZeroPOS.WPF
             _loginViewModel = loginViewModel;
             _dashboardView = dashboardView;
             _dashboardViewModel = dashboardViewModel;
+            _orderEntryView = orderEntryView;
+            _orderEntryViewModel = orderEntryViewModel;
 
             _loginView.DataContext = _loginViewModel;
             _loginViewModel.LoginSucceeded += ShowDashboard;
 
             _dashboardView.DataContext = _dashboardViewModel;
             _dashboardViewModel.LogoutRequested += ShowLogin;
+            _dashboardViewModel.NewOrderRequested += ShowOrderEntry;
 
-            // Placeholder handlers for nav tiles until those screens are built.
-            _dashboardViewModel.NewOrderRequested += () =>
-                MessageBox.Show("شاشة الطلب الجديد - قيد الإنشاء", "قريباً");
+            _orderEntryView.DataContext = _orderEntryViewModel;
+            _orderEntryView.BackRequested += ShowDashboard;
+            _orderEntryViewModel.OrderCompleted += ShowDashboard;
+
+            // Placeholder handlers for screens not built yet.
             _dashboardViewModel.ExpensesRequested += () =>
                 MessageBox.Show("شاشة المصروفات - قيد الإنشاء", "قريباً");
             _dashboardViewModel.ReportsRequested += () =>
                 MessageBox.Show("شاشة التقارير - قيد الإنشاء", "قريباً");
-            _dashboardViewModel.ShiftRequested += () =>
-                MessageBox.Show("شاشة الوردية - قيد الإنشاء", "قريباً");
+ 
 
             ShowLogin();
         }
@@ -53,6 +61,12 @@ namespace SubZeroPOS.WPF
         {
             RootContent.Children.Clear();
             RootContent.Children.Add(_dashboardView);
+        }
+
+        private void ShowOrderEntry()
+        {
+            RootContent.Children.Clear();
+            RootContent.Children.Add(_orderEntryView);
         }
     }
 }

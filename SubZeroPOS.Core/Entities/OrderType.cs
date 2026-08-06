@@ -6,7 +6,7 @@ namespace SubZeroPOS.Core.Entities
     {
         public int OrderTypeId { get; set; }
         public string TypeCode { get; set; } = string.Empty; // "DineIn" / "Delivery" / "Pickup"
-        public string TypeName { get; set; } = string.Empty;   // "صالة" / "توصيل" / "استلام"
+        public string NameAr { get; set; } = string.Empty;   // "صالة" / "توصيل" / "استلام"
 
         public ICollection<Order> Orders { get; set; } = new List<Order>();
     }

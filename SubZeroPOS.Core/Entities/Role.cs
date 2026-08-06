@@ -6,7 +6,7 @@ namespace SubZeroPOS.Core.Entities
     {
         public int RoleId { get; set; }
         public string RoleCode { get; set; } = string.Empty;   // "Manager" / "Cashier"
-        public string RoleName { get; set; } = string.Empty; // "مدير" / "كاشير"
+        public string RoleNameAr { get; set; } = string.Empty; // "مدير" / "كاشير"
 
         public ICollection<User> Users { get; set; } = new List<User>();
     }

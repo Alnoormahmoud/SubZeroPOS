@@ -19,7 +19,7 @@ namespace SubZeroPOS.Data.Configurations
 
             builder.HasIndex(ot => ot.TypeCode).IsUnique();
 
-            builder.Property(ot => ot.TypeName)
+            builder.Property(ot => ot.NameAr)
                 .IsRequired()
                 .HasMaxLength(50)
                 .IsUnicode(true);

@@ -8,16 +8,18 @@ namespace SubZeroPOS.Data.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly SubZeroDbContext _context;
+        private readonly IDbContextFactory<SubZeroDbContext> _contextFactory;
 
-        public AuthService(SubZeroDbContext context)
+        public AuthService(IDbContextFactory<SubZeroDbContext> contextFactory)
         {
-            _context = context;
+            _contextFactory = contextFactory;
         }
 
         public async Task<AuthResultDto> LoginAsync(string username, string password)
         {
-            var user = await _context.Users
+            await using var context = await _contextFactory.CreateDbContextAsync();
+
+            var user = await context.Users
                 .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.Username == username);
 
@@ -55,7 +57,7 @@ namespace SubZeroPOS.Data.Services
                 UserId = user.UserId,
                 FullName = user.FullName,
                 RoleCode = user.Role.RoleCode,
-                RoleName = user.Role.RoleName
+                RoleNameAr = user.Role.RoleNameAr
             };
         }
     }

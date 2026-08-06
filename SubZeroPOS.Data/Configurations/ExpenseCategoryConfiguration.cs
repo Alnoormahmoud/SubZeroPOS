@@ -12,7 +12,7 @@ namespace SubZeroPOS.Data.Configurations
 
             builder.HasKey(ec => ec.ExpenseCategoryId);
 
-            builder.Property(ec => ec.ExpenseName)
+            builder.Property(ec => ec.NameAr)
                 .IsRequired()
                 .HasMaxLength(100)
                 .IsUnicode(true);
