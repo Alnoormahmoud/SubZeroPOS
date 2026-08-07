@@ -8,6 +8,7 @@ namespace SubZeroPOS.Core.Interfaces
     {
         Task<List<Category>> GetCategoriesAsync();
         Task<List<Item>> GetItemsByCategoryAsync(int categoryId);
+        Task<List<Item>> GetAllItemsAsync();
         Task<Item?> GetItemByIdAsync(int itemId);
     }
 }

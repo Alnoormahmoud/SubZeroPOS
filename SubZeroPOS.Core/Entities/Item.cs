@@ -7,8 +7,10 @@ namespace SubZeroPOS.Core.Entities
     {
         public int ItemId { get; set; }
         public int CategoryId { get; set; }
-        public string NameAr { get; set; } = string.Empty;
+        public string ItemName { get; set; } = string.Empty;
         public string? NameEn { get; set; }
+        public string? ImagePath { get; set; } // relative path e.g. "Images/Items/7.jpg" - null shows a placeholder
+        public bool HasNoImage => string.IsNullOrWhiteSpace(ImagePath);
         public decimal Price { get; set; }
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.Now;

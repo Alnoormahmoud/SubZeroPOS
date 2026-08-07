@@ -38,7 +38,7 @@
             </Button>
         </Grid>
 
-        <!-- Category tabs -->
+        <!-- Category tabs (includes "الكل" pseudo-category first) -->
         <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto"
                       VerticalScrollBarVisibility="Disabled" Margin="0,0,0,12">
             <ItemsControl ItemsSource="{Binding Categories}">
@@ -73,17 +73,17 @@
             </ItemsControl>
         </ScrollViewer>
 
-        <!-- Item grid + Cart side by side -->
+        <!-- Item grid + Cart side by side - flexible/stretchy columns -->
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="3*" />
                 <ColumnDefinition Width="12" />
-                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" MinWidth="260" />
             </Grid.ColumnDefinitions>
 
-            <!-- Item grid -->
-            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
-                <ItemsControl ItemsSource="{Binding ItemsInCategory}">
+            <!-- Item grid: cards with image + name + price, wraps and reflows as window resizes -->
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Padding="0,0,10,0">
+                <ItemsControl ItemsSource="{Binding ItemsInCategory}" Margin="0,0,4,0">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel />
@@ -94,18 +94,45 @@
                             <Button Command="{Binding DataContext.AddToCartCommand,
                                               RelativeSource={RelativeSource AncestorType=UserControl}}"
                                     CommandParameter="{Binding}"
-                                    Width="120" Height="80" Margin="0,0,8,8" Cursor="Hand">
+                                    Width="150" Height="150" Margin="0,0,10,10" Cursor="Hand">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
                                         <Border Background="{StaticResource SurfaceBrush}"
                                                 BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
-                                                CornerRadius="10" Padding="8">
-                                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                                <TextBlock Text="{Binding NameAr}" Foreground="{StaticResource TextPrimaryBrush}"
-                                                           FontSize="13" TextWrapping="Wrap" TextAlignment="Center" Margin="0,0,0,6" />
-                                                <TextBlock Text="{Binding Price, StringFormat={}{0:0.000}}"
-                                                           Foreground="{StaticResource IceBlueBrush}" FontSize="12" TextAlignment="Center" />
-                                            </StackPanel>
+                                                CornerRadius="10">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+
+                                                <!-- Image if ImagePath is set -->
+                                                <Border Grid.Row="0" CornerRadius="10,10,0,0" ClipToBounds="True">
+                                                    <Grid>
+                                                        <!-- Real photo -->
+                                                        <Image Source="{Binding ImagePath, Converter={StaticResource ItemImagePathConverter}}" Stretch="UniformToFill"
+                                                               Visibility="{Binding ImagePath, Converter={StaticResource StringToVisibilityConverter}}" />
+                                                        <!-- Placeholder when no photo yet: colored box with first letter -->
+                                                        <Border Background="{StaticResource AccentRedBrush}"
+                                                                Visibility="{Binding HasNoImage, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                            <TextBlock Text="{Binding ItemName}"
+                                                                       Foreground="White"
+                                                                       FontSize="16" FontWeight="Bold"
+                                                                       TextWrapping="Wrap" TextAlignment="Center"
+                                                                       Margin="6"
+                                                                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                       Opacity="0.9" />
+                                                        </Border>
+                                                    </Grid>
+                                                </Border>
+
+                                                <StackPanel Grid.Row="1" Margin="8,6,8,8">
+                                                    <TextBlock Text="{Binding ItemName}" Foreground="{StaticResource TextPrimaryBrush}"
+                                                               FontSize="13" TextWrapping="Wrap" TextAlignment="Center" Margin="0,0,0,4" />
+                                                    <TextBlock Text="{Binding Price, StringFormat={}{0:0.000}}"
+                                                               Foreground="{StaticResource IceBlueBrush}" FontSize="12" TextAlignment="Center" />
+                                                </StackPanel>
+                                            </Grid>
                                         </Border>
                                     </ControlTemplate>
                                 </Button.Template>
@@ -143,8 +170,8 @@
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
 
-                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding NameAr}"
-                                                   Foreground="{StaticResource TextPrimaryBrush}" FontSize="13" />
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding ItemName}"
+                                                   Foreground="{StaticResource TextPrimaryBrush}" FontSize="13" TextWrapping="Wrap" />
                                         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding LineTotal, StringFormat={}{0:0.000}}"
                                                    Foreground="{StaticResource IceBlueBrush}" FontSize="13" />
 

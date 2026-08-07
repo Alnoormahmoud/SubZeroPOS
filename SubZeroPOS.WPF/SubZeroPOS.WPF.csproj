@@ -10,14 +10,22 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
-
-	  <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.10" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SubZeroPOS.Core\SubZeroPOS.Core.csproj" />
     <ProjectReference Include="..\SubZeroPOS.Data\SubZeroPOS.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Automatically copies every file under Images/ (all item photos) to the
+         output folder on build, so you never have to set "Copy to Output
+         Directory" by hand for each new photo you add. -->
+    <Content Include="Images\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

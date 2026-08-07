@@ -26,13 +26,24 @@ namespace SubZeroPOS.Data.Services
                 .ToListAsync();
         }
 
-   
         public async Task<List<Item>> GetItemsByCategoryAsync(int categoryId)
         {
             await using var context = await _contextFactory.CreateDbContextAsync();
 
             return await context.Items
-                .Where(i => i.CategoryId == categoryId)
+                .Where(i => i.CategoryId == categoryId && i.IsActive)
+                .OrderBy(i => i.ItemName)
+                .ToListAsync();
+        }
+
+        public async Task<List<Item>> GetAllItemsAsync()
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+
+            return await context.Items
+                .Where(i => i.IsActive)
+                .OrderBy(i => i.CategoryId)
+                .ThenBy(i => i.ItemName)
                 .ToListAsync();
         }
 

@@ -11,6 +11,7 @@
             <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
             <conv:InverseBoolConverter x:Key="InverseBoolConverter" />
             <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <conv:ItemImagePathConverter x:Key="ItemImagePathConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

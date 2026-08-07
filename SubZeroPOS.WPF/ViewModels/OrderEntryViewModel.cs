@@ -16,6 +16,15 @@ namespace SubZeroPOS.WPF.ViewModels
         private readonly IItemService _itemService;
         private readonly IOrderService _orderService;
 
+        // Pseudo-category representing "show everything" - not a real DB row.
+        // CategoryId = 0 is never used by a real category (IDENTITY starts at 1).
+        private static readonly Category AllCategory = new()
+        {
+            CategoryId = 0,
+            NameAr = "الكل",
+            DisplayOrder = -1
+        };
+
         public OrderEntryViewModel(IItemService itemService, IOrderService orderService)
         {
             _itemService = itemService;
@@ -24,7 +33,7 @@ namespace SubZeroPOS.WPF.ViewModels
 
         public ObservableCollection<Category> Categories { get; } = new();
         public ObservableCollection<Item> ItemsInCategory { get; } = new();
-        public ObservableCollection<CartItemDto> Cart { get; } = new();
+        public ObservableCollection<CartLineItem> Cart { get; } = new();
 
         [ObservableProperty]
         private Category? selectedCategory;
@@ -46,12 +55,14 @@ namespace SubZeroPOS.WPF.ViewModels
             try
             {
                 Categories.Clear();
+                Categories.Add(AllCategory); // "الكل" always shows first
+
                 var categories = await _itemService.GetCategoriesAsync();
                 foreach (var c in categories)
                     Categories.Add(c);
 
-                if (Categories.Count > 0)
-                    await SelectCategoryAsync(Categories.First());
+                // Default view: show everything
+                await SelectCategoryAsync(AllCategory);
             }
             finally
             {
@@ -65,7 +76,10 @@ namespace SubZeroPOS.WPF.ViewModels
             SelectedCategory = category;
             ItemsInCategory.Clear();
 
-            var items = await _itemService.GetItemsByCategoryAsync(category.CategoryId);
+            var items = category.CategoryId == 0
+                ? await _itemService.GetAllItemsAsync()
+                : await _itemService.GetItemsByCategoryAsync(category.CategoryId);
+
             foreach (var i in items)
                 ItemsInCategory.Add(i);
         }
@@ -76,16 +90,15 @@ namespace SubZeroPOS.WPF.ViewModels
             var existing = Cart.FirstOrDefault(c => c.ItemId == item.ItemId);
             if (existing != null)
             {
-                existing.Quantity++;
-                // Force the collection to refresh totals shown in the UI
+                existing.Quantity++; // CartLineItem is observable - UI updates automatically
                 RefreshCartTotal();
                 return;
             }
 
-            Cart.Add(new CartItemDto
+            Cart.Add(new CartLineItem
             {
                 ItemId = item.ItemId,
-                ItemName = item.NameAr,
+                ItemName = item.ItemName,
                 UnitPrice = item.Price,
                 Quantity = 1
             });
@@ -94,21 +107,21 @@ namespace SubZeroPOS.WPF.ViewModels
         }
 
         [RelayCommand]
-        private void RemoveFromCart(CartItemDto cartItem)
+        private void RemoveFromCart(CartLineItem cartItem)
         {
             Cart.Remove(cartItem);
             RefreshCartTotal();
         }
 
         [RelayCommand]
-        private void IncreaseQuantity(CartItemDto cartItem)
+        private void IncreaseQuantity(CartLineItem cartItem)
         {
             cartItem.Quantity++;
             RefreshCartTotal();
         }
 
         [RelayCommand]
-        private void DecreaseQuantity(CartItemDto cartItem)
+        private void DecreaseQuantity(CartLineItem cartItem)
         {
             if (cartItem.Quantity <= 1)
             {
@@ -145,7 +158,15 @@ namespace SubZeroPOS.WPF.ViewModels
                     OrderTypeId = 1, // TODO: replace with a real selector (صالة/توصيل/استلام)
                     CashierUserId = CurrentSession.UserId,
                     DeliveryFee = 0,
-                    Items = Cart.ToList()
+                    // Convert UI-only CartLineItem rows into plain CartItemDto here,
+                    // right before handing off to the service layer.
+                    Items = Cart.Select(c => new CartItemDto
+                    {
+                        ItemId = c.ItemId,
+                        ItemName = c.ItemName,
+                        UnitPrice = c.UnitPrice,
+                        Quantity = c.Quantity
+                    }).ToList()
                 };
 
                 await _orderService.CreateOrderAsync(dto);

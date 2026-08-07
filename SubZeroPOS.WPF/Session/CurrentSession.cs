@@ -5,7 +5,7 @@ namespace SubZeroPOS.WPF.Session
         public static int UserId { get; set; }
         public static string FullName { get; set; } = string.Empty;
         public static string RoleCode { get; set; } = string.Empty; // "Manager" / "Cashier"
-        public static string RoleName { get; set; } = string.Empty;
+        public static string RoleNameAr { get; set; } = string.Empty;
 
         public static bool IsManager => RoleCode == "Manager";
 
@@ -14,7 +14,7 @@ namespace SubZeroPOS.WPF.Session
             UserId = 0;
             FullName = string.Empty;
             RoleCode = string.Empty;
-            RoleName = string.Empty;
+            RoleNameAr = string.Empty;
         }
     }
 }

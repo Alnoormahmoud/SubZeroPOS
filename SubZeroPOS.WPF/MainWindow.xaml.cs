@@ -46,7 +46,8 @@ namespace SubZeroPOS.WPF
                 MessageBox.Show("شاشة المصروفات - قيد الإنشاء", "قريباً");
             _dashboardViewModel.ReportsRequested += () =>
                 MessageBox.Show("شاشة التقارير - قيد الإنشاء", "قريباً");
- 
+            _dashboardViewModel.ShiftRequested += () =>
+                MessageBox.Show("شاشة الوردية - قيد الإنشاء", "قريباً");
 
             ShowLogin();
         }

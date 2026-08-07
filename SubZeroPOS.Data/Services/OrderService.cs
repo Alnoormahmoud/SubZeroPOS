@@ -28,7 +28,7 @@ namespace SubZeroPOS.Data.Services
             var order = new Order
             {
                 OrderTypeId = orderDto.OrderTypeId,
-                CustomerName = orderDto.CustomerName,
+                CustomerPhone = orderDto.CustomerPhone,
                 DeliveryFee = orderDto.DeliveryFee,
                 CashierUserId = orderDto.CashierUserId,
                 Notes = orderDto.Notes,

@@ -19,7 +19,8 @@ namespace SubZeroPOS.Data
         public DbSet<OrderItem> OrderItems => Set<OrderItem>();
         public DbSet<ExpenseCategory> ExpenseCategories => Set<ExpenseCategory>();
         public DbSet<Expense> Expenses => Set<Expense>();
- 
+        public DbSet<ShiftClosing> ShiftClosings => Set<ShiftClosing>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

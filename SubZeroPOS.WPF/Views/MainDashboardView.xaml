@@ -168,7 +168,10 @@
                         </Border>
                     </ControlTemplate>
                 </Button.Template>
-               
+                <StackPanel>
+                    <TextBlock Text="الوردية" Foreground="{StaticResource TextPrimaryBrush}" FontSize="15" FontWeight="Medium" />
+                    <TextBlock Text="فتح / إغلاق الوردية" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                </StackPanel>
             </Button>
         </Grid>
     </Grid>
