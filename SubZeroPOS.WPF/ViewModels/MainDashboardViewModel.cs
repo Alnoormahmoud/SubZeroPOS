@@ -1,16 +1,27 @@
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SubZeroPOS.Core.Interfaces;
 using SubZeroPOS.WPF.Session;
 
 namespace SubZeroPOS.WPF.ViewModels
 {
     public partial class MainDashboardViewModel : ObservableObject
     {
+        private readonly IOrderService _orderService;
+        private readonly IExpenseService _expenseService;
+
+        public MainDashboardViewModel(IOrderService orderService, IExpenseService expenseService)
+        {
+            _orderService = orderService;
+            _expenseService = expenseService;
+        }
+
         public string WelcomeMessage => $"مرحباً، {CurrentSession.FullName}";
         public bool IsManager => CurrentSession.IsManager;
 
-        // Placeholder stats - wire these to real queries once OrderService/ExpenseService exist
         [ObservableProperty]
         private string todaysSales = "0.000";
 
@@ -25,6 +36,22 @@ namespace SubZeroPOS.WPF.ViewModels
         public event Action? ExpensesRequested;
         public event Action? ReportsRequested;
         public event Action? ShiftRequested;
+
+        // Called every time the dashboard becomes visible (Loaded fires on every
+        // navigation back to it), so numbers always reflect the latest orders/expenses.
+        public async Task RefreshStatsAsync()
+        {
+            var today = DateTime.Today;
+
+            var orders = await _orderService.GetOrdersByDateAsync(today);
+            var completedOrders = orders.Where(o => o.StatusCode == "Completed").ToList();
+
+            TodaysSales = completedOrders.Sum(o => o.TotalAmount).ToString("0.000");
+            TodaysOrderCount = completedOrders.Count.ToString();
+
+            var expenses = await _expenseService.GetExpensesByDateRangeAsync(today, today);
+            TodaysExpenses = expenses.Sum(e => e.Amount).ToString("0.000");
+        }
 
         [RelayCommand]
         private void Logout()

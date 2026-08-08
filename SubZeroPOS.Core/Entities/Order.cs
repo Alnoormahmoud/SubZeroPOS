@@ -7,9 +7,10 @@ namespace SubZeroPOS.Core.Entities
     {
         public int OrderId { get; set; }
         public int OrderTypeId { get; set; }
-        public string? CustomerPhone { get; set; }
+        public string? CustomerName { get; set; }
         public DateTime OrderDate { get; set; } = DateTime.Now;
         public string StatusCode { get; set; } = "Completed"; // "Completed" / "Cancelled"
+        public string PaymentMethodCode { get; set; } = "Cash"; // "Cash" / "Bankak"
         public decimal TotalAmount { get; set; }
         public decimal DeliveryFee { get; set; }
         public int CashierUserId { get; set; }

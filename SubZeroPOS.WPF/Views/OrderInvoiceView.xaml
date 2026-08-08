@@ -1,0 +1,163 @@
+<UserControl x:Class="SubZeroPOS.WPF.Views.OrderInvoiceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             FlowDirection="RightToLeft"
+             DataContextChanged="OnDataContextChanged"
+             Background="{StaticResource BackgroundBrush}">
+
+    <Grid>
+        <Border x:Name="ReceiptBorder"
+                Width="380" Padding="24"
+                CornerRadius="14"
+                FlowDirection="RightToLeft"
+                TextElement.FontFamily="Segoe UI"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+            <StackPanel>
+
+                <Border Width="48" Height="48" CornerRadius="24"
+                        Background="{StaticResource AccentRedBrush}"
+                        HorizontalAlignment="Center" Margin="0,0,0,10">
+                    <TextBlock Text="✓" Foreground="White" FontSize="22" FontWeight="Bold"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <TextBlock Text="تم حفظ الطلب بنجاح" Foreground="{StaticResource TextPrimaryBrush}"
+                           FontSize="17" FontWeight="Medium" HorizontalAlignment="Center" Margin="0,0,0,4" />
+                <TextBlock Text="{Binding Order.OrderId, StringFormat='رقم الطلب: {0}'}"
+                           Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"
+                           HorizontalAlignment="Center" Margin="0,0,0,16" />
+
+                <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,14" />
+
+                <Grid Margin="0,0,0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="الكاشير" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                    <TextBlock Grid.Column="1" Text="{Binding Order.CashierName}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
+                </Grid>
+                <Grid Margin="0,0,0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="التاريخ والوقت" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                    <TextBlock Grid.Column="1" Text="{Binding Order.OrderDate, StringFormat={}{0:yyyy-MM-dd HH:mm}}"
+                               Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
+                </Grid>
+                <Grid Margin="0,0,0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="نوع الطلب" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                    <TextBlock Grid.Column="1" Text="{Binding Order.OrderTypeNameAr}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
+                </Grid>
+                <Grid Margin="0,0,0,4" Visibility="{Binding Order.CustomerName, Converter={StaticResource StringToVisibilityConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="اسم الزبون" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                    <TextBlock Grid.Column="1" Text="{Binding Order.CustomerName}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
+                </Grid>
+                <Grid Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="طريقة الدفع" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                    <TextBlock Grid.Column="1" Text="{Binding Order.PaymentMethodNameAr}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
+                </Grid>
+
+                <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,10" />
+
+                <ItemsControl ItemsSource="{Binding Order.Items}" Margin="0,0,0,10">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Foreground="{StaticResource TextPrimaryBrush}" FontSize="13" TextWrapping="Wrap">
+                                    <Run Text="{Binding Quantity, Mode=OneWay}" />
+                                    <Run Text=" × " />
+                                    <Run Text="{Binding ItemName, Mode=OneWay}" />
+                                </TextBlock>
+                                <TextBlock Grid.Column="1" Text="{Binding LineTotal, StringFormat={}{0:0.000}}"
+                                           Foreground="{StaticResource IceBlueBrush}" FontSize="13" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <Grid Margin="0,0,0,6" Visibility="{Binding Order.HasDeliveryFee, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="رسوم التوصيل" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" />
+                    <TextBlock Grid.Column="1" Text="{Binding Order.DeliveryFee, StringFormat={}{0:0.000}}"
+                               Foreground="{StaticResource IceBlueBrush}" FontSize="13" />
+                </Grid>
+
+                <StackPanel Margin="0,0,0,10" Visibility="{Binding Order.Notes, Converter={StaticResource StringToVisibilityConverter}}">
+                    <TextBlock Text="ملاحظات" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,2" />
+                    <TextBlock Text="{Binding Order.Notes}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" TextWrapping="Wrap" />
+                </StackPanel>
+
+                <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,10" />
+
+                <Grid Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="الإجمالي" Foreground="{StaticResource TextPrimaryBrush}"
+                               FontSize="16" FontWeight="Medium" />
+                    <TextBlock Grid.Column="1" Text="{Binding Order.TotalAmount, StringFormat={}{0:0.000}}"
+                               Foreground="{StaticResource TextPrimaryBrush}" FontSize="16" FontWeight="Medium" />
+                </Grid>
+
+                <Button Content="طباعة الفاتورة" Command="{Binding PrintCommand}"
+                        Background="{StaticResource SurfaceBrush}"
+                        Foreground="{StaticResource TextPrimaryBrush}"
+                        BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                        Padding="12" Margin="0,0,0,8" Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <Button Content="طلب جديد" Command="{Binding NewOrderCommand}"
+                        Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,0,8" />
+
+                <Button Content="الرئيسية" Command="{Binding BackToDashboardCommand}"
+                        Background="Transparent"
+                        Foreground="{StaticResource TextSecondaryBrush}"
+                        BorderThickness="0" Padding="8" Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

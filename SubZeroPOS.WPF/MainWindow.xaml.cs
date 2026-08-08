@@ -12,6 +12,10 @@ namespace SubZeroPOS.WPF
         private readonly MainDashboardViewModel _dashboardViewModel;
         private readonly OrderEntryView _orderEntryView;
         private readonly OrderEntryViewModel _orderEntryViewModel;
+        private readonly ExpenseView _expenseView;
+        private readonly ExpenseViewModel _expenseViewModel;
+        private readonly OrderInvoiceView _orderInvoiceView;
+        private readonly OrderInvoiceViewModel _orderInvoiceViewModel;
 
         public MainWindow(
             LoginView loginView,
@@ -19,7 +23,11 @@ namespace SubZeroPOS.WPF
             MainDashboardView dashboardView,
             MainDashboardViewModel dashboardViewModel,
             OrderEntryView orderEntryView,
-            OrderEntryViewModel orderEntryViewModel)
+            OrderEntryViewModel orderEntryViewModel,
+            ExpenseView expenseView,
+            ExpenseViewModel expenseViewModel,
+            OrderInvoiceView orderInvoiceView,
+            OrderInvoiceViewModel orderInvoiceViewModel)
         {
             InitializeComponent();
 
@@ -29,6 +37,10 @@ namespace SubZeroPOS.WPF
             _dashboardViewModel = dashboardViewModel;
             _orderEntryView = orderEntryView;
             _orderEntryViewModel = orderEntryViewModel;
+            _expenseView = expenseView;
+            _expenseViewModel = expenseViewModel;
+            _orderInvoiceView = orderInvoiceView;
+            _orderInvoiceViewModel = orderInvoiceViewModel;
 
             _loginView.DataContext = _loginViewModel;
             _loginViewModel.LoginSucceeded += ShowDashboard;
@@ -36,14 +48,24 @@ namespace SubZeroPOS.WPF
             _dashboardView.DataContext = _dashboardViewModel;
             _dashboardViewModel.LogoutRequested += ShowLogin;
             _dashboardViewModel.NewOrderRequested += ShowOrderEntry;
+            _dashboardViewModel.ExpensesRequested += ShowExpenses;
 
             _orderEntryView.DataContext = _orderEntryViewModel;
             _orderEntryView.BackRequested += ShowDashboard;
-            _orderEntryViewModel.OrderCompleted += ShowDashboard;
+            _orderEntryViewModel.OrderCompleted += invoice =>
+            {
+                _orderInvoiceViewModel.SetOrder(invoice);
+                ShowInvoice();
+            };
+
+            _expenseView.DataContext = _expenseViewModel;
+            _expenseViewModel.BackRequested += ShowDashboard;
+
+            _orderInvoiceView.DataContext = _orderInvoiceViewModel;
+            _orderInvoiceViewModel.NewOrderRequested += ShowOrderEntry;
+            _orderInvoiceViewModel.BackToDashboardRequested += ShowDashboard;
 
             // Placeholder handlers for screens not built yet.
-            _dashboardViewModel.ExpensesRequested += () =>
-                MessageBox.Show("شاشة المصروفات - قيد الإنشاء", "قريباً");
             _dashboardViewModel.ReportsRequested += () =>
                 MessageBox.Show("شاشة التقارير - قيد الإنشاء", "قريباً");
             _dashboardViewModel.ShiftRequested += () =>
@@ -68,6 +90,18 @@ namespace SubZeroPOS.WPF
         {
             RootContent.Children.Clear();
             RootContent.Children.Add(_orderEntryView);
+        }
+
+        private void ShowExpenses()
+        {
+            RootContent.Children.Clear();
+            RootContent.Children.Add(_expenseView);
+        }
+
+        private void ShowInvoice()
+        {
+            RootContent.Children.Clear();
+            RootContent.Children.Add(_orderInvoiceView);
         }
     }
 }

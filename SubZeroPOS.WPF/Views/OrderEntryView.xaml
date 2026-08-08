@@ -199,6 +199,37 @@
                     </ScrollViewer>
 
                     <StackPanel Grid.Row="2" Margin="0,10,0,0">
+
+                        <!-- Order type (صالة / توصيل / استلام) -->
+                        <TextBlock Text="نوع الطلب" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                        <ComboBox ItemsSource="{Binding OrderTypes}" SelectedItem="{Binding SelectedOrderType}"
+                                  DisplayMemberPath="NameAr" Margin="0,0,0,10" Padding="8" />
+
+                        <!-- Customer name -->
+                        <TextBlock Text="اسم الزبون (اختياري)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                        <TextBox Text="{Binding CustomerName, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,10" />
+
+                        <!-- Delivery fee - only shown when order type is Delivery -->
+                        <StackPanel Visibility="{Binding IsDeliverySelected, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <TextBlock Text="رسوم التوصيل" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                            <TextBox Text="{Binding DeliveryFeeText, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,10" />
+                        </StackPanel>
+
+                        <!-- Notes -->
+                        <TextBlock Text="ملاحظات (اختياري)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                        <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource DarkTextBoxStyle}" TextWrapping="Wrap" AcceptsReturn="True"
+                                 Height="50" Margin="0,0,0,10" />
+
+                        <!-- Payment method -->
+                        <TextBlock Text="طريقة الدفع" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                        <ComboBox ItemsSource="{Binding PaymentMethods}" SelectedItem="{Binding SelectedPaymentMethod}"
+                                  DisplayMemberPath="NameAr" Margin="0,0,0,10" Padding="8" />
+
+                        <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,10" />
+
                         <Grid Margin="0,0,0,10">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -206,7 +237,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="الإجمالي" Foreground="{StaticResource TextPrimaryBrush}"
                                        FontSize="15" FontWeight="Medium" />
-                            <TextBlock Grid.Column="1" Text="{Binding CartTotal, StringFormat={}{0:0.000}}"
+                            <TextBlock Grid.Column="1" Text="{Binding GrandTotal, StringFormat={}{0:0.000}}"
                                        Foreground="{StaticResource TextPrimaryBrush}" FontSize="15" FontWeight="Medium" />
                         </Grid>
 

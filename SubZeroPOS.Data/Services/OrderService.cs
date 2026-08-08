@@ -28,8 +28,9 @@ namespace SubZeroPOS.Data.Services
             var order = new Order
             {
                 OrderTypeId = orderDto.OrderTypeId,
-                CustomerPhone = orderDto.CustomerPhone,
+                CustomerName = orderDto.CustomerName,
                 DeliveryFee = orderDto.DeliveryFee,
+                PaymentMethodCode = orderDto.PaymentMethodCode,
                 CashierUserId = orderDto.CashierUserId,
                 Notes = orderDto.Notes,
                 OrderDate = DateTime.Now,
@@ -89,6 +90,13 @@ namespace SubZeroPOS.Data.Services
             order.StatusCode = "Cancelled";
             await context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<List<OrderType>> GetOrderTypesAsync()
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+
+            return await context.OrderTypes.ToListAsync();
         }
     }
 }

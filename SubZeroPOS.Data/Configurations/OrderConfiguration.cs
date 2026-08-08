@@ -12,9 +12,9 @@ namespace SubZeroPOS.Data.Configurations
 
             builder.HasKey(o => o.OrderId);
 
-            builder.Property(o => o.CustomerPhone)
-                .HasMaxLength(20)
-                .IsUnicode(false);
+            builder.Property(o => o.CustomerName)
+                .HasMaxLength(150)
+                .IsUnicode(true);
 
             builder.Property(o => o.OrderDate)
                 .IsRequired()
@@ -25,6 +25,12 @@ namespace SubZeroPOS.Data.Configurations
                 .HasMaxLength(20)
                 .IsUnicode(false)
                 .HasDefaultValue("Completed");
+
+            builder.Property(o => o.PaymentMethodCode)
+                .IsRequired()
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasDefaultValue("Cash");
 
             builder.Property(o => o.TotalAmount)
                 .IsRequired()

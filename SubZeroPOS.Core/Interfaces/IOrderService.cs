@@ -11,5 +11,6 @@ namespace SubZeroPOS.Core.Interfaces
         Task<Order?> GetOrderByIdAsync(int orderId);
         Task<List<Order>> GetOrdersByDateAsync(System.DateTime date);
         Task<bool> CancelOrderAsync(int orderId);
+        Task<List<OrderType>> GetOrderTypesAsync();
     }
 }

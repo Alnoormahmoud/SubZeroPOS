@@ -42,19 +42,22 @@ namespace SubZeroPOS.WPF
                     services.AddScoped<IAuthService, AuthService>();
                     services.AddScoped<IItemService, ItemService>();
                     services.AddScoped<IOrderService, OrderService>();
-                    // TODO as each is implemented:
-                    // services.AddScoped<IExpenseService, ExpenseService>();
-                    // services.AddScoped<IReportService, ReportService>();
+                    services.AddScoped<IExpenseService, ExpenseService>();
+                    // TODO: services.AddScoped<IReportService, ReportService>();
 
                     // ViewModels
                     services.AddTransient<LoginViewModel>();
                     services.AddTransient<MainDashboardViewModel>();
                     services.AddTransient<OrderEntryViewModel>();
+                    services.AddTransient<ExpenseViewModel>();
+                    services.AddTransient<OrderInvoiceViewModel>();
 
                     // Views
                     services.AddTransient<LoginView>();
                     services.AddTransient<MainDashboardView>();
                     services.AddTransient<OrderEntryView>();
+                    services.AddTransient<ExpenseView>();
+                    services.AddTransient<OrderInvoiceView>();
 
                     // Main window
                     services.AddSingleton<MainWindow>();
