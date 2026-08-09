@@ -6,6 +6,7 @@
              Background="{StaticResource BackgroundBrush}">
 
     <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <Border x:Name="ReceiptBorder"
                 Width="380" Padding="24"
                 CornerRadius="14"
@@ -15,7 +16,8 @@
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Center">
+                VerticalAlignment="Top"
+                Margin="0,20,0,20">
             <StackPanel>
 
                 <!-- Restaurant info -->
@@ -181,5 +183,6 @@
 
             </StackPanel>
         </Border>
+        </ScrollViewer>
     </Grid>
 </UserControl>

@@ -22,6 +22,10 @@ namespace SubZeroPOS.WPF
         private readonly UserManagementViewModel _userManagementViewModel;
         private readonly MenuManagementView _menuManagementView;
         private readonly MenuManagementViewModel _menuManagementViewModel;
+        private readonly PreviousOrdersView _previousOrdersView;
+        private readonly PreviousOrdersViewModel _previousOrdersViewModel;
+        private readonly ReportsView _reportsView;
+        private readonly ReportsViewModel _reportsViewModel;
 
         public MainWindow(
             LoginView loginView,
@@ -39,7 +43,11 @@ namespace SubZeroPOS.WPF
             UserManagementView userManagementView,
             UserManagementViewModel userManagementViewModel,
             MenuManagementView menuManagementView,
-            MenuManagementViewModel menuManagementViewModel)
+            MenuManagementViewModel menuManagementViewModel,
+            PreviousOrdersView previousOrdersView,
+            PreviousOrdersViewModel previousOrdersViewModel,
+            ReportsView reportsView,
+            ReportsViewModel reportsViewModel)
         {
             InitializeComponent();
 
@@ -59,6 +67,10 @@ namespace SubZeroPOS.WPF
             _userManagementViewModel = userManagementViewModel;
             _menuManagementView = menuManagementView;
             _menuManagementViewModel = menuManagementViewModel;
+            _previousOrdersView = previousOrdersView;
+            _previousOrdersViewModel = previousOrdersViewModel;
+            _reportsView = reportsView;
+            _reportsViewModel = reportsViewModel;
 
             _loginView.DataContext = _loginViewModel;
             _loginViewModel.LoginSucceeded += ShowDashboard;
@@ -70,6 +82,7 @@ namespace SubZeroPOS.WPF
             _dashboardViewModel.SettingsRequested += ShowSettings;
             _dashboardViewModel.UserManagementRequested += ShowUserManagement;
             _dashboardViewModel.MenuManagementRequested += ShowMenuManagement;
+            _dashboardViewModel.PreviousOrdersRequested += ShowPreviousOrders;
 
             _orderEntryView.DataContext = _orderEntryViewModel;
             _orderEntryView.BackRequested += ShowDashboard;
@@ -95,9 +108,19 @@ namespace SubZeroPOS.WPF
             _menuManagementView.DataContext = _menuManagementViewModel;
             _menuManagementViewModel.BackRequested += ShowDashboard;
 
+            _previousOrdersView.DataContext = _previousOrdersViewModel;
+            _previousOrdersViewModel.BackRequested += ShowDashboard;
+            _previousOrdersViewModel.ViewInvoiceRequested += invoice =>
+            {
+                _orderInvoiceViewModel.SetOrder(invoice);
+                ShowInvoice();
+            };
+
+            _reportsView.DataContext = _reportsViewModel;
+            _reportsViewModel.BackRequested += ShowDashboard;
+            _dashboardViewModel.ReportsRequested += ShowReports;
+
             // Placeholder handlers for screens not built yet.
-            _dashboardViewModel.ReportsRequested += () =>
-                MessageBox.Show("شاشة التقارير - قيد الإنشاء", "قريباً");
             _dashboardViewModel.ShiftRequested += () =>
                 MessageBox.Show("شاشة الوردية - قيد الإنشاء", "قريباً");
 
@@ -150,6 +173,18 @@ namespace SubZeroPOS.WPF
         {
             RootContent.Children.Clear();
             RootContent.Children.Add(_menuManagementView);
+        }
+
+        private void ShowPreviousOrders()
+        {
+            RootContent.Children.Clear();
+            RootContent.Children.Add(_previousOrdersView);
+        }
+
+        private void ShowReports()
+        {
+            RootContent.Children.Clear();
+            RootContent.Children.Add(_reportsView);
         }
     }
 }

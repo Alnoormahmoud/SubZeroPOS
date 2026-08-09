@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace SubZeroPOS.Core.DTOs
 {
@@ -9,7 +10,14 @@ namespace SubZeroPOS.Core.DTOs
         public decimal TotalIncome { get; set; }
         public decimal TotalExpenses { get; set; }
         public int TotalOrders { get; set; }
+        public List<ExpenseByCategoryDto> ExpensesByCategory { get; set; } = new();
 
         public decimal NetProfit => TotalIncome - TotalExpenses;
+    }
+
+    public class ExpenseByCategoryDto
+    {
+        public string CategoryNameAr { get; set; } = string.Empty;
+        public decimal Total { get; set; }
     }
 }

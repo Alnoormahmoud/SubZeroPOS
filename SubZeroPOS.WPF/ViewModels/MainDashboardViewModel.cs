@@ -49,6 +49,7 @@ namespace SubZeroPOS.WPF.ViewModels
         public event Action? UserManagementRequested;
         public event Action? MenuManagementRequested;
         public event Action? SettingsRequested;
+        public event Action? PreviousOrdersRequested;
 
         // Called every time the dashboard becomes visible (Loaded fires on every
         // navigation back to it), so numbers always reflect the latest orders/expenses.
@@ -99,5 +100,8 @@ namespace SubZeroPOS.WPF.ViewModels
 
         [RelayCommand]
         private void OpenSettings() => SettingsRequested?.Invoke();
+
+        [RelayCommand]
+        private void OpenPreviousOrders() => PreviousOrdersRequested?.Invoke();
     }
 }

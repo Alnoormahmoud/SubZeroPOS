@@ -52,9 +52,36 @@
                     <TextBox Text="{Binding NewItemName, UpdateSourceTrigger=PropertyChanged}"
                              Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
 
+                    <TextBlock Text="الاسم بالإنجليزية (اختياري)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                    <TextBox Text="{Binding NewItemNameEn, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
+
                     <TextBlock Text="السعر" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                     <TextBox Text="{Binding NewItemPriceText, UpdateSourceTrigger=PropertyChanged}"
-                             Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,16" />
+                             Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
+
+                    <TextBlock Text="صورة الصنف (اختياري)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding NewItemImageFilePath, TargetNullValue='لم يتم اختيار صورة'}"
+                                   Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis" />
+                        <Button Grid.Column="1" Content="اختيار صورة" Command="{Binding ChooseImageCommand}"
+                                Background="{StaticResource SurfaceBrush}" Foreground="{StaticResource TextPrimaryBrush}"
+                                BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Padding="10,6" Cursor="Hand">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
 
                     <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource IceBlueBrush}"
                                FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10" />
@@ -76,7 +103,7 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="110" />
+                                            <ColumnDefinition Width="190" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
@@ -87,9 +114,18 @@
                                         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                                             <TextBox Text="{Binding Price, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.000}}"
                                                      Style="{StaticResource DarkTextBoxStyle}" Width="80" Margin="0,0,6,0" />
-                                            <Button Content="حفظ" FontSize="11" Padding="6,4" Cursor="Hand"
+                                            <Button Content="حفظ" FontSize="12" Padding="14,6" Cursor="Hand" MinWidth="50"
                                                     Command="{Binding DataContext.UpdatePriceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                    CommandParameter="{Binding}" />
+                                                    CommandParameter="{Binding}"
+                                                    Background="{StaticResource AccentRedBrush}" Foreground="White" BorderThickness="0">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
                                         </StackPanel>
 
                                         <Button Grid.Column="2"

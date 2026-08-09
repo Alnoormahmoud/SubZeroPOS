@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -21,12 +22,15 @@ namespace SubZeroPOS.WPF.ViewModels
         public ObservableCollection<Category> Categories { get; } = new();
 
         [ObservableProperty] private string newItemName = string.Empty;
+        [ObservableProperty] private string newItemNameEn = string.Empty;
         [ObservableProperty] private string newItemPriceText = string.Empty;
         [ObservableProperty] private Category? selectedNewItemCategory;
+        [ObservableProperty] private string? newItemImageFilePath; // full path to the chosen source file on disk
         [ObservableProperty] private string statusMessage = string.Empty;
         [ObservableProperty] private bool isBusy;
 
         public event Action? BackRequested;
+        public event Func<string?>? ChooseImageFileRequested; // code-behind shows OpenFileDialog, returns chosen path or null
 
         public async Task InitializeAsync()
         {
@@ -55,6 +59,14 @@ namespace SubZeroPOS.WPF.ViewModels
         }
 
         [RelayCommand]
+        private void ChooseImage()
+        {
+            var path = ChooseImageFileRequested?.Invoke();
+            if (!string.IsNullOrWhiteSpace(path))
+                NewItemImageFilePath = path;
+        }
+
+        [RelayCommand]
         private async Task AddItemAsync()
         {
             StatusMessage = string.Empty;
@@ -80,11 +92,32 @@ namespace SubZeroPOS.WPF.ViewModels
             IsBusy = true;
             try
             {
-                await _itemService.AddItemAsync(SelectedNewItemCategory.CategoryId, NewItemName, price);
+                var nameEn = string.IsNullOrWhiteSpace(NewItemNameEn) ? null : NewItemNameEn;
+                var item = await _itemService.AddItemAsync(SelectedNewItemCategory.CategoryId, NewItemName, price, nameEn);
+
+                // If an image was chosen, copy it into Images/Items/{ItemId}.{ext}
+                // next to the running app, then store that relative path.
+                if (!string.IsNullOrWhiteSpace(NewItemImageFilePath) && File.Exists(NewItemImageFilePath))
+                {
+                    var extension = Path.GetExtension(NewItemImageFilePath);
+                    var relativePath = $"Images/Items/{item.ItemId}{extension}";
+                    var destinationFullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", "Items");
+                    Directory.CreateDirectory(destinationFullPath);
+                    File.Copy(NewItemImageFilePath, Path.Combine(destinationFullPath, $"{item.ItemId}{extension}"), overwrite: true);
+
+                    await _itemService.UpdateItemImagePathAsync(item.ItemId, relativePath);
+                }
+
                 NewItemName = string.Empty;
+                NewItemNameEn = string.Empty;
                 NewItemPriceText = string.Empty;
+                NewItemImageFilePath = null;
                 StatusMessage = "تم إضافة الصنف بنجاح";
                 await ReloadItemsAsync();
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"حدث خطأ: {ex.Message}";
             }
             finally
             {

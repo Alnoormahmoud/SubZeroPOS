@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Win32;
 using SubZeroPOS.WPF.ViewModels;
 
 namespace SubZeroPOS.WPF.Views
@@ -16,8 +17,26 @@ namespace SubZeroPOS.WPF.Views
         {
             if (DataContext is MenuManagementViewModel vm)
             {
+                vm.ChooseImageFileRequested += ChooseImageFile;
                 await vm.InitializeAsync();
             }
+        }
+
+        private string? ChooseImageFile()
+        {
+            var dialog = new OpenFileDialog
+            {
+                Title = "اختيار صورة الصنف",
+                Filter = "كل صور الصور|*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.webp;*.tiff;*.tif;*.ico|" +
+                          "JPEG|*.jpg;*.jpeg|" +
+                          "PNG|*.png|" +
+                          "BMP|*.bmp|" +
+                          "GIF|*.gif|" +
+                          "WEBP|*.webp|" +
+                          "كل الملفات|*.*"
+            };
+
+            return dialog.ShowDialog() == true ? dialog.FileName : null;
         }
     }
 }

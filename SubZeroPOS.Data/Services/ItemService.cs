@@ -52,7 +52,7 @@ namespace SubZeroPOS.Data.Services
             return await context.Items.FirstOrDefaultAsync(i => i.ItemId == itemId);
         }
 
-        public async Task<Item> AddItemAsync(int categoryId, string itemName, decimal price)
+        public async Task<Item> AddItemAsync(int categoryId, string itemName, decimal price, string? nameEn = null)
         {
             await using var context = await _contextFactory.CreateDbContextAsync();
 
@@ -60,6 +60,7 @@ namespace SubZeroPOS.Data.Services
             {
                 CategoryId = categoryId,
                 ItemName = itemName,
+                NameEn = nameEn,
                 Price = price,
                 IsActive = true
             };
@@ -67,6 +68,18 @@ namespace SubZeroPOS.Data.Services
             context.Items.Add(item);
             await context.SaveChangesAsync();
             return item;
+        }
+
+        public async Task<bool> UpdateItemImagePathAsync(int itemId, string imagePath)
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+
+            var item = await context.Items.FindAsync(itemId);
+            if (item is null) return false;
+
+            item.ImagePath = imagePath;
+            await context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<bool> UpdateItemPriceAsync(int itemId, decimal newPrice)
