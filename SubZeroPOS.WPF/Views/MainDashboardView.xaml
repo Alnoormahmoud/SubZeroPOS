@@ -33,16 +33,38 @@
                 </StackPanel>
             </StackPanel>
 
-            <Button Grid.Column="1" Content="تسجيل الخروج"
-                    Command="{Binding LogoutCommand}"
-                    Background="{StaticResource SurfaceBrush}"
-                    Foreground="{StaticResource TextPrimaryBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    BorderThickness="1" Padding="10,6" Cursor="Hand">
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <TextBlock Text="{Binding CurrentDateTime}" Foreground="{StaticResource TextSecondaryBrush}"
+                           FontSize="12" VerticalAlignment="Center" Margin="0,0,12,0" />
+
+                <Button Content="الإعدادات" Command="{Binding OpenSettingsCommand}"
+                        Visibility="{Binding IsManager, Converter={StaticResource BoolToVisibilityConverter}}"
+                        Background="{StaticResource SurfaceBrush}"
+                        Foreground="{StaticResource TextPrimaryBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1" Padding="10,6" Cursor="Hand" Margin="0,0,8,0">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <Button Content="تسجيل الخروج"
+                        Command="{Binding LogoutCommand}"
+                        Background="{StaticResource SurfaceBrush}"
+                        Foreground="{StaticResource TextPrimaryBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1" Padding="10,6" Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="8" Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
@@ -50,6 +72,7 @@
                     </ControlTemplate>
                 </Button.Template>
             </Button>
+            </StackPanel>
         </Grid>
 
         <!-- Stat cards -->
@@ -97,6 +120,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <!-- New Order - always visible (Cashier + Manager) -->
@@ -138,7 +162,7 @@
             <!-- Reports - Manager only -->
             <Button Grid.Row="1" Grid.Column="0" Command="{Binding OpenReportsCommand}"
                     Visibility="{Binding IsManager, Converter={StaticResource BoolToVisibilityConverter}}"
-                    Background="{StaticResource SurfaceBrush}" Margin="0,0,6,0"
+                    Background="{StaticResource SurfaceBrush}" Margin="0,0,6,10"
                     Padding="20,18" Cursor="Hand" HorizontalContentAlignment="Right">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
@@ -157,7 +181,7 @@
 
             <!-- Shift - always visible -->
             <Button Grid.Row="1" Grid.Column="1" Command="{Binding OpenShiftCommand}"
-                    Background="{StaticResource SurfaceBrush}" Margin="6,0,0,0"
+                    Background="{StaticResource SurfaceBrush}" Margin="6,0,0,10"
                     Padding="20,18" Cursor="Hand" HorizontalContentAlignment="Right">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
@@ -171,6 +195,46 @@
                 <StackPanel>
                     <TextBlock Text="الوردية" Foreground="{StaticResource TextPrimaryBrush}" FontSize="15" FontWeight="Medium" />
                     <TextBlock Text="فتح / إغلاق الوردية" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                </StackPanel>
+            </Button>
+
+            <!-- Menu Management - Manager only -->
+            <Button Grid.Row="2" Grid.Column="0" Command="{Binding OpenMenuManagementCommand}"
+                    Visibility="{Binding IsManager, Converter={StaticResource BoolToVisibilityConverter}}"
+                    Background="{StaticResource SurfaceBrush}" Margin="0,0,6,0"
+                    Padding="20,18" Cursor="Hand" HorizontalContentAlignment="Right">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                                CornerRadius="12" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter />
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+                <StackPanel>
+                    <TextBlock Text="إدارة القائمة" Foreground="{StaticResource TextPrimaryBrush}" FontSize="15" FontWeight="Medium" />
+                    <TextBlock Text="إضافة وتعديل الأصناف والأسعار" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                </StackPanel>
+            </Button>
+
+            <!-- User Management - Manager only -->
+            <Button Grid.Row="2" Grid.Column="1" Command="{Binding OpenUserManagementCommand}"
+                    Visibility="{Binding IsManager, Converter={StaticResource BoolToVisibilityConverter}}"
+                    Background="{StaticResource SurfaceBrush}" Margin="6,0,0,0"
+                    Padding="20,18" Cursor="Hand" HorizontalContentAlignment="Right">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                                CornerRadius="12" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter />
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+                <StackPanel>
+                    <TextBlock Text="إدارة المستخدمين" Foreground="{StaticResource TextPrimaryBrush}" FontSize="15" FontWeight="Medium" />
+                    <TextBlock Text="إضافة كاشير أو مدير جديد" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
                 </StackPanel>
             </Button>
         </Grid>

@@ -16,5 +16,12 @@ namespace SubZeroPOS.Core.DTOs
         public string PaymentMethodNameAr { get; set; } = string.Empty;
         public List<CartItemDto> Items { get; set; } = new();
         public decimal TotalAmount { get; set; }
+
+        // Restaurant info, pulled from RestaurantSettings at invoice-build time
+        public string RestaurantName { get; set; } = string.Empty;
+        public string? RestaurantPhone { get; set; }
+        public string? RestaurantAddress { get; set; }
+        public string? FooterPrimary { get; set; }
+        public string? FooterSecondary { get; set; }
     }
 }

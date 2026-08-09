@@ -42,16 +42,65 @@ namespace SubZeroPOS.Data.Services
 
             return await context.Items
                 .Where(i => i.IsActive)
-                .OrderBy(i => i.CategoryId)
-                .ThenBy(i => i.ItemName)
+                .OrderBy(i => i.ItemName)
                 .ToListAsync();
         }
 
         public async Task<Item?> GetItemByIdAsync(int itemId)
         {
             await using var context = await _contextFactory.CreateDbContextAsync();
-
             return await context.Items.FirstOrDefaultAsync(i => i.ItemId == itemId);
+        }
+
+        public async Task<Item> AddItemAsync(int categoryId, string itemName, decimal price)
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+
+            var item = new Item
+            {
+                CategoryId = categoryId,
+                ItemName = itemName,
+                Price = price,
+                IsActive = true
+            };
+
+            context.Items.Add(item);
+            await context.SaveChangesAsync();
+            return item;
+        }
+
+        public async Task<bool> UpdateItemPriceAsync(int itemId, decimal newPrice)
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+
+            var item = await context.Items.FindAsync(itemId);
+            if (item is null) return false;
+
+            item.Price = newPrice;
+            await context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> SetItemActiveAsync(int itemId, bool isActive)
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+
+            var item = await context.Items.FindAsync(itemId);
+            if (item is null) return false;
+
+            item.IsActive = isActive;
+            await context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<List<Item>> GetAllItemsForManagementAsync()
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+
+            return await context.Items
+                .Include(i => i.Category)
+                .OrderBy(i => i.CategoryId).ThenBy(i => i.ItemName)
+                .ToListAsync();
         }
     }
 }

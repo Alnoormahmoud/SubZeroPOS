@@ -16,6 +16,12 @@ namespace SubZeroPOS.WPF
         private readonly ExpenseViewModel _expenseViewModel;
         private readonly OrderInvoiceView _orderInvoiceView;
         private readonly OrderInvoiceViewModel _orderInvoiceViewModel;
+        private readonly SettingsView _settingsView;
+        private readonly SettingsViewModel _settingsViewModel;
+        private readonly UserManagementView _userManagementView;
+        private readonly UserManagementViewModel _userManagementViewModel;
+        private readonly MenuManagementView _menuManagementView;
+        private readonly MenuManagementViewModel _menuManagementViewModel;
 
         public MainWindow(
             LoginView loginView,
@@ -27,7 +33,13 @@ namespace SubZeroPOS.WPF
             ExpenseView expenseView,
             ExpenseViewModel expenseViewModel,
             OrderInvoiceView orderInvoiceView,
-            OrderInvoiceViewModel orderInvoiceViewModel)
+            OrderInvoiceViewModel orderInvoiceViewModel,
+            SettingsView settingsView,
+            SettingsViewModel settingsViewModel,
+            UserManagementView userManagementView,
+            UserManagementViewModel userManagementViewModel,
+            MenuManagementView menuManagementView,
+            MenuManagementViewModel menuManagementViewModel)
         {
             InitializeComponent();
 
@@ -41,6 +53,12 @@ namespace SubZeroPOS.WPF
             _expenseViewModel = expenseViewModel;
             _orderInvoiceView = orderInvoiceView;
             _orderInvoiceViewModel = orderInvoiceViewModel;
+            _settingsView = settingsView;
+            _settingsViewModel = settingsViewModel;
+            _userManagementView = userManagementView;
+            _userManagementViewModel = userManagementViewModel;
+            _menuManagementView = menuManagementView;
+            _menuManagementViewModel = menuManagementViewModel;
 
             _loginView.DataContext = _loginViewModel;
             _loginViewModel.LoginSucceeded += ShowDashboard;
@@ -49,6 +67,9 @@ namespace SubZeroPOS.WPF
             _dashboardViewModel.LogoutRequested += ShowLogin;
             _dashboardViewModel.NewOrderRequested += ShowOrderEntry;
             _dashboardViewModel.ExpensesRequested += ShowExpenses;
+            _dashboardViewModel.SettingsRequested += ShowSettings;
+            _dashboardViewModel.UserManagementRequested += ShowUserManagement;
+            _dashboardViewModel.MenuManagementRequested += ShowMenuManagement;
 
             _orderEntryView.DataContext = _orderEntryViewModel;
             _orderEntryView.BackRequested += ShowDashboard;
@@ -64,6 +85,15 @@ namespace SubZeroPOS.WPF
             _orderInvoiceView.DataContext = _orderInvoiceViewModel;
             _orderInvoiceViewModel.NewOrderRequested += ShowOrderEntry;
             _orderInvoiceViewModel.BackToDashboardRequested += ShowDashboard;
+
+            _settingsView.DataContext = _settingsViewModel;
+            _settingsViewModel.BackRequested += ShowDashboard;
+
+            _userManagementView.DataContext = _userManagementViewModel;
+            _userManagementViewModel.BackRequested += ShowDashboard;
+
+            _menuManagementView.DataContext = _menuManagementViewModel;
+            _menuManagementViewModel.BackRequested += ShowDashboard;
 
             // Placeholder handlers for screens not built yet.
             _dashboardViewModel.ReportsRequested += () =>
@@ -102,6 +132,24 @@ namespace SubZeroPOS.WPF
         {
             RootContent.Children.Clear();
             RootContent.Children.Add(_orderInvoiceView);
+        }
+
+        private void ShowSettings()
+        {
+            RootContent.Children.Clear();
+            RootContent.Children.Add(_settingsView);
+        }
+
+        private void ShowUserManagement()
+        {
+            RootContent.Children.Clear();
+            RootContent.Children.Add(_userManagementView);
+        }
+
+        private void ShowMenuManagement()
+        {
+            RootContent.Children.Clear();
+            RootContent.Children.Add(_menuManagementView);
         }
     }
 }

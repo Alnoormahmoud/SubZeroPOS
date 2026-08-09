@@ -20,6 +20,7 @@ namespace SubZeroPOS.Data
         public DbSet<ExpenseCategory> ExpenseCategories => Set<ExpenseCategory>();
         public DbSet<Expense> Expenses => Set<Expense>();
         public DbSet<ShiftClosing> ShiftClosings => Set<ShiftClosing>();
+        public DbSet<RestaurantSettings> RestaurantSettings => Set<RestaurantSettings>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

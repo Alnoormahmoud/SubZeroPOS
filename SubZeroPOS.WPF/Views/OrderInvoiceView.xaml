@@ -18,6 +18,18 @@
                 VerticalAlignment="Center">
             <StackPanel>
 
+                <!-- Restaurant info -->
+                <TextBlock Text="{Binding Order.RestaurantName}" Foreground="{StaticResource TextPrimaryBrush}"
+                           FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,2" />
+                <TextBlock Text="{Binding Order.RestaurantAddress}" Foreground="{StaticResource TextSecondaryBrush}"
+                           FontSize="11" HorizontalAlignment="Center" TextWrapping="Wrap"
+                           Visibility="{Binding Order.RestaurantAddress, Converter={StaticResource StringToVisibilityConverter}}" Margin="0,0,0,2" />
+                <TextBlock Text="{Binding Order.RestaurantPhone}" Foreground="{StaticResource TextSecondaryBrush}"
+                           FontSize="11" HorizontalAlignment="Center"
+                           Visibility="{Binding Order.RestaurantPhone, Converter={StaticResource StringToVisibilityConverter}}" Margin="0,0,0,10" />
+
+                <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,10" />
+
                 <Border Width="48" Height="48" CornerRadius="24"
                         Background="{StaticResource AccentRedBrush}"
                         HorizontalAlignment="Center" Margin="0,0,0,10">
@@ -123,6 +135,16 @@
                     <TextBlock Grid.Column="1" Text="{Binding Order.TotalAmount, StringFormat={}{0:0.000}}"
                                Foreground="{StaticResource TextPrimaryBrush}" FontSize="16" FontWeight="Medium" />
                 </Grid>
+
+                <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,10" />
+
+                <!-- Footer thank-you / policy messages, configurable in Settings -->
+                <TextBlock Text="{Binding Order.FooterPrimary}" Foreground="{StaticResource TextPrimaryBrush}"
+                           FontSize="13" FontWeight="Medium" HorizontalAlignment="Center" TextWrapping="Wrap"
+                           Visibility="{Binding Order.FooterPrimary, Converter={StaticResource StringToVisibilityConverter}}" Margin="0,0,0,4" />
+                <TextBlock Text="{Binding Order.FooterSecondary}" Foreground="{StaticResource TextSecondaryBrush}"
+                           FontSize="11" HorizontalAlignment="Center" TextWrapping="Wrap"
+                           Visibility="{Binding Order.FooterSecondary, Converter={StaticResource StringToVisibilityConverter}}" Margin="0,0,0,16" />
 
                 <Button Content="طباعة الفاتورة" Command="{Binding PrintCommand}"
                         Background="{StaticResource SurfaceBrush}"

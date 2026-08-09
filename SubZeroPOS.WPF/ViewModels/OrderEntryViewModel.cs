@@ -15,6 +15,7 @@ namespace SubZeroPOS.WPF.ViewModels
     {
         private readonly IItemService _itemService;
         private readonly IOrderService _orderService;
+        private readonly IRestaurantSettingsService _settingsService;
 
         // Pseudo-category representing "show everything" - not a real DB row.
         private static readonly Category AllCategory = new()
@@ -24,10 +25,11 @@ namespace SubZeroPOS.WPF.ViewModels
             DisplayOrder = -1
         };
 
-        public OrderEntryViewModel(IItemService itemService, IOrderService orderService)
+        public OrderEntryViewModel(IItemService itemService, IOrderService orderService, IRestaurantSettingsService settingsService)
         {
             _itemService = itemService;
             _orderService = orderService;
+            _settingsService = settingsService;
 
             PaymentMethods = new ObservableCollection<PaymentMethodOption>
             {
@@ -91,18 +93,28 @@ namespace SubZeroPOS.WPF.ViewModels
             IsBusy = true;
             try
             {
+                // Run these concurrently instead of one-after-another - each opens
+                // its own DB connection (safe, since each uses its own DbContext),
+                // so doing them in parallel avoids paying connection-setup cost
+                // three times in a row.
+                var categoriesTask = _itemService.GetCategoriesAsync();
+                var allItemsTask = _itemService.GetAllItemsAsync();
+                var orderTypesTask = _orderService.GetOrderTypesAsync();
+
+                await Task.WhenAll(categoriesTask, allItemsTask, orderTypesTask);
+
                 Categories.Clear();
                 Categories.Add(AllCategory);
-
-                var categories = await _itemService.GetCategoriesAsync();
-                foreach (var c in categories)
+                foreach (var c in categoriesTask.Result)
                     Categories.Add(c);
 
-                await SelectCategoryAsync(AllCategory);
+                ItemsInCategory.Clear();
+                foreach (var i in allItemsTask.Result)
+                    ItemsInCategory.Add(i);
+                SelectedCategory = AllCategory;
 
                 OrderTypes.Clear();
-                var orderTypes = await _orderService.GetOrderTypesAsync();
-                foreach (var ot in orderTypes)
+                foreach (var ot in orderTypesTask.Result)
                     OrderTypes.Add(ot);
 
                 if (OrderTypes.Count > 0)
@@ -235,6 +247,7 @@ namespace SubZeroPOS.WPF.ViewModels
                 };
 
                 var createdOrder = await _orderService.CreateOrderAsync(dto);
+                var restaurantSettings = await _settingsService.GetSettingsAsync();
 
                 var invoice = new OrderInvoiceDto
                 {
@@ -247,7 +260,12 @@ namespace SubZeroPOS.WPF.ViewModels
                     DeliveryFee = dto.DeliveryFee,
                     PaymentMethodNameAr = SelectedPaymentMethod.NameAr,
                     TotalAmount = createdOrder.TotalAmount,
-                    Items = dto.Items
+                    Items = dto.Items,
+                    RestaurantName = restaurantSettings.RestaurantName,
+                    RestaurantPhone = restaurantSettings.Phone,
+                    RestaurantAddress = restaurantSettings.Address,
+                    FooterPrimary = restaurantSettings.InvoiceFooterPrimary,
+                    FooterSecondary = restaurantSettings.InvoiceFooterSecondary
                 };
 
                 // Reset the form for the next order

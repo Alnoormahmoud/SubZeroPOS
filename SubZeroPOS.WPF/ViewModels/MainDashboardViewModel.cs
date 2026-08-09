@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SubZeroPOS.Core.Interfaces;
@@ -12,15 +13,24 @@ namespace SubZeroPOS.WPF.ViewModels
     {
         private readonly IOrderService _orderService;
         private readonly IExpenseService _expenseService;
+        private readonly DispatcherTimer _clockTimer;
 
         public MainDashboardViewModel(IOrderService orderService, IExpenseService expenseService)
         {
             _orderService = orderService;
             _expenseService = expenseService;
+
+            CurrentDateTime = DateTime.Now.ToString("yyyy/MM/dd - HH:mm:ss");
+            _clockTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+            _clockTimer.Tick += (_, _) => CurrentDateTime = DateTime.Now.ToString("yyyy/MM/dd - HH:mm:ss");
+            _clockTimer.Start();
         }
 
         public string WelcomeMessage => $"مرحباً، {CurrentSession.FullName}";
         public bool IsManager => CurrentSession.IsManager;
+
+        [ObservableProperty]
+        private string currentDateTime = string.Empty;
 
         [ObservableProperty]
         private string todaysSales = "0.000";
@@ -36,11 +46,20 @@ namespace SubZeroPOS.WPF.ViewModels
         public event Action? ExpensesRequested;
         public event Action? ReportsRequested;
         public event Action? ShiftRequested;
+        public event Action? UserManagementRequested;
+        public event Action? MenuManagementRequested;
+        public event Action? SettingsRequested;
 
         // Called every time the dashboard becomes visible (Loaded fires on every
         // navigation back to it), so numbers always reflect the latest orders/expenses.
         public async Task RefreshStatsAsync()
         {
+            // WelcomeMessage/IsManager read CurrentSession, which is empty when
+            // this ViewModel is first constructed (before login happens) - re-notify
+            // them here so the greeting and role-based visibility stay correct.
+            OnPropertyChanged(nameof(WelcomeMessage));
+            OnPropertyChanged(nameof(IsManager));
+
             var today = DateTime.Today;
 
             var orders = await _orderService.GetOrdersByDateAsync(today);
@@ -71,5 +90,14 @@ namespace SubZeroPOS.WPF.ViewModels
 
         [RelayCommand]
         private void OpenShift() => ShiftRequested?.Invoke();
+
+        [RelayCommand]
+        private void OpenUserManagement() => UserManagementRequested?.Invoke();
+
+        [RelayCommand]
+        private void OpenMenuManagement() => MenuManagementRequested?.Invoke();
+
+        [RelayCommand]
+        private void OpenSettings() => SettingsRequested?.Invoke();
     }
 }
