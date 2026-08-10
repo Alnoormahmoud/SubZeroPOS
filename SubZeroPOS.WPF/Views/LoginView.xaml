@@ -50,6 +50,10 @@
                              Style="{StaticResource DarkPasswordBoxStyle}"
                              Margin="0,0,0,10" />
 
+                <CheckBox Content="تذكرني" IsChecked="{Binding RememberMe}"
+                          Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"
+                          Margin="0,0,0,10" />
+
                 <!-- Error message -->
                 <TextBlock Text="{Binding ErrorMessage}"
                            Foreground="{StaticResource AccentRedBrush}"

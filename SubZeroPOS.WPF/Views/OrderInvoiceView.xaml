@@ -134,8 +134,11 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="الإجمالي" Foreground="{StaticResource TextPrimaryBrush}"
                                FontSize="16" FontWeight="Medium" />
-                    <TextBlock Grid.Column="1" Text="{Binding Order.TotalAmount, StringFormat={}{0:0.000}}"
-                               Foreground="{StaticResource TextPrimaryBrush}" FontSize="16" FontWeight="Medium" />
+                    <TextBlock Grid.Column="1" FontSize="16" FontWeight="Medium" Foreground="{StaticResource TextPrimaryBrush}">
+                        <Run Text="{Binding Order.TotalAmount, StringFormat={}{0:0.000}}" />
+                        <Run Text=" " />
+                        <Run Text="{Binding Order.CurrencySymbol}" />
+                    </TextBlock>
                 </Grid>
 
                 <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,10" />

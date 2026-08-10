@@ -51,6 +51,8 @@ namespace SubZeroPOS.Data.Services
                 existing.Address = settings.Address;
                 existing.InvoiceFooterPrimary = settings.InvoiceFooterPrimary;
                 existing.InvoiceFooterSecondary = settings.InvoiceFooterSecondary;
+                existing.CurrencyCode = settings.CurrencyCode;
+                existing.CurrencySymbol = settings.CurrencySymbol;
             }
 
             await context.SaveChangesAsync();

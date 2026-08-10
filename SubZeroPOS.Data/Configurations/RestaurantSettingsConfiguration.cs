@@ -32,6 +32,18 @@ namespace SubZeroPOS.Data.Configurations
             builder.Property(s => s.InvoiceFooterSecondary)
                 .HasMaxLength(300)
                 .IsUnicode(true);
+
+            builder.Property(s => s.CurrencyCode)
+                .IsRequired()
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasDefaultValue("SDG");
+
+            builder.Property(s => s.CurrencySymbol)
+                .IsRequired()
+                .HasMaxLength(10)
+                .IsUnicode(true)
+                .HasDefaultValue("ج.س");
         }
     }
 }

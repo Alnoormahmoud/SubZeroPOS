@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SubZeroPOS.Core.Interfaces;
 using SubZeroPOS.WPF.Session;
+using System.IO;
 
 namespace SubZeroPOS.WPF.ViewModels
 {
@@ -24,6 +25,51 @@ namespace SubZeroPOS.WPF.ViewModels
 
         [ObservableProperty]
         private bool isBusy;
+
+        [ObservableProperty]
+        private bool rememberMe;
+
+        // Stores only the username locally (never the password) so the login
+        // screen can pre-fill it next time. One file per Windows user account.
+        private static readonly string RememberedUserFilePath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "SubZeroPOS", "remembered_user.txt");
+
+        public void LoadRememberedUsername()
+        {
+            try
+            {
+                if (File.Exists(RememberedUserFilePath))
+                {
+                    Username = File.ReadAllText(RememberedUserFilePath).Trim();
+                    RememberMe = true;
+                }
+            }
+            catch
+            {
+                // Non-critical - just skip pre-filling if anything goes wrong.
+            }
+        }
+
+        private void SaveOrClearRememberedUsername()
+        {
+            try
+            {
+                if (RememberMe)
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(RememberedUserFilePath)!);
+                    File.WriteAllText(RememberedUserFilePath, Username);
+                }
+                else if (File.Exists(RememberedUserFilePath))
+                {
+                    File.Delete(RememberedUserFilePath);
+                }
+            }
+            catch
+            {
+                // Non-critical.
+            }
+        }
 
         // Raised when login succeeds - MainWindow subscribes to this to switch screens
         public event Action? LoginSucceeded;
@@ -49,6 +95,8 @@ namespace SubZeroPOS.WPF.ViewModels
                     ErrorMessage = result.ErrorMessage ?? "فشل تسجيل الدخول";
                     return;
                 }
+
+                SaveOrClearRememberedUsername();
 
                 CurrentSession.UserId = result.UserId;
                 CurrentSession.FullName = result.FullName;

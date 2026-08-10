@@ -252,9 +252,33 @@
                         <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource IceBlueBrush}"
                                    FontSize="11" TextWrapping="Wrap" Margin="0,0,0,8" />
 
-                        <Button Content="إتمام الطلب" Command="{Binding CompleteOrderCommand}"
-                                Style="{StaticResource PrimaryButtonStyle}"
-                                IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Button Grid.Column="0" Content="إلغاء" Command="{Binding CancelOrderCommand}"
+                                    Background="{StaticResource SurfaceBrush}" Foreground="{StaticResource TextPrimaryBrush}"
+                                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                                    Padding="12" Cursor="Hand">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+
+                            <Button Grid.Column="2" Content="تأكيد الطلب" Command="{Binding CompleteOrderCommand}"
+                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
+                        </Grid>
                     </StackPanel>
                 </Grid>
             </Border>

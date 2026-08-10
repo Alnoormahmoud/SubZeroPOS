@@ -13,5 +13,7 @@ namespace SubZeroPOS.Core.Entities
         public string? Address { get; set; }
         public string? InvoiceFooterPrimary { get; set; }   // e.g. "شكراً لزيارتكم"
         public string? InvoiceFooterSecondary { get; set; } // e.g. return/exchange policy
+        public string CurrencyCode { get; set; } = "SDG";
+        public string CurrencySymbol { get; set; } = "ج.س"; // default: Sudanese Pound
     }
 }

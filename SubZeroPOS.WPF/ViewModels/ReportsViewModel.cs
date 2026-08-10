@@ -68,24 +68,27 @@ namespace SubZeroPOS.WPF.ViewModels
         }
 
         [RelayCommand]
-        private void SetToday()
+        private async Task SetTodayAsync()
         {
             FromDate = DateTime.Today;
             ToDate = DateTime.Today;
+            await LoadReportAsync();
         }
 
         [RelayCommand]
-        private void SetThisWeek()
+        private async Task SetThisWeekAsync()
         {
             FromDate = DateTime.Today.AddDays(-6);
             ToDate = DateTime.Today;
+            await LoadReportAsync();
         }
 
         [RelayCommand]
-        private void SetThisMonth()
+        private async Task SetThisMonthAsync()
         {
             FromDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             ToDate = DateTime.Today;
+            await LoadReportAsync();
         }
 
         [RelayCommand]

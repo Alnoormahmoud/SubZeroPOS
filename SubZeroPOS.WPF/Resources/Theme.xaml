@@ -62,4 +62,18 @@
         <Setter Property="CaretBrush" Value="{StaticResource IceBlueBrush}" />
     </Style>
 
+    <!-- DatePicker: the default WPF style renders a bright white box that
+         clashes badly against the dark theme - this recolors the text box
+         portion. The dropdown calendar popup itself stays OS-default (light),
+         which is a WPF limitation without a full ControlTemplate rewrite, but
+         the always-visible closed-state box now matches the theme. -->
+    <Style x:Key="DarkDatePickerStyle" TargetType="DatePicker">
+        <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="6" />
+        <Setter Property="FontSize" Value="12" />
+    </Style>
+
 </ResourceDictionary>

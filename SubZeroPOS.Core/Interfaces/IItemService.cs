@@ -15,5 +15,6 @@ namespace SubZeroPOS.Core.Interfaces
         Task<bool> SetItemActiveAsync(int itemId, bool isActive);
         Task<bool> UpdateItemImagePathAsync(int itemId, string imagePath);
         Task<List<Item>> GetAllItemsForManagementAsync(); // includes inactive items
+        Task<(bool Success, string? ErrorMessage)> DeleteItemAsync(int itemId);
     }
 }

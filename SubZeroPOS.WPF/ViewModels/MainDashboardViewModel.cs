@@ -45,7 +45,6 @@ namespace SubZeroPOS.WPF.ViewModels
         public event Action? NewOrderRequested;
         public event Action? ExpensesRequested;
         public event Action? ReportsRequested;
-        public event Action? ShiftRequested;
         public event Action? UserManagementRequested;
         public event Action? MenuManagementRequested;
         public event Action? SettingsRequested;
@@ -88,9 +87,6 @@ namespace SubZeroPOS.WPF.ViewModels
 
         [RelayCommand]
         private void OpenReports() => ReportsRequested?.Invoke();
-
-        [RelayCommand]
-        private void OpenShift() => ShiftRequested?.Invoke();
 
         [RelayCommand]
         private void OpenUserManagement() => UserManagementRequested?.Invoke();

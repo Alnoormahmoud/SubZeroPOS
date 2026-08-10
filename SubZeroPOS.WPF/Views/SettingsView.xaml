@@ -47,7 +47,11 @@
 
                 <TextBlock Text="العنوان" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                 <TextBox Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,20" />
+                         Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
+
+                <TextBlock Text="العملة" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                <ComboBox ItemsSource="{Binding Currencies}" SelectedItem="{Binding SelectedCurrency}"
+                          DisplayMemberPath="DisplayName" Margin="0,0,0,20" Padding="8" />
 
                 <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,16" />
 

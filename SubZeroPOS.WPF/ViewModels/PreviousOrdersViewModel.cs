@@ -14,20 +14,40 @@ namespace SubZeroPOS.WPF.ViewModels
     {
         private readonly IOrderService _orderService;
         private readonly IRestaurantSettingsService _settingsService;
+        private System.Collections.Generic.List<Order> _allLoadedOrders = new();
 
         public PreviousOrdersViewModel(IOrderService orderService, IRestaurantSettingsService settingsService)
         {
             _orderService = orderService;
             _settingsService = settingsService;
+
+            OrderTypeFilterOptions = new ObservableCollection<string> { "الكل", "صالة", "توصيل", "استلام" };
+            PaymentFilterOptions = new ObservableCollection<string> { "الكل", "نقدي", "بنكك" };
+            SelectedOrderTypeFilter = OrderTypeFilterOptions[0];
+            SelectedPaymentFilter = PaymentFilterOptions[0];
         }
 
         public ObservableCollection<Order> Orders { get; } = new();
+        public ObservableCollection<string> OrderTypeFilterOptions { get; }
+        public ObservableCollection<string> PaymentFilterOptions { get; }
 
         [ObservableProperty]
-        private DateTime selectedDate = DateTime.Today;
+        private DateTime fromDate = DateTime.Today;
+
+        [ObservableProperty]
+        private DateTime toDate = DateTime.Today;
+
+        [ObservableProperty]
+        private string selectedOrderTypeFilter = string.Empty;
+
+        [ObservableProperty]
+        private string selectedPaymentFilter = string.Empty;
 
         [ObservableProperty]
         private bool isBusy;
+
+        [ObservableProperty]
+        private string totalForRange = "0.000";
 
         public event Action? BackRequested;
         public event Action<OrderInvoiceDto>? ViewInvoiceRequested;
@@ -40,15 +60,80 @@ namespace SubZeroPOS.WPF.ViewModels
             IsBusy = true;
             try
             {
-                Orders.Clear();
-                var orders = await _orderService.GetOrdersByDateAsync(SelectedDate);
-                foreach (var o in orders)
-                    Orders.Add(o);
+                _allLoadedOrders.Clear();
+
+                // GetOrdersByDateAsync is per single day - loop the range and combine.
+                for (var d = FromDate.Date; d <= ToDate.Date; d = d.AddDays(1))
+                {
+                    var dayOrders = await _orderService.GetOrdersByDateAsync(d);
+                    _allLoadedOrders.AddRange(dayOrders);
+                }
+
+                ApplyFilters();
             }
             finally
             {
                 IsBusy = false;
             }
+        }
+
+        [RelayCommand]
+        private async Task SetTodayAsync()
+        {
+            FromDate = DateTime.Today;
+            ToDate = DateTime.Today;
+            await LoadOrdersAsync();
+        }
+
+        [RelayCommand]
+        private async Task SetThisWeekAsync()
+        {
+            FromDate = DateTime.Today.AddDays(-6);
+            ToDate = DateTime.Today;
+            await LoadOrdersAsync();
+        }
+
+        [RelayCommand]
+        private async Task SetThisMonthAsync()
+        {
+            FromDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            ToDate = DateTime.Today;
+            await LoadOrdersAsync();
+        }
+
+        partial void OnSelectedOrderTypeFilterChanged(string value) => ApplyFilters();
+        partial void OnSelectedPaymentFilterChanged(string value) => ApplyFilters();
+
+        private void ApplyFilters()
+        {
+            var filtered = _allLoadedOrders.AsEnumerable();
+
+            if (SelectedOrderTypeFilter != "الكل")
+            {
+                var typeCode = SelectedOrderTypeFilter switch
+                {
+                    "صالة" => "DineIn",
+                    "توصيل" => "Delivery",
+                    "استلام" => "Pickup",
+                    _ => null
+                };
+                if (typeCode != null)
+                    filtered = filtered.Where(o => o.OrderType?.TypeCode == typeCode);
+            }
+
+            if (SelectedPaymentFilter != "الكل")
+            {
+                var paymentCode = SelectedPaymentFilter == "بنكك" ? "Bankak" : "Cash";
+                filtered = filtered.Where(o => o.PaymentMethodCode == paymentCode);
+            }
+
+            var result = filtered.OrderByDescending(o => o.OrderDate).ToList();
+
+            Orders.Clear();
+            foreach (var o in result)
+                Orders.Add(o);
+
+            TotalForRange = result.Sum(o => o.TotalAmount).ToString("0.000");
         }
 
         [RelayCommand]
@@ -81,7 +166,8 @@ namespace SubZeroPOS.WPF.ViewModels
                 RestaurantPhone = settings.Phone,
                 RestaurantAddress = settings.Address,
                 FooterPrimary = settings.InvoiceFooterPrimary,
-                FooterSecondary = settings.InvoiceFooterSecondary
+                FooterSecondary = settings.InvoiceFooterSecondary,
+                CurrencySymbol = settings.CurrencySymbol
             };
 
             ViewInvoiceRequested?.Invoke(invoice);

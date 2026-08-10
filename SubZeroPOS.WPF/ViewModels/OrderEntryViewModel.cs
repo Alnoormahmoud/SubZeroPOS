@@ -196,6 +196,38 @@ namespace SubZeroPOS.WPF.ViewModels
             OnPropertyChanged(nameof(GrandTotal));
         }
 
+        public event Action? CancelOrderRequested;
+
+        [RelayCommand]
+        private void CancelOrder()
+        {
+            if (Cart.Count == 0)
+            {
+                // Nothing to lose - just go back without asking.
+                CancelOrderRequested?.Invoke();
+                return;
+            }
+
+            var result = System.Windows.MessageBox.Show(
+                "هل أنت متأكد من إلغاء الطلب؟ سيتم فقدان جميع الأصناف المضافة.",
+                "تأكيد الإلغاء",
+                System.Windows.MessageBoxButton.YesNo,
+                System.Windows.MessageBoxImage.Warning);
+
+            if (result != System.Windows.MessageBoxResult.Yes) return;
+
+            Cart.Clear();
+            CartTotal = 0;
+            CustomerName = string.Empty;
+            Notes = string.Empty;
+            DeliveryFeeText = "0";
+            SelectedOrderType = OrderTypes.Count > 0 ? OrderTypes[0] : null;
+            SelectedPaymentMethod = PaymentMethods[0];
+            StatusMessage = string.Empty;
+
+            CancelOrderRequested?.Invoke();
+        }
+
         [RelayCommand]
         private async Task CompleteOrderAsync()
         {
@@ -223,6 +255,15 @@ namespace SubZeroPOS.WPF.ViewModels
                 StatusMessage = "الرجاء إدخال رسوم توصيل صحيحة";
                 return;
             }
+
+            var confirmResult = System.Windows.MessageBox.Show(
+                $"هل أنت متأكد من إتمام الطلب بإجمالي {GrandTotal:0.000}؟",
+                "تأكيد الطلب",
+                System.Windows.MessageBoxButton.YesNo,
+                System.Windows.MessageBoxImage.Question);
+
+            if (confirmResult != System.Windows.MessageBoxResult.Yes)
+                return;
 
             IsBusy = true;
             StatusMessage = string.Empty;
@@ -265,7 +306,8 @@ namespace SubZeroPOS.WPF.ViewModels
                     RestaurantPhone = restaurantSettings.Phone,
                     RestaurantAddress = restaurantSettings.Address,
                     FooterPrimary = restaurantSettings.InvoiceFooterPrimary,
-                    FooterSecondary = restaurantSettings.InvoiceFooterSecondary
+                    FooterSecondary = restaurantSettings.InvoiceFooterSecondary,
+                    CurrencySymbol = restaurantSettings.CurrencySymbol
                 };
 
                 // Reset the form for the next order

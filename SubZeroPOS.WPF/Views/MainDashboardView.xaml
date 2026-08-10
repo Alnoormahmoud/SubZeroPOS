@@ -180,29 +180,10 @@
                 </StackPanel>
             </Button>
 
-            <!-- Shift - always visible -->
-            <Button Grid.Row="1" Grid.Column="1" Command="{Binding OpenShiftCommand}"
-                    Background="{StaticResource SurfaceBrush}" Margin="6,0,0,10"
-                    Padding="20,18" Cursor="Hand" HorizontalContentAlignment="Right">
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
-                                CornerRadius="12" Padding="{TemplateBinding Padding}">
-                            <ContentPresenter />
-                        </Border>
-                    </ControlTemplate>
-                </Button.Template>
-                <StackPanel>
-                    <TextBlock Text="الوردية" Foreground="{StaticResource TextPrimaryBrush}" FontSize="15" FontWeight="Medium" />
-                    <TextBlock Text="فتح / إغلاق الوردية" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
-                </StackPanel>
-            </Button>
-
             <!-- Menu Management - Manager only -->
-            <Button Grid.Row="2" Grid.Column="0" Command="{Binding OpenMenuManagementCommand}"
+            <Button Grid.Row="1" Grid.Column="1" Command="{Binding OpenMenuManagementCommand}"
                     Visibility="{Binding IsManager, Converter={StaticResource BoolToVisibilityConverter}}"
-                    Background="{StaticResource SurfaceBrush}" Margin="0,0,6,0"
+                    Background="{StaticResource SurfaceBrush}" Margin="6,0,0,10"
                     Padding="20,18" Cursor="Hand" HorizontalContentAlignment="Right">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
@@ -220,9 +201,9 @@
             </Button>
 
             <!-- User Management - Manager only -->
-            <Button Grid.Row="2" Grid.Column="1" Command="{Binding OpenUserManagementCommand}"
+            <Button Grid.Row="2" Grid.Column="0" Command="{Binding OpenUserManagementCommand}"
                     Visibility="{Binding IsManager, Converter={StaticResource BoolToVisibilityConverter}}"
-                    Background="{StaticResource SurfaceBrush}" Margin="6,0,0,10"
+                    Background="{StaticResource SurfaceBrush}" Margin="0,0,6,10"
                     Padding="20,18" Cursor="Hand" HorizontalContentAlignment="Right">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">

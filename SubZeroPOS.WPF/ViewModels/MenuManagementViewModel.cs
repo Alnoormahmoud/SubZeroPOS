@@ -140,6 +140,30 @@ namespace SubZeroPOS.WPF.ViewModels
         }
 
         [RelayCommand]
+        private async Task DeleteItemAsync(Item item)
+        {
+            var result = System.Windows.MessageBox.Show(
+                $"هل أنت متأكد من حذف \"{item.ItemName}\" نهائياً؟ لا يمكن التراجع عن هذا الإجراء.",
+                "تأكيد الحذف",
+                System.Windows.MessageBoxButton.YesNo,
+                System.Windows.MessageBoxImage.Warning);
+
+            if (result != System.Windows.MessageBoxResult.Yes) return;
+
+            var (success, errorMessage) = await _itemService.DeleteItemAsync(item.ItemId);
+
+            if (!success)
+            {
+                System.Windows.MessageBox.Show(errorMessage, "تعذر الحذف",
+                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                return;
+            }
+
+            StatusMessage = $"تم حذف {item.ItemName}";
+            await ReloadItemsAsync();
+        }
+
+        [RelayCommand]
         private void Back() => BackRequested?.Invoke();
     }
 }

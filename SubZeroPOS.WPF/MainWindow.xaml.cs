@@ -86,6 +86,7 @@ namespace SubZeroPOS.WPF
 
             _orderEntryView.DataContext = _orderEntryViewModel;
             _orderEntryView.BackRequested += ShowDashboard;
+            _orderEntryViewModel.CancelOrderRequested += ShowDashboard;
             _orderEntryViewModel.OrderCompleted += invoice =>
             {
                 _orderInvoiceViewModel.SetOrder(invoice);
@@ -121,8 +122,6 @@ namespace SubZeroPOS.WPF
             _dashboardViewModel.ReportsRequested += ShowReports;
 
             // Placeholder handlers for screens not built yet.
-            _dashboardViewModel.ShiftRequested += () =>
-                MessageBox.Show("شاشة الوردية - قيد الإنشاء", "قريباً");
 
             ShowLogin();
         }

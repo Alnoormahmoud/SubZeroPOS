@@ -22,10 +22,6 @@ namespace SubZeroPOS.WPF.Views
             }
         }
 
-        // Switched from PrintVisual/RenderTargetBitmap (produced blank pages
-        // with some print drivers - a known WPF quirk with RTL visuals) to
-        // FlowDocument printing, which is WPF's actual intended mechanism for
-        // printing formatted/RTL text reliably.
         private void PrintReceipt()
         {
             if (DataContext is not OrderInvoiceViewModel vm || vm.Order is null) return;
@@ -35,22 +31,36 @@ namespace SubZeroPOS.WPF.Views
 
             var document = BuildReceiptDocument(vm.Order);
 
-            // FlowDocument defaults to full Letter-page height (11in) if PageHeight
-            // isn't set, leaving a huge blank area below a short receipt. Estimate
-            // the actual content height from what we know we're printing (header +
-            // meta rows + one row per item + footer) and size the page to fit,
-            // similar to how a real receipt printer only prints as much paper as
-            // the content needs.
-            double estimatedHeight = 170; // header + meta rows + total + margins
-            estimatedHeight += vm.Order.Items.Count * 20;
-            if (vm.Order.HasDeliveryFee) estimatedHeight += 20;
-            if (!string.IsNullOrWhiteSpace(vm.Order.CustomerName)) estimatedHeight += 18;
-            if (!string.IsNullOrWhiteSpace(vm.Order.FooterPrimary)) estimatedHeight += 22;
-            if (!string.IsNullOrWhiteSpace(vm.Order.FooterSecondary)) estimatedHeight += 30;
-            document.PageHeight = estimatedHeight;
+            // Previous attempt used VisualTreeHelper.GetDescendantBounds() on a
+            // paginator page - that always returns the full requested PageSize,
+            // not the actual ink extent, so it didn't fix the blank-space issue.
+            // Measuring via a FlowDocumentScrollViewer with infinite available
+            // height gives the document's true natural content height.
+            double measuredHeight = MeasureDocumentHeight(document, document.PageWidth);
+            document.PageHeight = measuredHeight + 16;
 
             IDocumentPaginatorSource paginatorSource = document;
             printDialog.PrintDocument(paginatorSource.DocumentPaginator, "فاتورة سوب زيرو");
+        }
+
+        private static double MeasureDocumentHeight(FlowDocument doc, double width)
+        {
+            var host = new FlowDocumentScrollViewer
+            {
+                Document = doc,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Disabled
+            };
+
+            host.Measure(new Size(width, double.PositiveInfinity));
+            double height = host.DesiredSize.Height;
+
+            // Release the document from this temporary host so it can be
+            // reassigned to the print paginator afterward - a FlowDocument can
+            // only be "owned" by one container at a time.
+            host.Document = null;
+
+            return height;
         }
 
         private FlowDocument BuildReceiptDocument(OrderInvoiceDto order)
@@ -73,14 +83,16 @@ namespace SubZeroPOS.WPF.Views
 
             doc.Blocks.Add(Divider());
 
-            var meta = NewTable();
-            AddRow(meta, "الكاشير", order.CashierName);
-            AddRow(meta, "التاريخ والوقت", order.OrderDate.ToString("yyyy-MM-dd HH:mm"));
-            AddRow(meta, "نوع الطلب", order.OrderTypeNameAr);
+            // Meta info as simple right-aligned "label: value" lines instead of
+            // a 2-column table - the table approach produced uneven, off-center
+            // spacing since columns auto-sized to content rather than the full
+            // page width.
+            AddLine(doc, "الكاشير", order.CashierName);
+            AddLine(doc, "التاريخ والوقت", order.OrderDate.ToString("yyyy-MM-dd HH:mm"));
+            AddLine(doc, "نوع الطلب", order.OrderTypeNameAr);
             if (!string.IsNullOrWhiteSpace(order.CustomerName))
-                AddRow(meta, "اسم الزبون", order.CustomerName);
-            AddRow(meta, "طريقة الدفع", order.PaymentMethodNameAr);
-            doc.Blocks.Add(meta);
+                AddLine(doc, "اسم الزبون", order.CustomerName);
+            AddLine(doc, "طريقة الدفع", order.PaymentMethodNameAr);
 
             doc.Blocks.Add(Divider());
 
@@ -94,7 +106,7 @@ namespace SubZeroPOS.WPF.Views
             doc.Blocks.Add(Divider());
 
             var totalTable = NewTable();
-            AddRow(totalTable, "الإجمالي", order.TotalAmount.ToString("0.000"), bold: true);
+            AddRow(totalTable, "الإجمالي", $"{order.TotalAmount:0.000} {order.CurrencySymbol}", bold: true);
             doc.Blocks.Add(totalTable);
 
             if (!string.IsNullOrWhiteSpace(order.FooterPrimary) || !string.IsNullOrWhiteSpace(order.FooterSecondary))
@@ -107,6 +119,14 @@ namespace SubZeroPOS.WPF.Views
             }
 
             return doc;
+        }
+
+        private static void AddLine(FlowDocument doc, string label, string value)
+        {
+            var p = new Paragraph { TextAlignment = TextAlignment.Right, FontSize = 11, Margin = new Thickness(0, 0, 0, 3) };
+            p.Inlines.Add(new Run($"{label}: ") { Foreground = Brushes.Gray });
+            p.Inlines.Add(new Run(value) { Foreground = Brushes.Black });
+            doc.Blocks.Add(p);
         }
 
         private static Paragraph Centered(string text, double size, FontWeight weight, Brush? foreground = null, double bottomMargin = 2)
@@ -134,8 +154,12 @@ namespace SubZeroPOS.WPF.Views
         private static Table NewTable()
         {
             var table = new Table();
-            table.Columns.Add(new TableColumn());
-            table.Columns.Add(new TableColumn());
+            // Star widths force the table to span the FULL page width with
+            // proportional columns - fixing the "not centered/aligned" look
+            // that Auto-width columns produced (they shrink-wrapped to content
+            // instead of spanning evenly).
+            table.Columns.Add(new TableColumn { Width = new GridLength(1, GridUnitType.Star) });
+            table.Columns.Add(new TableColumn { Width = new GridLength(1, GridUnitType.Star) });
             table.RowGroups.Add(new TableRowGroup());
             return table;
         }
@@ -146,9 +170,6 @@ namespace SubZeroPOS.WPF.Views
             var weight = bold ? FontWeights.Bold : FontWeights.Normal;
             var size = bold ? 15.0 : 12.0;
 
-            // First cell added lands on the right in RightToLeft flow -
-            // put the value there (matches on-screen layout: label -> right, value -> left... 
-            // actually we want label on the right like the on-screen UI, so label first).
             row.Cells.Add(new TableCell(new Paragraph(new Run(label)) { FontSize = size, FontWeight = weight })
             { TextAlignment = TextAlignment.Right });
             row.Cells.Add(new TableCell(new Paragraph(new Run(value)) { FontSize = size, FontWeight = weight, Foreground = bold ? Brushes.Black : Brushes.DarkSlateGray })

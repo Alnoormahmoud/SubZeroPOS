@@ -76,6 +76,7 @@ namespace SubZeroPOS.Data.Services
             return await context.Orders
                 .Where(o => o.OrderDate >= start && o.OrderDate < end)
                 .Include(o => o.OrderItems)
+                .Include(o => o.OrderType)
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
         }

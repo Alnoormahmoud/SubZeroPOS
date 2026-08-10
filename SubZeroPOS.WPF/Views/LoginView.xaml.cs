@@ -8,6 +8,15 @@ namespace SubZeroPOS.WPF.Views
         public LoginView()
         {
             InitializeComponent();
+            Loaded += LoginView_Loaded;
+        }
+
+        private void LoginView_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (DataContext is LoginViewModel vm)
+            {
+                vm.LoadRememberedUsername();
+            }
         }
 
         private void LoginButton_Click(object sender, System.Windows.RoutedEventArgs e)

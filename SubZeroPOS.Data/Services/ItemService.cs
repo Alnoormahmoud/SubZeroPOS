@@ -115,5 +115,25 @@ namespace SubZeroPOS.Data.Services
                 .OrderBy(i => i.CategoryId).ThenBy(i => i.ItemName)
                 .ToListAsync();
         }
+
+        public async Task<(bool Success, string? ErrorMessage)> DeleteItemAsync(int itemId)
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+
+            var item = await context.Items.FindAsync(itemId);
+            if (item is null) return (false, "الصنف غير موجود");
+
+            // Items referenced by past orders can't be truly deleted (would
+            // corrupt order history / break the foreign key) - only items with
+            // zero order history can be permanently removed. Anything else
+            // should be disabled instead (soft-delete via IsActive).
+            bool hasOrderHistory = await context.OrderItems.AnyAsync(oi => oi.ItemId == itemId);
+            if (hasOrderHistory)
+                return (false, "لا يمكن حذف هذا الصنف لوجود طلبات سابقة تحتوي عليه. استخدم زر التعطيل بدلاً من ذلك.");
+
+            context.Items.Remove(item);
+            await context.SaveChangesAsync();
+            return (true, null);
+        }
     }
 }

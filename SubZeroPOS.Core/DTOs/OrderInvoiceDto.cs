@@ -23,5 +23,6 @@ namespace SubZeroPOS.Core.DTOs
         public string? RestaurantAddress { get; set; }
         public string? FooterPrimary { get; set; }
         public string? FooterSecondary { get; set; }
+        public string CurrencySymbol { get; set; } = "ج.س";
     }
 }
