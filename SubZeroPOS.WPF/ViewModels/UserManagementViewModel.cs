@@ -109,6 +109,29 @@ namespace SubZeroPOS.WPF.ViewModels
         }
 
         [RelayCommand]
+        private async Task DeleteUserAsync(User user)
+        {
+            var confirm = System.Windows.MessageBox.Show(
+                $"هل أنت متأكد من حذف المستخدم \"{user.FullName}\" نهائياً؟",
+                "تأكيد الحذف",
+                System.Windows.MessageBoxButton.YesNo,
+                System.Windows.MessageBoxImage.Warning);
+
+            if (confirm != System.Windows.MessageBoxResult.Yes) return;
+
+            var (success, errorMessage) = await _userService.DeleteUserAsync(user.UserId);
+
+            if (!success)
+            {
+                System.Windows.MessageBox.Show(errorMessage, "تعذر الحذف",
+                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                return;
+            }
+
+            await ReloadUsersAsync();
+        }
+
+        [RelayCommand]
         private void Back() => BackRequested?.Invoke();
     }
 }

@@ -53,6 +53,8 @@ namespace SubZeroPOS.Data.Services
                 existing.InvoiceFooterSecondary = settings.InvoiceFooterSecondary;
                 existing.CurrencyCode = settings.CurrencyCode;
                 existing.CurrencySymbol = settings.CurrencySymbol;
+                existing.DateFormat = settings.DateFormat;
+                existing.ShowCashierNameOnInvoice = settings.ShowCashierNameOnInvoice;
             }
 
             await context.SaveChangesAsync();

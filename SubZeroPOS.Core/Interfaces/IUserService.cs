@@ -11,5 +11,6 @@ namespace SubZeroPOS.Core.Interfaces
         Task<bool> CreateUserAsync(string fullName, string username, string plainPassword, int roleId);
         Task<bool> SetUserActiveAsync(int userId, bool isActive);
         Task<bool> UsernameExistsAsync(string username);
+        Task<(bool Success, string? ErrorMessage)> DeleteUserAsync(int userId);
     }
 }

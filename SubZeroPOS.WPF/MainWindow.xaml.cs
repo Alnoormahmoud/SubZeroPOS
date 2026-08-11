@@ -89,7 +89,7 @@ namespace SubZeroPOS.WPF
             _orderEntryViewModel.CancelOrderRequested += ShowDashboard;
             _orderEntryViewModel.OrderCompleted += invoice =>
             {
-                _orderInvoiceViewModel.SetOrder(invoice);
+                _orderInvoiceViewModel.SetOrder(invoice, ShowDashboard, "الرئيسية");
                 ShowInvoice();
             };
 
@@ -98,7 +98,6 @@ namespace SubZeroPOS.WPF
 
             _orderInvoiceView.DataContext = _orderInvoiceViewModel;
             _orderInvoiceViewModel.NewOrderRequested += ShowOrderEntry;
-            _orderInvoiceViewModel.BackToDashboardRequested += ShowDashboard;
 
             _settingsView.DataContext = _settingsViewModel;
             _settingsViewModel.BackRequested += ShowDashboard;
@@ -113,7 +112,7 @@ namespace SubZeroPOS.WPF
             _previousOrdersViewModel.BackRequested += ShowDashboard;
             _previousOrdersViewModel.ViewInvoiceRequested += invoice =>
             {
-                _orderInvoiceViewModel.SetOrder(invoice);
+                _orderInvoiceViewModel.SetOrder(invoice, ShowPreviousOrders, "رجوع للطلبات السابقة");
                 ShowInvoice();
             };
 

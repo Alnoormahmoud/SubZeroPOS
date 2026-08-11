@@ -24,5 +24,8 @@ namespace SubZeroPOS.Core.DTOs
         public string? FooterPrimary { get; set; }
         public string? FooterSecondary { get; set; }
         public string CurrencySymbol { get; set; } = "ج.س";
+        public string DateFormat { get; set; } = "yyyy-MM-dd HH:mm";
+        public bool ShowCashierName { get; set; } = true;
+        public string OrderDateFormatted => OrderDate.ToString(DateFormat);
     }
 }

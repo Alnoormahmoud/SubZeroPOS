@@ -15,5 +15,7 @@ namespace SubZeroPOS.Core.Entities
         public string? InvoiceFooterSecondary { get; set; } // e.g. return/exchange policy
         public string CurrencyCode { get; set; } = "SDG";
         public string CurrencySymbol { get; set; } = "ج.س"; // default: Sudanese Pound
+        public string DateFormat { get; set; } = "yyyy-MM-dd HH:mm"; // used on invoice date/time display
+        public bool ShowCashierNameOnInvoice { get; set; } = true;
     }
 }

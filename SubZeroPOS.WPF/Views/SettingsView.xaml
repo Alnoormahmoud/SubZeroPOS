@@ -53,6 +53,14 @@
                 <ComboBox ItemsSource="{Binding Currencies}" SelectedItem="{Binding SelectedCurrency}"
                           DisplayMemberPath="DisplayName" Margin="0,0,0,20" Padding="8" />
 
+                <TextBlock Text="تنسيق التاريخ والوقت في الفاتورة" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                <ComboBox ItemsSource="{Binding DateFormats}" SelectedItem="{Binding SelectedDateFormat}"
+                          DisplayMemberPath="DisplayName" Margin="0,0,0,20" Padding="8" />
+
+                <CheckBox Content="إظهار اسم الكاشير في الفاتورة" IsChecked="{Binding ShowCashierNameOnInvoice}"
+                          FlowDirection="RightToLeft" HorizontalAlignment="Right"
+                          Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,20" />
+
                 <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,16" />
 
                 <TextBlock Text="نصوص الفاتورة" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />

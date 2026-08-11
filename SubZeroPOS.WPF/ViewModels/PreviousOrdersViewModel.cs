@@ -167,7 +167,9 @@ namespace SubZeroPOS.WPF.ViewModels
                 RestaurantAddress = settings.Address,
                 FooterPrimary = settings.InvoiceFooterPrimary,
                 FooterSecondary = settings.InvoiceFooterSecondary,
-                CurrencySymbol = settings.CurrencySymbol
+                CurrencySymbol = settings.CurrencySymbol,
+                DateFormat = settings.DateFormat,
+                ShowCashierName = settings.ShowCashierNameOnInvoice
             };
 
             ViewInvoiceRequested?.Invoke(invoice);

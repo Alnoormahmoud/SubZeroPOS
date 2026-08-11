@@ -52,7 +52,7 @@
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="16,0,0,0">
-                        <Button Content="اليوم" Command="{Binding SetTodayAsyncCommand}" Margin="0,0,8,0" Padding="10,5" Cursor="Hand"
+                        <Button Content="اليوم" Command="{Binding SetTodayCommand}" Margin="0,0,8,0" Padding="10,5" Cursor="Hand"
                                 Background="{StaticResource BackgroundBrush}" Foreground="{StaticResource TextSecondaryBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
@@ -62,7 +62,7 @@
                                 </ControlTemplate>
                             </Button.Template>
                         </Button>
-                        <Button Content="آخر 7 أيام" Command="{Binding SetThisWeekAsyncCommand}" Margin="0,0,8,0" Padding="10,5" Cursor="Hand"
+                        <Button Content="آخر 7 أيام" Command="{Binding SetThisWeekCommand}" Margin="0,0,8,0" Padding="10,5" Cursor="Hand"
                                 Background="{StaticResource BackgroundBrush}" Foreground="{StaticResource TextSecondaryBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
@@ -72,7 +72,7 @@
                                 </ControlTemplate>
                             </Button.Template>
                         </Button>
-                        <Button Content="هذا الشهر" Command="{Binding SetThisMonthAsyncCommand}" Padding="10,5" Cursor="Hand"
+                        <Button Content="هذا الشهر" Command="{Binding SetThisMonthCommand}" Padding="10,5" Cursor="Hand"
                                 Background="{StaticResource BackgroundBrush}" Foreground="{StaticResource TextSecondaryBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
@@ -84,9 +84,11 @@
                         </Button>
                     </StackPanel>
 
-                    <TextBlock Grid.Column="2" Text="{Binding TotalForRange, StringFormat='الإجمالي: {0}'}"
-                               Foreground="{StaticResource IceBlueBrush}" FontSize="14" FontWeight="Medium"
-                               VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center">
+                        <Run Text="{Binding Orders.Count, Mode=OneWay}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                        <Run Text=" طلب  •  " Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                        <Run Text="{Binding TotalForRange, Mode=OneWay}" Foreground="{StaticResource IceBlueBrush}" FontSize="14" FontWeight="Medium" />
+                    </TextBlock>
                 </Grid>
 
                 <!-- Row 2: type/payment filters + search -->
@@ -113,7 +115,7 @@
 
         <!-- Table -->
         <Border Grid.Row="2" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
-                BorderThickness="1" CornerRadius="12" Padding="4">
+                BorderThickness="1" CornerRadius="12" Padding="12">
             <DataGrid ItemsSource="{Binding Orders}"
                       AutoGenerateColumns="False"
                       IsReadOnly="True"
@@ -126,14 +128,16 @@
                       HorizontalGridLinesBrush="{StaticResource BorderBrush}"
                       Foreground="{StaticResource TextPrimaryBrush}"
                       FontSize="13"
-                      RowHeight="42">
+                      RowHeight="48">
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="DataGridColumnHeader">
-                        <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
+                        <Setter Property="Background" Value="#1F1F24" />
                         <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
                         <Setter Property="FontSize" Value="12" />
-                        <Setter Property="Padding" Value="10,8" />
-                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="FontWeight" Value="Medium" />
+                        <Setter Property="Padding" Value="12,10" />
+                        <Setter Property="BorderThickness" Value="0,0,0,1" />
+                        <Setter Property="BorderBrush" Value="{StaticResource AccentRedBrush}" />
                     </Style>
                 </DataGrid.ColumnHeaderStyle>
                 <DataGrid.RowStyle>
@@ -144,7 +148,7 @@
                 <DataGrid.CellStyle>
                     <Style TargetType="DataGridCell">
                         <Setter Property="BorderThickness" Value="0" />
-                        <Setter Property="Padding" Value="10,0" />
+                        <Setter Property="Padding" Value="12,0" />
                         <Setter Property="Background" Value="Transparent" />
                     </Style>
                 </DataGrid.CellStyle>
@@ -158,12 +162,23 @@
                     <DataGridTextColumn Header="رقم الطلب" Binding="{Binding OrderId}" Width="80" />
                     <DataGridTextColumn Header="التاريخ والوقت" Binding="{Binding OrderDate, StringFormat={}{0:yyyy-MM-dd HH:mm}}" Width="150" />
                     <DataGridTextColumn Header="النوع" Binding="{Binding OrderType.NameAr}" Width="90" />
-                    <DataGridTextColumn Header="الزبون" Binding="{Binding CustomerName}" Width="*" />
+                    <DataGridTextColumn Header="الزبون" Binding="{Binding CustomerName}" Width="*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextAlignment" Value="Right" />
+                                <Setter Property="FlowDirection" Value="LeftToRight" />
+                                <!-- LeftToRight here keeps mixed Arabic/English customer
+                                     names (e.g. "Ahmed Adam") reading naturally left-to-right
+                                     while TextAlignment=Right keeps it docked to the same
+                                     side as the rest of the RTL table. -->
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
-                    <DataGridTemplateColumn Header="الدفع" Width="90">
+                    <DataGridTemplateColumn Header="الدفع" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Border CornerRadius="10" Padding="8,3" HorizontalAlignment="Right">
+                                <Border CornerRadius="8" Padding="8,2" HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <Border.Style>
                                         <Style TargetType="Border">
                                             <Setter Property="Background" Value="#2A3B2A" />

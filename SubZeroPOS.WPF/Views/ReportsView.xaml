@@ -53,7 +53,7 @@
 
         <!-- Quick range shortcuts -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,16">
-            <Button Content="اليوم" Command="{Binding SetTodayAsyncCommand}" Margin="0,0,8,0" Padding="10,5" Cursor="Hand"
+            <Button Content="اليوم" Command="{Binding SetTodayCommand}" Margin="0,0,8,0" Padding="10,5" Cursor="Hand"
                     Background="{StaticResource SurfaceBrush}" Foreground="{StaticResource TextSecondaryBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
@@ -63,7 +63,7 @@
                     </ControlTemplate>
                 </Button.Template>
             </Button>
-            <Button Content="آخر 7 أيام" Command="{Binding SetThisWeekAsyncCommand}" Margin="0,0,8,0" Padding="10,5" Cursor="Hand"
+            <Button Content="آخر 7 أيام" Command="{Binding SetThisWeekCommand}" Margin="0,0,8,0" Padding="10,5" Cursor="Hand"
                     Background="{StaticResource SurfaceBrush}" Foreground="{StaticResource TextSecondaryBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
@@ -73,7 +73,7 @@
                     </ControlTemplate>
                 </Button.Template>
             </Button>
-            <Button Content="هذا الشهر" Command="{Binding SetThisMonthAsyncCommand}" Padding="10,5" Cursor="Hand"
+            <Button Content="هذا الشهر" Command="{Binding SetThisMonthCommand}" Padding="10,5" Cursor="Hand"
                     Background="{StaticResource SurfaceBrush}" Foreground="{StaticResource TextSecondaryBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">

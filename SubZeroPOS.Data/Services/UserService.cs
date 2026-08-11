@@ -70,5 +70,25 @@ namespace SubZeroPOS.Data.Services
             await using var context = await _contextFactory.CreateDbContextAsync();
             return await context.Users.AnyAsync(u => u.Username == username);
         }
+
+        public async Task<(bool Success, string? ErrorMessage)> DeleteUserAsync(int userId)
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+
+            var user = await context.Users.FindAsync(userId);
+            if (user is null) return (false, "المستخدم غير موجود");
+
+            // A user who ever cashiered an order or logged an expense can't be
+            // hard-deleted (would corrupt that history) - only disable is safe.
+            bool hasOrders = await context.Orders.AnyAsync(o => o.CashierUserId == userId);
+            bool hasExpenses = await context.Expenses.AnyAsync(e => e.EnteredByUserId == userId);
+
+            if (hasOrders || hasExpenses)
+                return (false, "لا يمكن حذف هذا المستخدم لوجود طلبات أو مصروفات مرتبطة به. استخدم زر التعطيل بدلاً من ذلك.");
+
+            context.Users.Remove(user);
+            await context.SaveChangesAsync();
+            return (true, null);
+        }
     }
 }

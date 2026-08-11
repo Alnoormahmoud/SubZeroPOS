@@ -21,6 +21,7 @@ namespace SubZeroPOS.WPF.ViewModels
         public ObservableCollection<Item> Items { get; } = new();
         public ObservableCollection<Category> Categories { get; } = new();
 
+        // Add-item form
         [ObservableProperty] private string newItemName = string.Empty;
         [ObservableProperty] private string newItemNameEn = string.Empty;
         [ObservableProperty] private string newItemPriceText = string.Empty;
@@ -28,6 +29,11 @@ namespace SubZeroPOS.WPF.ViewModels
         [ObservableProperty] private string? newItemImageFilePath; // full path to the chosen source file on disk
         [ObservableProperty] private string statusMessage = string.Empty;
         [ObservableProperty] private bool isBusy;
+
+        // Add-category form
+        [ObservableProperty] private string newCategoryName = string.Empty;
+        [ObservableProperty] private string newCategoryNameEn = string.Empty;
+        [ObservableProperty] private bool showAddCategoryForm;
 
         public event Action? BackRequested;
         public event Func<string?>? ChooseImageFileRequested; // code-behind shows OpenFileDialog, returns chosen path or null
@@ -37,17 +43,27 @@ namespace SubZeroPOS.WPF.ViewModels
             IsBusy = true;
             try
             {
-                Categories.Clear();
-                foreach (var c in await _itemService.GetCategoriesAsync())
-                    Categories.Add(c);
-
+                await ReloadCategoriesAsync();
                 if (Categories.Count > 0) SelectedNewItemCategory = Categories[0];
-
                 await ReloadItemsAsync();
             }
             finally
             {
                 IsBusy = false;
+            }
+        }
+
+        private async Task ReloadCategoriesAsync()
+        {
+            var previouslySelectedId = SelectedNewItemCategory?.CategoryId;
+            Categories.Clear();
+            foreach (var c in await _itemService.GetCategoriesAsync())
+                Categories.Add(c);
+
+            if (previouslySelectedId.HasValue)
+            {
+                var stillThere = System.Linq.Enumerable.FirstOrDefault(Categories, c => c.CategoryId == previouslySelectedId.Value);
+                if (stillThere != null) SelectedNewItemCategory = stillThere;
             }
         }
 
@@ -64,6 +80,12 @@ namespace SubZeroPOS.WPF.ViewModels
             var path = ChooseImageFileRequested?.Invoke();
             if (!string.IsNullOrWhiteSpace(path))
                 NewItemImageFilePath = path;
+        }
+
+        [RelayCommand]
+        private void RemoveNewItemImage()
+        {
+            NewItemImageFilePath = null;
         }
 
         [RelayCommand]
@@ -126,10 +148,71 @@ namespace SubZeroPOS.WPF.ViewModels
         }
 
         [RelayCommand]
-        private async Task UpdatePriceAsync(Item item)
+        private void ToggleAddCategoryForm() => ShowAddCategoryForm = !ShowAddCategoryForm;
+
+        [RelayCommand]
+        private async Task AddCategoryAsync()
         {
+            if (string.IsNullOrWhiteSpace(NewCategoryName))
+            {
+                StatusMessage = "الرجاء إدخال اسم القسم";
+                return;
+            }
+
+            IsBusy = true;
+            try
+            {
+                var nameEn = string.IsNullOrWhiteSpace(NewCategoryNameEn) ? null : NewCategoryNameEn;
+                var category = await _itemService.AddCategoryAsync(NewCategoryName, nameEn);
+
+                NewCategoryName = string.Empty;
+                NewCategoryNameEn = string.Empty;
+                ShowAddCategoryForm = false;
+                StatusMessage = $"تم إضافة قسم \"{category.NameAr}\" بنجاح";
+
+                await ReloadCategoriesAsync();
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
+        private async Task UpdateItemAsync(Item item)
+        {
+            if (string.IsNullOrWhiteSpace(item.ItemName))
+            {
+                StatusMessage = "اسم الصنف لا يمكن أن يكون فارغاً";
+                return;
+            }
+
+            await _itemService.UpdateItemNameAsync(item.ItemId, item.ItemName, item.NameEn);
             await _itemService.UpdateItemPriceAsync(item.ItemId, item.Price);
-            StatusMessage = $"تم تحديث سعر {item.ItemName}";
+            StatusMessage = $"تم تحديث {item.ItemName}";
+        }
+
+        [RelayCommand]
+        private async Task RemoveItemImageAsync(Item item)
+        {
+            await _itemService.RemoveItemImageAsync(item.ItemId);
+            await ReloadItemsAsync();
+        }
+
+        [RelayCommand]
+        private async Task ChangeItemImageAsync(Item item)
+        {
+            var path = ChooseImageFileRequested?.Invoke();
+            if (string.IsNullOrWhiteSpace(path) || !File.Exists(path)) return;
+
+            var extension = Path.GetExtension(path);
+            var relativePath = $"Images/Items/{item.ItemId}{extension}";
+            var destinationFullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", "Items");
+            Directory.CreateDirectory(destinationFullPath);
+            File.Copy(path, Path.Combine(destinationFullPath, $"{item.ItemId}{extension}"), overwrite: true);
+
+            await _itemService.UpdateItemImagePathAsync(item.ItemId, relativePath);
+            await ReloadItemsAsync();
         }
 
         [RelayCommand]

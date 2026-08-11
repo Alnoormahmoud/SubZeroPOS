@@ -46,7 +46,7 @@
 
                 <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,14" />
 
-                <Grid Margin="0,0,0,4">
+                <Grid Margin="0,0,0,4" Visibility="{Binding Order.ShowCashierName, Converter={StaticResource BoolToVisibilityConverter}}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
@@ -60,7 +60,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="التاريخ والوقت" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
-                    <TextBlock Grid.Column="1" Text="{Binding Order.OrderDate, StringFormat={}{0:yyyy-MM-dd HH:mm}}"
+                    <TextBlock Grid.Column="1" Text="{Binding Order.OrderDateFormatted}"
                                Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
                 </Grid>
                 <Grid Margin="0,0,0,4">
@@ -171,7 +171,7 @@
                 <Button Content="طلب جديد" Command="{Binding NewOrderCommand}"
                         Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,0,8" />
 
-                <Button Content="الرئيسية" Command="{Binding BackToDashboardCommand}"
+                <Button Content="{Binding BackButtonLabel}" Command="{Binding GoBackCommand}"
                         Background="Transparent"
                         Foreground="{StaticResource TextSecondaryBrush}"
                         BorderThickness="0" Padding="8" Cursor="Hand">

@@ -307,7 +307,9 @@ namespace SubZeroPOS.WPF.ViewModels
                     RestaurantAddress = restaurantSettings.Address,
                     FooterPrimary = restaurantSettings.InvoiceFooterPrimary,
                     FooterSecondary = restaurantSettings.InvoiceFooterSecondary,
-                    CurrencySymbol = restaurantSettings.CurrencySymbol
+                    CurrencySymbol = restaurantSettings.CurrencySymbol,
+                    DateFormat = restaurantSettings.DateFormat,
+                    ShowCashierName = restaurantSettings.ShowCashierNameOnInvoice
                 };
 
                 // Reset the form for the next order

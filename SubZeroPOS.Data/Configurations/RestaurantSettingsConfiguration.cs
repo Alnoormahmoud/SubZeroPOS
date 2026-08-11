@@ -44,6 +44,16 @@ namespace SubZeroPOS.Data.Configurations
                 .HasMaxLength(10)
                 .IsUnicode(true)
                 .HasDefaultValue("ج.س");
+
+            builder.Property(s => s.DateFormat)
+                .IsRequired()
+                .HasMaxLength(30)
+                .IsUnicode(false)
+                .HasDefaultValue("yyyy-MM-dd HH:mm");
+
+            builder.Property(s => s.ShowCashierNameOnInvoice)
+                .IsRequired()
+                .HasDefaultValue(true);
         }
     }
 }

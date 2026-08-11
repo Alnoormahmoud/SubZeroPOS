@@ -15,8 +15,13 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="إدارة القائمة" Foreground="{StaticResource TextPrimaryBrush}"
-                       FontSize="18" FontWeight="Medium" VerticalAlignment="Center" />
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <TextBlock Text="إدارة القائمة" Foreground="{StaticResource TextPrimaryBrush}"
+                           FontSize="18" FontWeight="Medium" VerticalAlignment="Center" Margin="0,0,10,0" />
+                <TextBlock Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" VerticalAlignment="Center">
+                    <Run Text="(" /><Run Text="{Binding Items.Count, Mode=OneWay}" /><Run Text=" صنف)" />
+                </TextBlock>
+            </StackPanel>
             <Button Grid.Column="1" Content="رجوع" Command="{Binding BackCommand}"
                     Background="{StaticResource SurfaceBrush}" Foreground="{StaticResource TextPrimaryBrush}"
                     BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Padding="12,6" Cursor="Hand">
@@ -33,64 +38,116 @@
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" MinWidth="300" />
+                <ColumnDefinition Width="1*" MinWidth="320" />
                 <ColumnDefinition Width="20" />
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
 
-            <!-- Add item form -->
-            <Border Grid.Column="0" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
-                    BorderThickness="1" CornerRadius="12" Padding="20" VerticalAlignment="Top">
+            <!-- Left column: Add item + Add category -->
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
-                    <TextBlock Text="إضافة صنف جديد" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
 
-                    <TextBlock Text="القسم" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
-                    <ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedNewItemCategory}"
-                              DisplayMemberPath="NameAr" Margin="0,0,0,12" Padding="8" />
+                    <!-- Add item form -->
+                    <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,0,0,14">
+                        <StackPanel>
+                            <TextBlock Text="إضافة صنف جديد" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
 
-                    <TextBlock Text="اسم الصنف" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
-                    <TextBox Text="{Binding NewItemName, UpdateSourceTrigger=PropertyChanged}"
-                             Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
+                            <TextBlock Text="القسم" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                            <ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedNewItemCategory}"
+                                      DisplayMemberPath="NameAr" Margin="0,0,0,12" Padding="8" />
 
-                    <TextBlock Text="الاسم بالإنجليزية (اختياري)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
-                    <TextBox Text="{Binding NewItemNameEn, UpdateSourceTrigger=PropertyChanged}"
-                             Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
+                            <TextBlock Text="اسم الصنف" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                            <TextBox Text="{Binding NewItemName, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
 
-                    <TextBlock Text="السعر" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
-                    <TextBox Text="{Binding NewItemPriceText, UpdateSourceTrigger=PropertyChanged}"
-                             Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
+                            <TextBlock Text="الاسم بالإنجليزية (اختياري)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                            <TextBox Text="{Binding NewItemNameEn, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
 
-                    <TextBlock Text="صورة الصنف (اختياري)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
-                    <Grid Margin="0,0,0,16">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding NewItemImageFilePath, TargetNullValue='لم يتم اختيار صورة'}"
-                                   Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"
-                                   TextTrimming="CharacterEllipsis" />
-                        <Button Grid.Column="1" Content="اختيار صورة" Command="{Binding ChooseImageCommand}"
-                                Background="{StaticResource SurfaceBrush}" Foreground="{StaticResource TextPrimaryBrush}"
-                                BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Padding="10,6" Cursor="Hand">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Padding="{TemplateBinding Padding}">
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    </Border>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
-                    </Grid>
+                            <TextBlock Text="السعر" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                            <TextBox Text="{Binding NewItemPriceText, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
 
-                    <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource IceBlueBrush}"
-                               FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10" />
+                            <TextBlock Text="صورة الصنف (اختياري)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                            <Grid Margin="0,0,0,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{Binding NewItemImageFilePath, TargetNullValue='لم يتم اختيار صورة'}"
+                                           Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis" />
+                                <Button Grid.Column="1" Content="اختيار صورة" Command="{Binding ChooseImageCommand}"
+                                        Background="{StaticResource SurfaceBrush}" Foreground="{StaticResource TextPrimaryBrush}"
+                                        BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Padding="10,6" Cursor="Hand" Margin="6,0,0,0">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                                <!-- Remove button only shows once a file is chosen -->
+                                <Button Grid.Column="2" Content="إزالة" Command="{Binding RemoveNewItemImageCommand}"
+                                        Visibility="{Binding NewItemImageFilePath, Converter={StaticResource StringToVisibilityConverter}}"
+                                        Background="Transparent" Foreground="{StaticResource AccentRedBrush}"
+                                        BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Padding="10,6" Cursor="Hand" Margin="6,0,0,0">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.Foreground="{StaticResource AccentRedBrush}" />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </Grid>
 
-                    <Button Content="إضافة الصنف" Command="{Binding AddItemCommand}"
-                            Style="{StaticResource PrimaryButtonStyle}"
-                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
+                            <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource IceBlueBrush}"
+                                       FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10" />
+
+                            <Button Content="إضافة الصنف" Command="{Binding AddItemCommand}"
+                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Add category (collapsible) -->
+                    <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1" CornerRadius="12" Padding="20">
+                        <StackPanel>
+                            <Button Content="+ إضافة قسم جديد" Command="{Binding ToggleAddCategoryFormCommand}"
+                                    Background="Transparent" Foreground="{StaticResource IceBlueBrush}"
+                                    BorderThickness="0" Padding="0" HorizontalAlignment="Right" Cursor="Hand" FontSize="13">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <ContentPresenter HorizontalAlignment="Right" TextElement.Foreground="{StaticResource IceBlueBrush}" />
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+
+                            <StackPanel Visibility="{Binding ShowAddCategoryForm, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,14,0,0">
+                                <TextBlock Text="اسم القسم" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                                <TextBox Text="{Binding NewCategoryName, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
+
+                                <TextBlock Text="الاسم بالإنجليزية (اختياري)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                                <TextBox Text="{Binding NewCategoryNameEn, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,14" />
+
+                                <Button Content="إضافة القسم" Command="{Binding AddCategoryCommand}"
+                                        Style="{StaticResource PrimaryButtonStyle}"
+                                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
                 </StackPanel>
-            </Border>
+            </ScrollViewer>
 
             <!-- Item list -->
             <Border Grid.Column="2" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
@@ -102,21 +159,65 @@
                                 <Border Background="{StaticResource BackgroundBrush}" CornerRadius="8" Padding="12" Margin="0,0,0,8">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="56" />
                                             <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="190" />
+                                            <ColumnDefinition Width="160" />
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{Binding ItemName}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="14" FontWeight="Medium" />
-                                            <TextBlock Text="{Binding Category.NameAr}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,2,0,0" />
+
+                                        <!-- Thumbnail -->
+                                        <Border Grid.Column="0" Width="48" Height="48" CornerRadius="8" ClipToBounds="True" Margin="0,0,10,0">
+                                            <Grid>
+                                                <Image Source="{Binding ImagePath, Converter={StaticResource ItemImagePathConverter}}" Stretch="UniformToFill"
+                                                       Visibility="{Binding ImagePath, Converter={StaticResource StringToVisibilityConverter}}" />
+                                                <Border Background="{StaticResource AccentRedBrush}"
+                                                        Visibility="{Binding HasNoImage, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                    <TextBlock Text="{Binding ItemName}" Foreground="White" FontSize="10" FontWeight="Bold"
+                                                               TextWrapping="Wrap" TextAlignment="Center" Margin="2"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.9" />
+                                                </Border>
+                                            </Grid>
+                                        </Border>
+
+                                        <!-- Name (editable) + category + image controls -->
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                            <TextBox Text="{Binding ItemName, UpdateSourceTrigger=PropertyChanged}"
+                                                     Style="{StaticResource DarkTextBoxStyle}" FontSize="13" Padding="6" Margin="0,0,0,4" />
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Category.NameAr}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center" Margin="0,0,10,0" />
+                                                <Button Content="تغيير الصورة" FontSize="10" Padding="6,2" Cursor="Hand" Margin="0,0,6,0"
+                                                        Command="{Binding DataContext.ChangeItemImageCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding}"
+                                                        Background="Transparent" Foreground="{StaticResource TextSecondaryBrush}" BorderThickness="0">
+                                                    <Button.Template>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <TextBlock Text="{TemplateBinding Content}" TextDecorations="Underline"
+                                                                       Foreground="{StaticResource IceBlueBrush}" FontSize="10" />
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+                                                <Button Content="إزالة الصورة" FontSize="10" Padding="0" Cursor="Hand"
+                                                        Visibility="{Binding ImagePath, Converter={StaticResource StringToVisibilityConverter}}"
+                                                        Command="{Binding DataContext.RemoveItemImageCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding}"
+                                                        Background="Transparent" Foreground="{StaticResource AccentRedBrush}" BorderThickness="0">
+                                                    <Button.Template>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <TextBlock Text="{TemplateBinding Content}" TextDecorations="Underline"
+                                                                       Foreground="{StaticResource AccentRedBrush}" FontSize="10" />
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+                                            </StackPanel>
                                         </StackPanel>
 
-                                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <!-- Price + Save (also saves the edited name) -->
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
                                             <TextBox Text="{Binding Price, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.000}}"
                                                      Style="{StaticResource DarkTextBoxStyle}" Width="80" Margin="0,0,6,0" />
                                             <Button Content="حفظ" FontSize="12" Padding="14,6" Cursor="Hand" MinWidth="50"
-                                                    Command="{Binding DataContext.UpdatePriceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    Command="{Binding DataContext.UpdateItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                     CommandParameter="{Binding}"
                                                     Background="{StaticResource AccentRedBrush}" Foreground="White" BorderThickness="0">
                                                 <Button.Template>
@@ -129,7 +230,7 @@
                                             </Button>
                                         </StackPanel>
 
-                                        <Button Grid.Column="2"
+                                        <Button Grid.Column="3"
                                                 Command="{Binding DataContext.ToggleActiveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                 CommandParameter="{Binding}"
                                                 Padding="10,6" Cursor="Hand" Margin="8,0,0,0">
@@ -158,7 +259,7 @@
                                             </Button.Style>
                                         </Button>
 
-                                        <Button Grid.Column="3" Content="حذف" FontSize="12" Padding="10,6" Cursor="Hand" Margin="6,0,0,0"
+                                        <Button Grid.Column="4" Content="حذف" FontSize="12" Padding="10,6" Cursor="Hand" Margin="6,0,0,0"
                                                 Command="{Binding DataContext.DeleteItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                 CommandParameter="{Binding}"
                                                 Background="Transparent" Foreground="{StaticResource TextSecondaryBrush}"

@@ -41,6 +41,35 @@ namespace SubZeroPOS.WPF.Views
 
             IDocumentPaginatorSource paginatorSource = document;
             printDialog.PrintDocument(paginatorSource.DocumentPaginator, "فاتورة سوب زيرو");
+
+            // Also save + open a viewable copy automatically, so the person
+            // sees confirmation of what was printed without having to hunt
+            // for the output file themselves. Wrapped in try/catch since this
+            // is a convenience feature - failure here should never block or
+            // break the actual print, which already succeeded above.
+            try
+            {
+                string tempPath = System.IO.Path.Combine(
+                    System.IO.Path.GetTempPath(), $"SubZero_Invoice_{vm.Order.OrderId}.xps");
+
+                if (System.IO.File.Exists(tempPath))
+                    System.IO.File.Delete(tempPath);
+
+                using (var xpsDoc = new System.Windows.Xps.Packaging.XpsDocument(tempPath, System.IO.FileAccess.ReadWrite))
+                {
+                    var xpsWriter = System.Windows.Xps.Packaging.XpsDocument.CreateXpsDocumentWriter(xpsDoc);
+                    xpsWriter.Write(paginatorSource.DocumentPaginator);
+                }
+
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(tempPath)
+                {
+                    UseShellExecute = true
+                });
+            }
+            catch
+            {
+                // Non-critical - the actual print already succeeded above.
+            }
         }
 
         private static double MeasureDocumentHeight(FlowDocument doc, double width)
@@ -87,8 +116,9 @@ namespace SubZeroPOS.WPF.Views
             // a 2-column table - the table approach produced uneven, off-center
             // spacing since columns auto-sized to content rather than the full
             // page width.
-            AddLine(doc, "الكاشير", order.CashierName);
-            AddLine(doc, "التاريخ والوقت", order.OrderDate.ToString("yyyy-MM-dd HH:mm"));
+            if (order.ShowCashierName)
+                AddLine(doc, "الكاشير", order.CashierName);
+            AddLine(doc, "التاريخ والوقت", order.OrderDateFormatted);
             AddLine(doc, "نوع الطلب", order.OrderTypeNameAr);
             if (!string.IsNullOrWhiteSpace(order.CustomerName))
                 AddLine(doc, "اسم الزبون", order.CustomerName);

@@ -25,9 +25,19 @@ namespace SubZeroPOS.WPF.ViewModels
                 new() { Code = "EGP", Symbol = "ج.م" },
                 new() { Code = "AED", Symbol = "د.إ" }
             };
+
+            DateFormats = new ObservableCollection<DateFormatOption>
+            {
+                new() { FormatString = "yyyy-MM-dd HH:mm" },   // 2026-08-10 14:30
+                new() { FormatString = "dd/MM/yyyy HH:mm" },    // 10/08/2026 14:30
+                new() { FormatString = "dd-MM-yyyy hh:mm tt" }, // 10-08-2026 02:30 PM
+                new() { FormatString = "MMM dd, yyyy HH:mm" },  // Aug 10, 2026 14:30
+                new() { FormatString = "yyyy/MM/dd HH:mm" },    // 2026/08/10 14:30
+            };
         }
 
         public ObservableCollection<CurrencyOption> Currencies { get; }
+        public ObservableCollection<DateFormatOption> DateFormats { get; }
 
         [ObservableProperty]
         private string restaurantName = string.Empty;
@@ -45,10 +55,13 @@ namespace SubZeroPOS.WPF.ViewModels
         private string invoiceFooterSecondary = string.Empty;
 
         [ObservableProperty]
-        private string currencySymbol = string.Empty;
+        private CurrencyOption? selectedCurrency;
 
         [ObservableProperty]
-        private CurrencyOption? selectedCurrency;
+        private DateFormatOption? selectedDateFormat;
+
+        [ObservableProperty]
+        private bool showCashierNameOnInvoice = true;
 
         [ObservableProperty]
         private string statusMessage = string.Empty;
@@ -70,11 +83,13 @@ namespace SubZeroPOS.WPF.ViewModels
                 Address = settings.Address ?? string.Empty;
                 InvoiceFooterPrimary = settings.InvoiceFooterPrimary ?? string.Empty;
                 InvoiceFooterSecondary = settings.InvoiceFooterSecondary ?? string.Empty;
-                CurrencySymbol = settings.CurrencySymbol;
+                ShowCashierNameOnInvoice = settings.ShowCashierNameOnInvoice;
 
-                SelectedCurrency = Currencies.Count > 0
-                    ? (System.Linq.Enumerable.FirstOrDefault(Currencies, c => c.Code == settings.CurrencyCode) ?? Currencies[0])
-                    : null;
+                SelectedCurrency = System.Linq.Enumerable.FirstOrDefault(Currencies, c => c.Code == settings.CurrencyCode)
+                    ?? Currencies[0];
+
+                SelectedDateFormat = System.Linq.Enumerable.FirstOrDefault(DateFormats, d => d.FormatString == settings.DateFormat)
+                    ?? DateFormats[0];
             }
             finally
             {
@@ -103,7 +118,9 @@ namespace SubZeroPOS.WPF.ViewModels
                     InvoiceFooterPrimary = string.IsNullOrWhiteSpace(InvoiceFooterPrimary) ? null : InvoiceFooterPrimary,
                     InvoiceFooterSecondary = string.IsNullOrWhiteSpace(InvoiceFooterSecondary) ? null : InvoiceFooterSecondary,
                     CurrencyCode = SelectedCurrency?.Code ?? "SDG",
-                    CurrencySymbol = SelectedCurrency?.Symbol ?? "ج.س"
+                    CurrencySymbol = SelectedCurrency?.Symbol ?? "ج.س",
+                    DateFormat = SelectedDateFormat?.FormatString ?? "yyyy-MM-dd HH:mm",
+                    ShowCashierNameOnInvoice = ShowCashierNameOnInvoice
                 });
 
                 StatusMessage = "تم حفظ الإعدادات بنجاح";

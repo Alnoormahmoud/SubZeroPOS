@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -94,6 +95,42 @@ namespace SubZeroPOS.Data.Services
             return true;
         }
 
+        public async Task<bool> UpdateItemNameAsync(int itemId, string itemName, string? nameEn)
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+
+            var item = await context.Items.FindAsync(itemId);
+            if (item is null) return false;
+
+            item.ItemName = itemName;
+            item.NameEn = nameEn;
+            await context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> RemoveItemImageAsync(int itemId)
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+
+            var item = await context.Items.FindAsync(itemId);
+            if (item is null) return false;
+
+            // Also delete the physical file if it exists, so orphaned images
+            // don't pile up in the Images/Items folder over time.
+            if (!string.IsNullOrWhiteSpace(item.ImagePath))
+            {
+                var fullPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, item.ImagePath);
+                if (System.IO.File.Exists(fullPath))
+                {
+                    try { System.IO.File.Delete(fullPath); } catch { /* non-critical */ }
+                }
+            }
+
+            item.ImagePath = null;
+            await context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<bool> SetItemActiveAsync(int itemId, bool isActive)
         {
             await using var context = await _contextFactory.CreateDbContextAsync();
@@ -134,6 +171,27 @@ namespace SubZeroPOS.Data.Services
             context.Items.Remove(item);
             await context.SaveChangesAsync();
             return (true, null);
+        }
+
+        public async Task<Category> AddCategoryAsync(string nameAr, string? nameEn)
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+
+            int maxOrder = await context.Categories.AnyAsync()
+                ? await context.Categories.MaxAsync(c => c.DisplayOrder)
+                : 0;
+
+            var category = new Category
+            {
+                NameAr = nameAr,
+                NameEn = nameEn,
+                DisplayOrder = maxOrder + 1,
+                IsActive = true
+            };
+
+            context.Categories.Add(category);
+            await context.SaveChangesAsync();
+            return category;
         }
     }
 }
