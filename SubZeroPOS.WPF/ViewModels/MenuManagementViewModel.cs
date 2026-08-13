@@ -1,6 +1,8 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -11,14 +13,17 @@ namespace SubZeroPOS.WPF.ViewModels
 {
     public partial class MenuManagementViewModel : ObservableObject
     {
+        private const int PageSize = 20;
+
         private readonly IItemService _itemService;
+        private List<Item> _allItems = new();
 
         public MenuManagementViewModel(IItemService itemService)
         {
             _itemService = itemService;
         }
 
-        public ObservableCollection<Item> Items { get; } = new();
+        public ObservableCollection<Item> Items { get; } = new(); // current page only
         public ObservableCollection<Category> Categories { get; } = new();
 
         // Add-item form
@@ -29,6 +34,13 @@ namespace SubZeroPOS.WPF.ViewModels
         [ObservableProperty] private string? newItemImageFilePath; // full path to the chosen source file on disk
         [ObservableProperty] private string statusMessage = string.Empty;
         [ObservableProperty] private bool isBusy;
+        [ObservableProperty] private int currentPage = 1;
+        [ObservableProperty] private int totalPages = 1;
+        [ObservableProperty] private int totalItemCount;
+
+        public string PageInfoText => $"الصفحة {CurrentPage} من {TotalPages}";
+        public bool CanGoNext => CurrentPage < TotalPages;
+        public bool CanGoPrevious => CurrentPage > 1;
 
         // Add-category form
         [ObservableProperty] private string newCategoryName = string.Empty;
@@ -69,9 +81,42 @@ namespace SubZeroPOS.WPF.ViewModels
 
         private async Task ReloadItemsAsync()
         {
+            _allItems = await _itemService.GetAllItemsForManagementAsync();
+            TotalItemCount = _allItems.Count;
+            CurrentPage = 1;
+            UpdatePagedItems();
+        }
+
+        private void UpdatePagedItems()
+        {
+            TotalPages = Math.Max(1, (int)Math.Ceiling(_allItems.Count / (double)PageSize));
+            if (CurrentPage > TotalPages) CurrentPage = TotalPages;
+
+            var pageItems = _allItems.Skip((CurrentPage - 1) * PageSize).Take(PageSize);
+
             Items.Clear();
-            foreach (var i in await _itemService.GetAllItemsForManagementAsync())
+            foreach (var i in pageItems)
                 Items.Add(i);
+
+            OnPropertyChanged(nameof(PageInfoText));
+            OnPropertyChanged(nameof(CanGoNext));
+            OnPropertyChanged(nameof(CanGoPrevious));
+        }
+
+        [RelayCommand]
+        private void NextPage()
+        {
+            if (!CanGoNext) return;
+            CurrentPage++;
+            UpdatePagedItems();
+        }
+
+        [RelayCommand]
+        private void PreviousPage()
+        {
+            if (!CanGoPrevious) return;
+            CurrentPage--;
+            UpdatePagedItems();
         }
 
         [RelayCommand]

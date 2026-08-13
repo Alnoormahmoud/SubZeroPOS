@@ -15,14 +15,13 @@
                 VerticalAlignment="Center">
             <StackPanel>
 
-                <!-- Logo / title -->
-                <Border Width="48" Height="48"
-                        CornerRadius="10"
-                        Background="{StaticResource AccentRedBrush}"
+                <!-- Logo -->
+                <Border Width="72" Height="72"
+                        CornerRadius="14"
+                        ClipToBounds="True"
                         HorizontalAlignment="Center"
                         Margin="0,0,0,10">
-                    <TextBlock Text="SZ" Foreground="White" FontSize="16"
-                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Image Source="pack://siteoforigin:,,,/Images/Branding/logo.jpg" Stretch="UniformToFill" />
                 </Border>
                 <TextBlock Text="سوب زيرو"
                            Foreground="{StaticResource TextPrimaryBrush}"

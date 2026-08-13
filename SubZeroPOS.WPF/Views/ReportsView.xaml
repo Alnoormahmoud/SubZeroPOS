@@ -85,9 +85,11 @@
             </Button>
         </StackPanel>
 
-        <!-- Summary + breakdown -->
+        <!-- Summary + charts -->
         <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
             <StackPanel>
+
+                <!-- Stat cards -->
                 <Grid Margin="0,0,0,16">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -122,25 +124,171 @@
                     </Border>
                 </Grid>
 
-                <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="16">
+                <!-- Daily sales trend (bar chart) -->
+                <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="16" Margin="0,0,0,14">
                     <StackPanel>
-                        <TextBlock Text="المصروفات حسب النوع" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
-                        <ItemsControl ItemsSource="{Binding ExpensesByCategory}">
+                        <TextBlock Text="اتجاه المبيعات اليومي" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,14" />
+                        <ItemsControl ItemsSource="{Binding DailySalesChart}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid Margin="0,0,0,8">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="{Binding CategoryNameAr}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="13" />
-                                        <TextBlock Grid.Column="1" Text="{Binding Total, StringFormat={}{0:0.000}}" Foreground="{StaticResource ExpenseBrush}" FontSize="13" />
-                                    </Grid>
+                                    <StackPanel Width="46" Margin="4,0,4,0" VerticalAlignment="Bottom">
+                                        <TextBlock Text="{Binding Total, StringFormat={}{0:0.0}}" Foreground="{StaticResource IceBlueBrush}"
+                                                   FontSize="9" HorizontalAlignment="Center" Margin="0,0,0,4" />
+                                        <Border Height="{Binding BarHeight}" Background="{StaticResource AccentRedBrush}"
+                                                CornerRadius="4,4,0,0" VerticalAlignment="Bottom" />
+                                        <TextBlock Text="{Binding DayLabel}" Foreground="{StaticResource TextSecondaryBrush}"
+                                                   FontSize="9" HorizontalAlignment="Center" Margin="0,4,0,0" />
+                                    </StackPanel>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </StackPanel>
                 </Border>
+
+                <Grid Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Top selling items -->
+                    <Border Grid.Column="0" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="الأصناف الأكثر مبيعاً" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
+                            <ItemsControl ItemsSource="{Binding TopItemsChart}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,0,0,10">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid Grid.Row="0" Margin="0,0,0,4">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="{Binding ItemName}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
+                                                <TextBlock Grid.Column="1" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11">
+                                                    <Run Text="{Binding QuantitySold, Mode=OneWay}" />
+                                                    <Run Text=" قطعة · " />
+                                                    <Run Text="{Binding TotalRevenue, StringFormat={}{0:0.000}}" />
+                                                </TextBlock>
+                                            </Grid>
+                                            <Border Grid.Row="1" Height="8" Width="{Binding BarWidth}" HorizontalAlignment="Right"
+                                                    Background="{StaticResource IceBlueBrush}" CornerRadius="4" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Sales by category -->
+                    <Border Grid.Column="2" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="المبيعات حسب القسم" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
+                            <ItemsControl ItemsSource="{Binding CategoriesChart}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,0,0,10">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid Grid.Row="0" Margin="0,0,0,4">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="{Binding CategoryNameAr}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
+                                                <TextBlock Grid.Column="1" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11">
+                                                    <Run Text="{Binding QuantitySold, Mode=OneWay}" />
+                                                    <Run Text=" قطعة · " />
+                                                    <Run Text="{Binding TotalRevenue, StringFormat={}{0:0.000}}" />
+                                                </TextBlock>
+                                            </Grid>
+                                            <Border Grid.Row="1" Height="8" Width="{Binding BarWidth}" HorizontalAlignment="Right"
+                                                    Background="{StaticResource AccentRedBrush}" CornerRadius="4" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <Grid Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Order type / delivery breakdown -->
+                    <Border Grid.Column="0" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="توزيع الطلبات حسب النوع (نسبة التوصيل)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
+                            <ItemsControl ItemsSource="{Binding OrderTypeChart}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,0,0,10">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid Grid.Row="0" Margin="0,0,0,4">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Foreground="{StaticResource TextPrimaryBrush}" FontSize="12">
+                                                    <Run Text="{Binding OrderTypeNameAr}" />
+                                                    <Run Text=" (" /><Run Text="{Binding PercentageLabel}" /><Run Text=")" />
+                                                </TextBlock>
+                                                <TextBlock Grid.Column="1" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11">
+                                                    <Run Text="{Binding OrderCount, Mode=OneWay}" />
+                                                    <Run Text=" طلب · " />
+                                                    <Run Text="{Binding TotalRevenue, StringFormat={}{0:0.000}}" />
+                                                </TextBlock>
+                                            </Grid>
+                                            <Border Grid.Row="1" Height="8" Width="{Binding BarWidth}" HorizontalAlignment="Right"
+                                                    Background="{StaticResource IceBlueBrush}" CornerRadius="4" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Expenses by category -->
+                    <Border Grid.Column="2" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="المصروفات حسب النوع" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
+                            <ItemsControl ItemsSource="{Binding ExpensesByCategory}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,0,0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="{Binding CategoryNameAr}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="13" />
+                                            <TextBlock Grid.Column="1" Text="{Binding Total, StringFormat={}{0:0.000}}" Foreground="{StaticResource ExpenseBrush}" FontSize="13" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
             </StackPanel>
         </ScrollViewer>
     </Grid>

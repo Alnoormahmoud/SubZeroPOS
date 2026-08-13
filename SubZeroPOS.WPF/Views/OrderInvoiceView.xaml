@@ -20,6 +20,12 @@
                 Margin="0,20,0,20">
             <StackPanel>
 
+                <!-- Restaurant logo -->
+                <Border Width="56" Height="56" CornerRadius="10" ClipToBounds="True"
+                        HorizontalAlignment="Center" Margin="0,0,0,8">
+                    <Image Source="pack://siteoforigin:,,,/Images/Branding/logo.jpg" Stretch="UniformToFill" />
+                </Border>
+
                 <!-- Restaurant info -->
                 <TextBlock Text="{Binding Order.RestaurantName}" Foreground="{StaticResource TextPrimaryBrush}"
                            FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,2" />

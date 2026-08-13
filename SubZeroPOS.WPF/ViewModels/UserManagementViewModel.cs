@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -10,14 +12,17 @@ namespace SubZeroPOS.WPF.ViewModels
 {
     public partial class UserManagementViewModel : ObservableObject
     {
+        private const int PageSize = 20;
+
         private readonly IUserService _userService;
+        private List<User> _allUsers = new();
 
         public UserManagementViewModel(IUserService userService)
         {
             _userService = userService;
         }
 
-        public ObservableCollection<User> Users { get; } = new();
+        public ObservableCollection<User> Users { get; } = new(); // current page only
         public ObservableCollection<Role> Roles { get; } = new();
 
         [ObservableProperty] private string newFullName = string.Empty;
@@ -26,6 +31,13 @@ namespace SubZeroPOS.WPF.ViewModels
         [ObservableProperty] private Role? selectedRole;
         [ObservableProperty] private string statusMessage = string.Empty;
         [ObservableProperty] private bool isBusy;
+        [ObservableProperty] private int currentPage = 1;
+        [ObservableProperty] private int totalPages = 1;
+        [ObservableProperty] private int totalUserCount;
+
+        public string PageInfoText => $"الصفحة {CurrentPage} من {TotalPages}";
+        public bool CanGoNext => CurrentPage < TotalPages;
+        public bool CanGoPrevious => CurrentPage > 1;
 
         public event Action? BackRequested;
 
@@ -50,9 +62,42 @@ namespace SubZeroPOS.WPF.ViewModels
 
         private async Task ReloadUsersAsync()
         {
+            _allUsers = await _userService.GetAllUsersAsync();
+            TotalUserCount = _allUsers.Count;
+            CurrentPage = 1;
+            UpdatePagedUsers();
+        }
+
+        private void UpdatePagedUsers()
+        {
+            TotalPages = Math.Max(1, (int)Math.Ceiling(_allUsers.Count / (double)PageSize));
+            if (CurrentPage > TotalPages) CurrentPage = TotalPages;
+
+            var pageItems = _allUsers.Skip((CurrentPage - 1) * PageSize).Take(PageSize);
+
             Users.Clear();
-            foreach (var u in await _userService.GetAllUsersAsync())
+            foreach (var u in pageItems)
                 Users.Add(u);
+
+            OnPropertyChanged(nameof(PageInfoText));
+            OnPropertyChanged(nameof(CanGoNext));
+            OnPropertyChanged(nameof(CanGoPrevious));
+        }
+
+        [RelayCommand]
+        private void NextPage()
+        {
+            if (!CanGoNext) return;
+            CurrentPage++;
+            UpdatePagedUsers();
+        }
+
+        [RelayCommand]
+        private void PreviousPage()
+        {
+            if (!CanGoPrevious) return;
+            CurrentPage--;
+            UpdatePagedUsers();
         }
 
         [RelayCommand]

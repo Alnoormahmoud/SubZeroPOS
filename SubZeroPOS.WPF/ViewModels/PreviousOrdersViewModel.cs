@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,9 +13,12 @@ namespace SubZeroPOS.WPF.ViewModels
 {
     public partial class PreviousOrdersViewModel : ObservableObject
     {
+        private const int PageSize = 20;
+
         private readonly IOrderService _orderService;
         private readonly IRestaurantSettingsService _settingsService;
-        private System.Collections.Generic.List<Order> _allLoadedOrders = new();
+        private List<Order> _allLoadedOrders = new();
+        private List<Order> _filteredOrders = new();
 
         public PreviousOrdersViewModel(IOrderService orderService, IRestaurantSettingsService settingsService)
         {
@@ -27,7 +31,7 @@ namespace SubZeroPOS.WPF.ViewModels
             SelectedPaymentFilter = PaymentFilterOptions[0];
         }
 
-        public ObservableCollection<Order> Orders { get; } = new();
+        public ObservableCollection<Order> Orders { get; } = new(); // current page only
         public ObservableCollection<string> OrderTypeFilterOptions { get; }
         public ObservableCollection<string> PaymentFilterOptions { get; }
 
@@ -48,6 +52,19 @@ namespace SubZeroPOS.WPF.ViewModels
 
         [ObservableProperty]
         private string totalForRange = "0.000";
+
+        [ObservableProperty]
+        private int currentPage = 1;
+
+        [ObservableProperty]
+        private int totalPages = 1;
+
+        [ObservableProperty]
+        private int totalFilteredCount;
+
+        public string PageInfoText => $"الصفحة {CurrentPage} من {TotalPages} ({TotalFilteredCount} طلب)";
+        public bool CanGoNext => CurrentPage < TotalPages;
+        public bool CanGoPrevious => CurrentPage > 1;
 
         public event Action? BackRequested;
         public event Action<OrderInvoiceDto>? ViewInvoiceRequested;
@@ -127,13 +144,46 @@ namespace SubZeroPOS.WPF.ViewModels
                 filtered = filtered.Where(o => o.PaymentMethodCode == paymentCode);
             }
 
-            var result = filtered.OrderByDescending(o => o.OrderDate).ToList();
+            _filteredOrders = filtered.OrderByDescending(o => o.OrderDate).ToList();
+            TotalForRange = _filteredOrders.Sum(o => o.TotalAmount).ToString("0.000");
+            TotalFilteredCount = _filteredOrders.Count;
+
+            CurrentPage = 1; // any filter change resets to page 1
+            UpdatePagedOrders();
+        }
+
+        private void UpdatePagedOrders()
+        {
+            TotalPages = Math.Max(1, (int)Math.Ceiling(_filteredOrders.Count / (double)PageSize));
+            if (CurrentPage > TotalPages) CurrentPage = TotalPages;
+
+            var pageItems = _filteredOrders
+                .Skip((CurrentPage - 1) * PageSize)
+                .Take(PageSize);
 
             Orders.Clear();
-            foreach (var o in result)
+            foreach (var o in pageItems)
                 Orders.Add(o);
 
-            TotalForRange = result.Sum(o => o.TotalAmount).ToString("0.000");
+            OnPropertyChanged(nameof(PageInfoText));
+            OnPropertyChanged(nameof(CanGoNext));
+            OnPropertyChanged(nameof(CanGoPrevious));
+        }
+
+        [RelayCommand]
+        private void NextPage()
+        {
+            if (!CanGoNext) return;
+            CurrentPage++;
+            UpdatePagedOrders();
+        }
+
+        [RelayCommand]
+        private void PreviousPage()
+        {
+            if (!CanGoPrevious) return;
+            CurrentPage--;
+            UpdatePagedOrders();
         }
 
         [RelayCommand]

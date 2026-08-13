@@ -104,6 +104,31 @@ namespace SubZeroPOS.WPF.Views
                 ColumnWidth = 320
             };
 
+            // Logo, if the file exists next to the exe - printing shouldn't
+            // fail just because the logo is missing on a fresh install.
+            try
+            {
+                var logoUri = new Uri("pack://siteoforigin:,,,/Images/Branding/logo.jpg", UriKind.Absolute);
+                var logoBitmap = new System.Windows.Media.Imaging.BitmapImage(logoUri);
+                var logoImage = new System.Windows.Controls.Image
+                {
+                    Source = logoBitmap,
+                    Width = 60,
+                    Height = 60,
+                    Stretch = Stretch.UniformToFill
+                };
+                var logoContainer = new BlockUIContainer(logoImage)
+                {
+                    TextAlignment = TextAlignment.Center,
+                    Margin = new Thickness(0, 0, 0, 8)
+                };
+                doc.Blocks.Add(logoContainer);
+            }
+            catch
+            {
+                // Logo file missing/unreadable - skip it, rest of the receipt still prints.
+            }
+
             doc.Blocks.Add(Centered(order.RestaurantName, 17, FontWeights.Bold));
             if (!string.IsNullOrWhiteSpace(order.RestaurantAddress))
                 doc.Blocks.Add(Centered(order.RestaurantAddress, 11, FontWeights.Normal, Brushes.Gray));

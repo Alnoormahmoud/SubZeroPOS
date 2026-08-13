@@ -20,10 +20,9 @@
 
             <StackPanel Orientation="Horizontal" Grid.Column="0">
                 <Border Width="34" Height="34" CornerRadius="8"
-                        Background="{StaticResource AccentRedBrush}"
+                        ClipToBounds="True"
                         Margin="0,0,8,0">
-                    <TextBlock Text="SZ" Foreground="White" FontSize="14"
-                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Image Source="pack://siteoforigin:,,,/Images/Branding/logo.jpg" Stretch="UniformToFill" />
                 </Border>
                 <StackPanel>
                     <TextBlock Text="سوب زيرو" Foreground="{StaticResource TextPrimaryBrush}"
