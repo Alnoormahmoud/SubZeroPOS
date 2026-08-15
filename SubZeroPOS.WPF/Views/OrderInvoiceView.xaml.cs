@@ -1,7 +1,12 @@
+using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
 using SubZeroPOS.Core.DTOs;
 using SubZeroPOS.WPF.ViewModels;
 
@@ -42,33 +47,96 @@ namespace SubZeroPOS.WPF.Views
             IDocumentPaginatorSource paginatorSource = document;
             printDialog.PrintDocument(paginatorSource.DocumentPaginator, "فاتورة سوب زيرو");
 
-            // Also save + open a viewable copy automatically, so the person
-            // sees confirmation of what was printed without having to hunt
-            // for the output file themselves. Wrapped in try/catch since this
-            // is a convenience feature - failure here should never block or
-            // break the actual print, which already succeeded above.
+            // Also save a real PDF copy and open it, so the person can confirm
+            // what was printed immediately, in a normal PDF viewer (Edge).
+            // We deliberately do NOT ask PdfSharp to draw the Arabic text
+            // itself - PdfSharp has no Arabic glyph-shaping support, so hand-
+            // drawn Arabic text would render as disconnected/incorrect
+            // characters. Instead we rasterize the SAME on-screen receipt
+            // (ReceiptBorder), which WPF already renders with fully correct
+            // Arabic shaping, and embed that image into the PDF page. This
+            // guarantees the PDF looks identical to what's on screen.
+            // Wrapped in try/catch since this is a convenience feature only -
+            // failure here should never block or break the actual print,
+            // which already succeeded above.
             try
             {
-                string tempPath = System.IO.Path.Combine(
-                    System.IO.Path.GetTempPath(), $"SubZero_Invoice_{vm.Order.OrderId}.xps");
-
-                if (System.IO.File.Exists(tempPath))
-                    System.IO.File.Delete(tempPath);
-
-                using (var xpsDoc = new System.Windows.Xps.Packaging.XpsDocument(tempPath, System.IO.FileAccess.ReadWrite))
-                {
-                    var xpsWriter = System.Windows.Xps.Packaging.XpsDocument.CreateXpsDocumentWriter(xpsDoc);
-                    xpsWriter.Write(paginatorSource.DocumentPaginator);
-                }
-
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(tempPath)
-                {
-                    UseShellExecute = true
-                });
+                OpenReceiptAsPdf(vm.Order.OrderId);
             }
             catch
             {
                 // Non-critical - the actual print already succeeded above.
+            }
+        }
+
+        private void OpenReceiptAsPdf(int orderId)
+        {
+            ReceiptBorder.UpdateLayout();
+
+            double width = ReceiptBorder.ActualWidth;
+            double height = ReceiptBorder.ActualHeight;
+            if (width <= 0 || height <= 0) return;
+
+            double dpiScale = 2.0;
+            int pixelWidth = (int)(width * dpiScale);
+            int pixelHeight = (int)(height * dpiScale);
+
+            var renderBitmap = new RenderTargetBitmap(
+                pixelWidth, pixelHeight, 96 * dpiScale, 96 * dpiScale, PixelFormats.Pbgra32);
+            renderBitmap.Render(ReceiptBorder);
+
+            // Encode to PNG bytes so PdfSharp's XImage can read it.
+            var encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
+            byte[] pngBytes;
+            using (var ms = new MemoryStream())
+            {
+                encoder.Save(ms);
+                pngBytes = ms.ToArray();
+            }
+
+            using var pdfDocument = new PdfDocument();
+            var page = pdfDocument.AddPage();
+
+            // WPF's ActualWidth/Height are in device-independent pixels
+            // (1/96 inch). PDF points are 1/72 inch, so convert: pt = dip * 0.75.
+            page.Width = XUnit.FromPoint(width * 0.75);
+            page.Height = XUnit.FromPoint(height * 0.75);
+
+            using var gfx = XGraphics.FromPdfPage(page);
+            using var imageStream = new MemoryStream(pngBytes);
+            var ximage = XImage.FromStream(imageStream);
+            gfx.DrawImage(ximage, 0, 0, page.Width.Point, page.Height.Point);
+
+            string tempPath = Path.Combine(Path.GetTempPath(), $"SubZero_Invoice_{orderId}.pdf");
+            if (File.Exists(tempPath))
+                File.Delete(tempPath);
+            pdfDocument.Save(tempPath);
+
+            // Try to open explicitly in Microsoft Edge (common install paths).
+            // Falls back to the OS default PDF handler if Edge isn't found -
+            // this never throws, so it can't break the print flow above.
+            string[] possibleEdgePaths =
+            {
+                @"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+                @"C:\Program Files\Microsoft\Edge\Application\msedge.exe"
+            };
+
+            string? edgePath = Array.Find(possibleEdgePaths, File.Exists);
+
+            if (edgePath != null)
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(edgePath, $"\"{tempPath}\"")
+                {
+                    UseShellExecute = true
+                });
+            }
+            else
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(tempPath)
+                {
+                    UseShellExecute = true
+                });
             }
         }
 
@@ -108,7 +176,7 @@ namespace SubZeroPOS.WPF.Views
             // fail just because the logo is missing on a fresh install.
             try
             {
-                var logoUri = new Uri("pack://siteoforigin:,,,/Images/Branding/logo.jpg", UriKind.Absolute);
+                var logoUri = new Uri("pack://siteoforigin:,,,/Images/Branding/logo_icon.png", UriKind.Absolute);
                 var logoBitmap = new System.Windows.Media.Imaging.BitmapImage(logoUri);
                 var logoImage = new System.Windows.Controls.Image
                 {

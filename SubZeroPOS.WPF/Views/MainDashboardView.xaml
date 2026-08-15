@@ -22,7 +22,7 @@
                 <Border Width="34" Height="34" CornerRadius="8"
                         ClipToBounds="True"
                         Margin="0,0,8,0">
-                    <Image Source="pack://siteoforigin:,,,/Images/Branding/logo.jpg" Stretch="UniformToFill" />
+                    <Image Source="pack://siteoforigin:,,,/Images/Branding/logo_icon.png" Stretch="Uniform" Margin="4" />
                 </Border>
                 <StackPanel>
                     <TextBlock Text="سوب زيرو" Foreground="{StaticResource TextPrimaryBrush}"

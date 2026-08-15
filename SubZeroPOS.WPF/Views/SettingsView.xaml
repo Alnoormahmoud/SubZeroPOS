@@ -31,9 +31,10 @@
             </Button>
         </Grid>
 
-        <Border Grid.Row="1" Width="500" HorizontalAlignment="Right" VerticalAlignment="Top"
+        <Border Grid.Row="1" Width="500" HorizontalAlignment="Right" VerticalAlignment="Stretch"
                 Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1" CornerRadius="12" Padding="20">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <TextBlock Text="بيانات المطعم" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
 
@@ -81,6 +82,7 @@
                         Style="{StaticResource PrimaryButtonStyle}"
                         IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
             </StackPanel>
+            </ScrollViewer>
         </Border>
     </Grid>
 </UserControl>

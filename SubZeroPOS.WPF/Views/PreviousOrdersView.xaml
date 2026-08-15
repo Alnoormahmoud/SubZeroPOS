@@ -12,7 +12,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,16">
+        <Grid Grid.Row="0" Margin="0,0,0,22">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -116,8 +116,9 @@
 
         <!-- Table -->
         <Border Grid.Row="2" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
-                BorderThickness="1" CornerRadius="12" Padding="12">
+                BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,4,0,0">
             <DataGrid ItemsSource="{Binding Orders}"
+                      Margin="0,0,10,0"
                       AutoGenerateColumns="False"
                       IsReadOnly="True"
                       HeadersVisibility="Column"

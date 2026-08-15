@@ -28,11 +28,17 @@ namespace SubZeroPOS.WPF.ViewModels
 
             DateFormats = new ObservableCollection<DateFormatOption>
             {
-                new() { FormatString = "yyyy-MM-dd HH:mm" },   // 2026-08-10 14:30
-                new() { FormatString = "dd/MM/yyyy HH:mm" },    // 10/08/2026 14:30
-                new() { FormatString = "dd-MM-yyyy hh:mm tt" }, // 10-08-2026 02:30 PM
-                new() { FormatString = "MMM dd, yyyy HH:mm" },  // Aug 10, 2026 14:30
-                new() { FormatString = "yyyy/MM/dd HH:mm" },    // 2026/08/10 14:30
+                new() { FormatString = "yyyy-MM-dd HH:mm" },        // 2026-08-10 14:30
+                new() { FormatString = "dd/MM/yyyy HH:mm" },         // 10/08/2026 14:30
+                new() { FormatString = "dd-MM-yyyy hh:mm tt" },      // 10-08-2026 02:30 PM
+                new() { FormatString = "MMM dd, yyyy HH:mm" },       // Aug 10, 2026 14:30
+                new() { FormatString = "yyyy/MM/dd HH:mm" },         // 2026/08/10 14:30
+                new() { FormatString = "dd/MM/yyyy hh:mm tt" },      // 10/08/2026 02:30 PM
+                new() { FormatString = "MM/dd/yyyy HH:mm" },         // 08/10/2026 14:30 (US style)
+                new() { FormatString = "dd MMMM yyyy - HH:mm" },     // 10 August 2026 - 14:30
+                new() { FormatString = "yyyy-MM-dd" },               // 2026-08-10 (date only)
+                new() { FormatString = "dd/MM/yyyy" },               // 10/08/2026 (date only)
+                new() { FormatString = "HH:mm - dd/MM/yyyy" },       // 14:30 - 10/08/2026 (time first)
             };
         }
 

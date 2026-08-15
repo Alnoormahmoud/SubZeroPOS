@@ -23,7 +23,7 @@
                 <!-- Restaurant logo -->
                 <Border Width="56" Height="56" CornerRadius="10" ClipToBounds="True"
                         HorizontalAlignment="Center" Margin="0,0,0,8">
-                    <Image Source="pack://siteoforigin:,,,/Images/Branding/logo.jpg" Stretch="UniformToFill" />
+                    <Image Source="pack://siteoforigin:,,,/Images/Branding/logo_icon.png" Stretch="Uniform" />
                 </Border>
 
                 <!-- Restaurant info -->

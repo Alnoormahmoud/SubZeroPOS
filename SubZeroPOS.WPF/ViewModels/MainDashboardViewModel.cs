@@ -13,16 +13,19 @@ namespace SubZeroPOS.WPF.ViewModels
     {
         private readonly IOrderService _orderService;
         private readonly IExpenseService _expenseService;
+        private readonly IRestaurantSettingsService _settingsService;
         private readonly DispatcherTimer _clockTimer;
+        private string _clockFormat = "yyyy/MM/dd - HH:mm:ss";
 
-        public MainDashboardViewModel(IOrderService orderService, IExpenseService expenseService)
+        public MainDashboardViewModel(IOrderService orderService, IExpenseService expenseService, IRestaurantSettingsService settingsService)
         {
             _orderService = orderService;
             _expenseService = expenseService;
+            _settingsService = settingsService;
 
-            CurrentDateTime = DateTime.Now.ToString("yyyy/MM/dd - HH:mm:ss");
+            CurrentDateTime = DateTime.Now.ToString(_clockFormat);
             _clockTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-            _clockTimer.Tick += (_, _) => CurrentDateTime = DateTime.Now.ToString("yyyy/MM/dd - HH:mm:ss");
+            _clockTimer.Tick += (_, _) => CurrentDateTime = DateTime.Now.ToString(_clockFormat);
             _clockTimer.Start();
         }
 
@@ -59,6 +62,11 @@ namespace SubZeroPOS.WPF.ViewModels
             // them here so the greeting and role-based visibility stay correct.
             OnPropertyChanged(nameof(WelcomeMessage));
             OnPropertyChanged(nameof(IsManager));
+
+            // Keep the header clock in sync with the format chosen in Settings.
+            var settings = await _settingsService.GetSettingsAsync();
+            _clockFormat = settings.DateFormat;
+            CurrentDateTime = DateTime.Now.ToString(_clockFormat);
 
             var today = DateTime.Today;
 

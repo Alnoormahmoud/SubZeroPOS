@@ -21,7 +21,7 @@
                         ClipToBounds="True"
                         HorizontalAlignment="Center"
                         Margin="0,0,0,10">
-                    <Image Source="pack://siteoforigin:,,,/Images/Branding/logo.jpg" Stretch="UniformToFill" />
+                    <Image Source="pack://siteoforigin:,,,/Images/Branding/logo_icon.png" Stretch="Uniform" Margin="8" />
                 </Border>
                 <TextBlock Text="سوب زيرو"
                            Foreground="{StaticResource TextPrimaryBrush}"
@@ -49,10 +49,12 @@
                              Style="{StaticResource DarkPasswordBoxStyle}"
                              Margin="0,0,0,10" />
 
-                <CheckBox Content="تذكرني" IsChecked="{Binding RememberMe}"
-                          FlowDirection="RightToLeft" HorizontalAlignment="Right"
-                          Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"
-                          Margin="0,0,0,10" />
+                <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft"
+                            HorizontalAlignment="Right" Margin="0,0,0,10">
+                    <CheckBox IsChecked="{Binding RememberMe}" VerticalAlignment="Center" />
+                    <TextBlock Text="تذكرني" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"
+                               VerticalAlignment="Center" Margin="6,0,0,0" />
+                </StackPanel>
 
                 <!-- Error message -->
                 <TextBlock Text="{Binding ErrorMessage}"
