@@ -174,16 +174,18 @@ namespace SubZeroPOS.WPF.Views
 
             // Logo, if the file exists next to the exe - printing shouldn't
             // fail just because the logo is missing on a fresh install.
+            // Uses the full lockup (icon + Arabic + English name already
+            // baked into the image) to match the on-screen invoice exactly -
+            // so no separate restaurant-name text line is needed below it.
             try
             {
-                var logoUri = new Uri("pack://siteoforigin:,,,/Images/Branding/logo_icon.png", UriKind.Absolute);
+                var logoUri = new Uri("pack://siteoforigin:,,,/Images/Branding/logo.png", UriKind.Absolute);
                 var logoBitmap = new System.Windows.Media.Imaging.BitmapImage(logoUri);
                 var logoImage = new System.Windows.Controls.Image
                 {
                     Source = logoBitmap,
-                    Width = 60,
-                    Height = 60,
-                    Stretch = Stretch.UniformToFill
+                    Width = 140,
+                    Stretch = Stretch.Uniform
                 };
                 var logoContainer = new BlockUIContainer(logoImage)
                 {
@@ -194,10 +196,11 @@ namespace SubZeroPOS.WPF.Views
             }
             catch
             {
-                // Logo file missing/unreadable - skip it, rest of the receipt still prints.
+                // Logo file missing/unreadable - fall back to plain text name
+                // so the receipt still identifies the restaurant.
+                doc.Blocks.Add(Centered(order.RestaurantName, 17, FontWeights.Bold));
             }
 
-            doc.Blocks.Add(Centered(order.RestaurantName, 17, FontWeights.Bold));
             if (!string.IsNullOrWhiteSpace(order.RestaurantAddress))
                 doc.Blocks.Add(Centered(order.RestaurantAddress, 11, FontWeights.Normal, Brushes.Gray));
             if (!string.IsNullOrWhiteSpace(order.RestaurantPhone))

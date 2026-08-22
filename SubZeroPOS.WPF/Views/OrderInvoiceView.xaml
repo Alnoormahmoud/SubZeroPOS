@@ -20,21 +20,18 @@
                 Margin="0,20,0,20">
             <StackPanel>
 
-                <!-- Restaurant logo -->
-                <Border Width="56" Height="56" CornerRadius="10" ClipToBounds="True"
-                        HorizontalAlignment="Center" Margin="0,0,0,8">
-                    <Image Source="pack://siteoforigin:,,,/Images/Branding/logo_icon.png" Stretch="Uniform" />
-                </Border>
+                <!-- Restaurant logo (full lockup - icon + name already baked into the image) -->
+                <Image Source="pack://siteoforigin:,,,/Images/Branding/logo.png" Stretch="Uniform"
+                       Width="180" HorizontalAlignment="Center" Margin="0,5,0,15" />
 
                 <!-- Restaurant info -->
-                <TextBlock Text="{Binding Order.RestaurantName}" Foreground="{StaticResource TextPrimaryBrush}"
-                           FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,2" />
                 <TextBlock Text="{Binding Order.RestaurantAddress}" Foreground="{StaticResource TextSecondaryBrush}"
                            FontSize="11" HorizontalAlignment="Center" TextWrapping="Wrap"
                            Visibility="{Binding Order.RestaurantAddress, Converter={StaticResource StringToVisibilityConverter}}" Margin="0,0,0,2" />
                 <TextBlock Text="{Binding Order.RestaurantPhone}" Foreground="{StaticResource TextSecondaryBrush}"
                            FontSize="11" HorizontalAlignment="Center"
                            Visibility="{Binding Order.RestaurantPhone, Converter={StaticResource StringToVisibilityConverter}}" Margin="0,0,0,10" />
+
 
                 <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,10" />
 
@@ -109,7 +106,7 @@
                                     <Run Text=" × " />
                                     <Run Text="{Binding ItemName, Mode=OneWay}" />
                                 </TextBlock>
-                                <TextBlock Grid.Column="1" Text="{Binding LineTotal, StringFormat={}{0:0.000}}"
+                                <TextBlock Grid.Column="1" Text="{Binding LineTotal, StringFormat={}{0:#,##0.000}}"
                                            Foreground="{StaticResource IceBlueBrush}" FontSize="13" />
                             </Grid>
                         </DataTemplate>
@@ -122,7 +119,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="رسوم التوصيل" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" />
-                    <TextBlock Grid.Column="1" Text="{Binding Order.DeliveryFee, StringFormat={}{0:0.000}}"
+                    <TextBlock Grid.Column="1" Text="{Binding Order.DeliveryFee, StringFormat={}{0:#,##0.000}}"
                                Foreground="{StaticResource IceBlueBrush}" FontSize="13" />
                 </Grid>
 
@@ -141,7 +138,7 @@
                     <TextBlock Grid.Column="0" Text="الإجمالي" Foreground="{StaticResource TextPrimaryBrush}"
                                FontSize="16" FontWeight="Medium" />
                     <TextBlock Grid.Column="1" FontSize="16" FontWeight="Medium" Foreground="{StaticResource TextPrimaryBrush}">
-                        <Run Text="{Binding Order.TotalAmount, StringFormat={}{0:0.000}}" />
+                        <Run Text="{Binding Order.TotalAmount, StringFormat={}{0:#,##0.000}}" />
                         <Run Text=" " />
                         <Run Text="{Binding Order.CurrencySymbol}" />
                     </TextBlock>

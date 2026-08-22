@@ -113,130 +113,353 @@
                 </StackPanel>
             </StackPanel>
         </Border>
-
         <!-- Table -->
-        <Border Grid.Row="2" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
-                BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,4,0,0">
+        <Border Grid.Row="2"
+        Background="{StaticResource SurfaceBrush}"
+        BorderBrush="{StaticResource BorderBrush}"
+        BorderThickness="1"
+        CornerRadius="12"
+        Padding="20"
+        Margin="0,4,0,0">
+
             <DataGrid ItemsSource="{Binding Orders}"
-                      Margin="0,0,10,0"
-                      AutoGenerateColumns="False"
-                      IsReadOnly="True"
-                      HeadersVisibility="Column"
-                      GridLinesVisibility="Horizontal"
-                      Background="Transparent"
-                      RowBackground="{StaticResource SurfaceBrush}"
-                      AlternatingRowBackground="{StaticResource BackgroundBrush}"
-                      BorderThickness="0"
-                      HorizontalGridLinesBrush="{StaticResource BorderBrush}"
-                      Foreground="{StaticResource TextPrimaryBrush}"
-                      FontSize="13"
-                      RowHeight="48">
+              Margin="0,12,0,0"
+              AutoGenerateColumns="False"
+              IsReadOnly="True"
+              HeadersVisibility="Column"
+              GridLinesVisibility="Horizontal"
+
+              Background="Transparent"
+              RowBackground="{StaticResource SurfaceBrush}"
+              AlternatingRowBackground="{StaticResource BackgroundBrush}"
+              BorderThickness="0"
+
+              HorizontalGridLinesBrush="{StaticResource BorderBrush}"
+              Foreground="{StaticResource TextPrimaryBrush}"
+              FontSize="13"
+
+              RowHeight="48"
+
+              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+              ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+                <!-- =========================
+             COLUMN HEADERS
+             ========================= -->
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="DataGridColumnHeader">
                         <Setter Property="Background" Value="#1F1F24" />
-                        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+                        <Setter Property="Foreground"
+                        Value="{StaticResource TextSecondaryBrush}" />
                         <Setter Property="FontSize" Value="12" />
                         <Setter Property="FontWeight" Value="Medium" />
-                        <Setter Property="Padding" Value="12,10" />
+
+                        <!-- More space inside the header -->
+                        <Setter Property="Padding" Value="10,11" />
+
                         <Setter Property="BorderThickness" Value="0,0,0,1" />
-                        <Setter Property="BorderBrush" Value="{StaticResource AccentRedBrush}" />
+                        <Setter Property="BorderBrush"
+                        Value="{StaticResource AccentRedBrush}" />
+
+                        <Setter Property="HorizontalContentAlignment"
+                        Value="Center" />
                     </Style>
                 </DataGrid.ColumnHeaderStyle>
+
+
+                <!-- =========================
+             ROW STYLE
+             ========================= -->
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
+
+                        <!-- Space between header and first row / rows -->
+                        <Setter Property="Margin" Value="0,3,0,0" />
+
                         <Setter Property="Cursor" Value="Hand" />
                     </Style>
                 </DataGrid.RowStyle>
+
+
+                <!-- =========================
+             CELL STYLE
+             ========================= -->
                 <DataGrid.CellStyle>
                     <Style TargetType="DataGridCell">
+
+                        <!-- Horizontal breathing room -->
+                        <Setter Property="Padding" Value="10,0" />
+
                         <Setter Property="BorderThickness" Value="0" />
-                        <Setter Property="Padding" Value="12,0" />
                         <Setter Property="Background" Value="Transparent" />
+
+                        <Setter Property="VerticalContentAlignment"
+                        Value="Center" />
                     </Style>
                 </DataGrid.CellStyle>
 
+
+                <!-- Double click -->
                 <DataGrid.InputBindings>
-                    <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding ViewOrderCommand}"
-                                  CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=DataGrid}}" />
+                    <MouseBinding MouseAction="LeftDoubleClick"
+                          Command="{Binding ViewOrderCommand}"
+                          CommandParameter="{Binding SelectedItem,
+                              RelativeSource={RelativeSource AncestorType=DataGrid}}" />
                 </DataGrid.InputBindings>
 
+
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="رقم الطلب" Binding="{Binding OrderId}" Width="80" />
-                    <DataGridTextColumn Header="التاريخ والوقت" Binding="{Binding OrderDate, StringFormat={}{0:yyyy-MM-dd HH:mm}}" Width="150" />
-                    <DataGridTextColumn Header="النوع" Binding="{Binding OrderType.NameAr}" Width="90" />
-                    <DataGridTextColumn Header="الزبون" Binding="{Binding CustomerName}" Width="*">
+
+                    <!-- =========================
+                 ORDER ID
+                 ========================= -->
+                    <DataGridTextColumn Header="رقم الطلب"
+                                Binding="{Binding OrderId}"
+                                Width="85">
+
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
-                                <Setter Property="TextAlignment" Value="Right" />
-                                <Setter Property="FlowDirection" Value="LeftToRight" />
-                                <!-- LeftToRight here keeps mixed Arabic/English customer
-                                     names (e.g. "Ahmed Adam") reading naturally left-to-right
-                                     while TextAlignment=Right keeps it docked to the same
-                                     side as the rest of the RTL table. -->
+
+                                <!-- Move ID away from edge -->
+                                <Setter Property="Margin" Value="8,0,8,0" />
+
+                                <Setter Property="VerticalAlignment"
+                                Value="Center" />
+
+                                <Setter Property="HorizontalAlignment"
+                                Value="Center" />
+
                             </Style>
                         </DataGridTextColumn.ElementStyle>
+
                     </DataGridTextColumn>
 
-                    <DataGridTemplateColumn Header="الدفع" Width="80">
+
+                    <!-- =========================
+                 DATE
+                 ========================= -->
+                    <DataGridTextColumn Header="التاريخ والوقت"
+                                Binding="{Binding OrderDate,
+                                    StringFormat={}{0:yyyy-MM-dd HH:mm}}"
+                                Width="145">
+
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment"
+                                Value="Center" />
+                                <Setter Property="VerticalAlignment"
+                                Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+
+                    </DataGridTextColumn>
+
+
+                    <!-- =========================
+                 ORDER TYPE
+                 ========================= -->
+                    <DataGridTextColumn Header="النوع"
+                                Binding="{Binding OrderType.NameAr}"
+                                Width="80">
+
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment"
+                                Value="Center" />
+                                <Setter Property="VerticalAlignment"
+                                Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+
+                    </DataGridTextColumn>
+
+
+                    <!-- =========================
+                 CUSTOMER
+                 ========================= -->
+                    <DataGridTextColumn Header="الزبون"
+                    Binding="{Binding CustomerName}"
+                    Width="*">
+
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+
+                                <!-- Center the customer name under the header -->
+                                <Setter Property="HorizontalAlignment"
+                    Value="Center" />
+
+                                <Setter Property="VerticalAlignment"
+                    Value="Center" />
+
+                                <!-- Let Arabic/English display naturally -->
+                                <Setter Property="TextAlignment"
+                    Value="Center" />
+
+                                <Setter Property="FlowDirection"
+                    Value="LeftToRight" />
+
+                                <Setter Property="Margin"
+                    Value="6,0" />
+
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+
+                    </DataGridTextColumn>
+
+
+                    <!-- =========================
+                 PAYMENT
+                 ========================= -->
+                    <DataGridTemplateColumn Header="الدفع"
+                                    Width="90">
+
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Border CornerRadius="8" Padding="8,2" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <Border.Style>
-                                        <Style TargetType="Border">
-                                            <Setter Property="Background" Value="#2A3B2A" />
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding PaymentMethodCode}" Value="Bankak">
-                                                    <Setter Property="Background" Value="#2A2A3B" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Border.Style>
-                                    <TextBlock FontSize="11" HorizontalAlignment="Center">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Text" Value="نقدي" />
-                                                <Setter Property="Foreground" Value="#8FD98F" />
+
+                                <!-- Center the payment badge -->
+                                <Grid HorizontalAlignment="Center"
+                              VerticalAlignment="Center">
+
+                                    <Border CornerRadius="8"
+                                    Padding="11,4"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
+
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+
+                                                <Setter Property="Background"
+                                                Value="#2A3B2A" />
+
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding PaymentMethodCode}" Value="Bankak">
-                                                        <Setter Property="Text" Value="بنكك" />
-                                                        <Setter Property="Foreground" Value="#8F9FD9" />
+
+                                                    <DataTrigger Binding="{Binding PaymentMethodCode}"
+                                                         Value="Bankak">
+
+                                                        <Setter Property="Background"
+                                                        Value="#2A2A3B" />
+
                                                     </DataTrigger>
+
                                                 </Style.Triggers>
+
                                             </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </Border>
+                                        </Border.Style>
+
+
+                                        <TextBlock FontSize="11"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center">
+
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+
+                                                    <Setter Property="Text"
+                                                    Value="نقدي" />
+
+                                                    <Setter Property="Foreground"
+                                                    Value="#8FD98F" />
+
+                                                    <Style.Triggers>
+
+                                                        <DataTrigger Binding="{Binding PaymentMethodCode}"
+                                                             Value="Bankak">
+
+                                                            <Setter Property="Text"
+                                                            Value="بنكك" />
+
+                                                            <Setter Property="Foreground"
+                                                            Value="#8F9FD9" />
+
+                                                        </DataTrigger>
+
+                                                    </Style.Triggers>
+
+                                                </Style>
+                                            </TextBlock.Style>
+
+                                        </TextBlock>
+
+                                    </Border>
+
+                                </Grid>
+
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
+
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="الإجمالي" Width="110">
+
+                    <!-- =========================
+                 TOTAL
+                 ========================= -->
+                    <DataGridTemplateColumn Header="الإجمالي"
+                                    Width="105">
+
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding TotalAmount, StringFormat={}{0:0.000}}"
-                                           Foreground="{StaticResource IceBlueBrush}" FontWeight="Medium" VerticalAlignment="Center" />
+
+                                <TextBlock Text="{Binding TotalAmount,
+                                      StringFormat={}{0:#,##0.000}}"
+                                   Foreground="{StaticResource IceBlueBrush}"
+                                   FontWeight="Medium"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
+
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="" Width="80">
+
+                    <!-- =========================
+                 SHOW BUTTON
+                 ========================= -->
+                    <DataGridTemplateColumn Header=""
+                                    Width="65">
+
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="عرض" FontSize="11" Padding="10,4" Cursor="Hand"
-                                        Command="{Binding DataContext.ViewOrderCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                        CommandParameter="{Binding}">
+
+                                <Button Content="عرض"
+                                FontSize="10"
+                                Padding="8,4"
+                                Width="52"
+                                Height="30"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Cursor="Hand"
+
+                                Command="{Binding DataContext.ViewOrderCommand,
+                                    RelativeSource={RelativeSource AncestorType=DataGrid}}"
+
+                                CommandParameter="{Binding}">
+
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
-                                            <Border Background="{StaticResource AccentRedBrush}" CornerRadius="6" Padding="{TemplateBinding Padding}">
-                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.Foreground="White" />
+
+                                            <Border Background="{StaticResource AccentRedBrush}"
+                                            CornerRadius="6">
+
+                                                <ContentPresenter
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            TextElement.Foreground="White" />
+
                                             </Border>
+
                                         </ControlTemplate>
                                     </Button.Template>
+
                                 </Button>
+
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
+
                     </DataGridTemplateColumn>
+
                 </DataGrid.Columns>
+
             </DataGrid>
         </Border>
 

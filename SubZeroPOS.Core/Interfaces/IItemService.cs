@@ -19,5 +19,6 @@ namespace SubZeroPOS.Core.Interfaces
         Task<List<Item>> GetAllItemsForManagementAsync(); // includes inactive items
         Task<(bool Success, string? ErrorMessage)> DeleteItemAsync(int itemId);
         Task<Category> AddCategoryAsync(string nameAr, string? nameEn);
+        Task<(bool Success, string? ErrorMessage)> DeleteCategoryAsync(int categoryId);
     }
 }

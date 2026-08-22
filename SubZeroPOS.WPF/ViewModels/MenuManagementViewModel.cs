@@ -224,6 +224,30 @@ namespace SubZeroPOS.WPF.ViewModels
         }
 
         [RelayCommand]
+        private async Task DeleteCategoryAsync(Category category)
+        {
+            var confirm = System.Windows.MessageBox.Show(
+                $"هل أنت متأكد من حذف قسم \"{category.NameAr}\" نهائياً؟",
+                "تأكيد الحذف",
+                System.Windows.MessageBoxButton.YesNo,
+                System.Windows.MessageBoxImage.Warning);
+
+            if (confirm != System.Windows.MessageBoxResult.Yes) return;
+
+            var (success, errorMessage) = await _itemService.DeleteCategoryAsync(category.CategoryId);
+
+            if (!success)
+            {
+                System.Windows.MessageBox.Show(errorMessage, "تعذر الحذف",
+                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                return;
+            }
+
+            StatusMessage = $"تم حذف قسم \"{category.NameAr}\"";
+            await ReloadCategoriesAsync();
+        }
+
+        [RelayCommand]
         private async Task UpdateItemAsync(Item item)
         {
             if (string.IsNullOrWhiteSpace(item.ItemName))

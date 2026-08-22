@@ -82,7 +82,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- Item grid: cards with image + name + price, wraps and reflows as window resizes -->
-            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,10,0">
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,15,0">
                 <ItemsControl ItemsSource="{Binding ItemsInCategory}" Margin="0,0,4,0">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -129,7 +129,7 @@
                                                 <StackPanel Grid.Row="1" Margin="8,6,8,8">
                                                     <TextBlock Text="{Binding ItemName}" Foreground="{StaticResource TextPrimaryBrush}"
                                                                FontSize="13" TextWrapping="Wrap" TextAlignment="Center" Margin="0,0,0,4" />
-                                                    <TextBlock Text="{Binding Price, StringFormat={}{0:0.000}}"
+                                                    <TextBlock Text="{Binding Price, StringFormat={}{0:#,##0.000}}"
                                                                Foreground="{StaticResource IceBlueBrush}" FontSize="12" TextAlignment="Center" />
                                                 </StackPanel>
                                             </Grid>
@@ -160,8 +160,8 @@
                          region, so the item list isn't squeezed by the form's
                          height. Only the total + checkout button stay pinned
                          at the bottom, always visible without scrolling. -->
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                        <StackPanel>
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="0,0,10,0">
+                        <StackPanel Margin="0,0,4,0">
                             <ItemsControl ItemsSource="{Binding Cart}" Margin="0,0,0,10">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
@@ -177,7 +177,7 @@
 
                                             <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding ItemName}"
                                                        Foreground="{StaticResource TextPrimaryBrush}" FontSize="13" TextWrapping="Wrap" />
-                                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding LineTotal, StringFormat={}{0:0.000}}"
+                                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding LineTotal, StringFormat={}{0:#,##0.000}}"
                                                        Foreground="{StaticResource IceBlueBrush}" FontSize="13" />
 
                                             <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
@@ -245,7 +245,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="الإجمالي" Foreground="{StaticResource TextPrimaryBrush}"
                                        FontSize="15" FontWeight="Medium" />
-                            <TextBlock Grid.Column="1" Text="{Binding GrandTotal, StringFormat={}{0:0.000}}"
+                            <TextBlock Grid.Column="1" Text="{Binding GrandTotal, StringFormat={}{0:#,##0.000}}"
                                        Foreground="{StaticResource TextPrimaryBrush}" FontSize="15" FontWeight="Medium" />
                         </Grid>
 

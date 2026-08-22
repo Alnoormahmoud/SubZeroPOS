@@ -193,5 +193,24 @@ namespace SubZeroPOS.Data.Services
             await context.SaveChangesAsync();
             return category;
         }
+
+        public async Task<(bool Success, string? ErrorMessage)> DeleteCategoryAsync(int categoryId)
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+
+            var category = await context.Categories.FindAsync(categoryId);
+            if (category is null) return (false, "القسم غير موجود");
+
+            // A category with items in it (active or disabled) can't be safely
+            // removed - the items would be orphaned. Ask the user to move/delete
+            // those items first.
+            bool hasItems = await context.Items.AnyAsync(i => i.CategoryId == categoryId);
+            if (hasItems)
+                return (false, "لا يمكن حذف هذا القسم لوجود أصناف تابعة له. احذف أو انقل الأصناف أولاً.");
+
+            context.Categories.Remove(category);
+            await context.SaveChangesAsync();
+            return (true, null);
+        }
     }
 }

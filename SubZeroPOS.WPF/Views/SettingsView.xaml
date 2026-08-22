@@ -15,8 +15,12 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="الإعدادات" Foreground="{StaticResource TextPrimaryBrush}"
-                       FontSize="18" FontWeight="Medium" VerticalAlignment="Center" />
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <Image Source="pack://siteoforigin:,,,/Images/Branding/logo_icon.png" Stretch="Uniform"
+                       Width="26" Height="26" Margin="0,0,10,0" />
+                <TextBlock Text="الإعدادات" Foreground="{StaticResource TextPrimaryBrush}"
+                           FontSize="18" FontWeight="Medium" VerticalAlignment="Center" />
+            </StackPanel>
             <Button Grid.Column="1" Content="رجوع" Command="{Binding BackCommand}"
                     Background="{StaticResource SurfaceBrush}" Foreground="{StaticResource TextPrimaryBrush}"
                     BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Padding="12,6" Cursor="Hand">
@@ -34,8 +38,9 @@
         <Border Grid.Row="1" Width="500" HorizontalAlignment="Right" VerticalAlignment="Stretch"
                 Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1" CornerRadius="12" Padding="20">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <StackPanel>
+                 <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,0,10,0">
+
+                    <StackPanel>
                 <TextBlock Text="بيانات المطعم" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
 
                 <TextBlock Text="اسم المطعم" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
@@ -59,7 +64,7 @@
                           DisplayMemberPath="DisplayName" Margin="0,0,0,20" Padding="8" />
 
                 <CheckBox Content="إظهار اسم الكاشير في الفاتورة" IsChecked="{Binding ShowCashierNameOnInvoice}"
-                          FlowDirection="RightToLeft" HorizontalAlignment="Right"
+                          FlowDirection="LeftToRight" HorizontalAlignment="left"
                           Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,20" />
 
                 <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,16" />

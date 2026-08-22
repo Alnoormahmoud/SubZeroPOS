@@ -143,6 +143,38 @@
                                         Style="{StaticResource PrimaryButtonStyle}"
                                         IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
                             </StackPanel>
+
+                            <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,16,0,14" />
+
+                            <TextBlock Text="الأقسام الحالية" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,10" />
+                            <ItemsControl ItemsSource="{Binding Categories}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,0,0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="{Binding NameAr}" Foreground="{StaticResource TextPrimaryBrush}"
+                                                       FontSize="13" VerticalAlignment="Center" />
+                                            <Button Grid.Column="1" Content="حذف" FontSize="11" Padding="10,4" Cursor="Hand"
+                                                    Command="{Binding DataContext.DeleteCategoryCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    Background="Transparent" Foreground="{StaticResource TextSecondaryBrush}"
+                                                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                                                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
                         </StackPanel>
                     </Border>
 

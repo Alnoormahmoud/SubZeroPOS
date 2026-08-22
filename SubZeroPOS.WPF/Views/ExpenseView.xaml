@@ -95,7 +95,7 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="مصروفات اليوم"
                                    Foreground="{StaticResource TextPrimaryBrush}" FontSize="15" FontWeight="Medium" />
-                        <TextBlock Grid.Column="1" Text="{Binding TodaysTotal, StringFormat={}{0:0.000}}"
+                        <TextBlock Grid.Column="1" Text="{Binding TodaysTotal, StringFormat={}{0:#,##0.000}}"
                                    Foreground="{StaticResource ExpenseBrush}" FontSize="15" FontWeight="Medium" />
                     </Grid>
 
@@ -119,7 +119,7 @@
                                                 <TextBlock Text="{Binding ExpenseDate, StringFormat={}{0:HH:mm}}" Foreground="{StaticResource TextSecondaryBrush}"
                                                            FontSize="11" />
                                             </StackPanel>
-                                            <TextBlock Grid.Column="1" Text="{Binding Amount, StringFormat={}{0:0.000}}"
+                                            <TextBlock Grid.Column="1" Text="{Binding Amount, StringFormat={}{0:#,##0.000}}"
                                                        Foreground="{StaticResource ExpenseBrush}" FontSize="14" FontWeight="Medium"
                                                        VerticalAlignment="Center" />
                                         </Grid>

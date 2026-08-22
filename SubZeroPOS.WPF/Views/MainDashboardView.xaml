@@ -19,13 +19,8 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Orientation="Horizontal" Grid.Column="0">
-                <Border Width="34" Height="34" CornerRadius="8"
-                        ClipToBounds="True"
-                        Margin="0,0,8,0">
-                    <Image Source="pack://siteoforigin:,,,/Images/Branding/logo_icon.png" Stretch="Uniform" Margin="4" />
-                </Border>
                 <StackPanel>
-                    <TextBlock Text="سوب زيرو" Foreground="{StaticResource TextPrimaryBrush}"
+                    <TextBlock Text="ساب زيرو" Foreground="{StaticResource TextPrimaryBrush}"
                                FontSize="15" FontWeight="Medium" />
                     <TextBlock Text="{Binding WelcomeMessage}" Foreground="{StaticResource IceBlueBrush}"
                                FontSize="11" />
