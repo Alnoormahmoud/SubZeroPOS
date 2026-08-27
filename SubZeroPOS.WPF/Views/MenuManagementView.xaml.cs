@@ -38,5 +38,10 @@ namespace SubZeroPOS.WPF.Views
 
             return dialog.ShowDialog() == true ? dialog.FileName : null;
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

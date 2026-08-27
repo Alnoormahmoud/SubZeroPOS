@@ -240,7 +240,7 @@
                  ========================= -->
                     <DataGridTextColumn Header="التاريخ والوقت"
                                 Binding="{Binding OrderDate,
-                                    StringFormat={}{0:yyyy-MM-dd HH:mm}}"
+                                    StringFormat={}{0:yyyy-MM-dd hh:mm}}"
                                 Width="145">
 
                         <DataGridTextColumn.ElementStyle>
@@ -400,7 +400,7 @@
                             <DataTemplate>
 
                                 <TextBlock Text="{Binding TotalAmount,
-                                      StringFormat={}{0:#,##0.000}}"
+                                      StringFormat={}{0:N0}}"
                                    Foreground="{StaticResource IceBlueBrush}"
                                    FontWeight="Medium"
                                    HorizontalAlignment="Center"
@@ -496,3 +496,5 @@
         </StackPanel>
     </Grid>
 </UserControl>
+
+    

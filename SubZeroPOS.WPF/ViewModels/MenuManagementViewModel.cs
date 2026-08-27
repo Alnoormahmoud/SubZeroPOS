@@ -47,6 +47,23 @@ namespace SubZeroPOS.WPF.ViewModels
         [ObservableProperty] private string newCategoryNameEn = string.Empty;
         [ObservableProperty] private bool showAddCategoryForm;
 
+        // Item edit panel - opens when tapping "تعديل" on a row, instead of
+        // editing inline in the crowded list row.
+        [ObservableProperty] private bool isItemEditOpen;
+        [ObservableProperty] private Item? editingItem;
+        [ObservableProperty] private string editItemName = string.Empty;
+        [ObservableProperty] private string editItemNameEn = string.Empty;
+        [ObservableProperty] private string editItemPriceText = string.Empty;
+        [ObservableProperty] private Category? editItemCategory;
+        [ObservableProperty] private bool editItemIsActive;
+        [ObservableProperty] private string? editItemImagePath; // current relative path shown as preview
+
+        // Category edit panel - same idea, kept separate from the add-category form.
+        [ObservableProperty] private bool isCategoryEditOpen;
+        [ObservableProperty] private Category? editingCategory;
+        [ObservableProperty] private string editCategoryName = string.Empty;
+        [ObservableProperty] private string editCategoryNameEn = string.Empty;
+
         public event Action? BackRequested;
         public event Func<string?>? ChooseImageFileRequested; // code-behind shows OpenFileDialog, returns chosen path or null
 
@@ -248,47 +265,100 @@ namespace SubZeroPOS.WPF.ViewModels
         }
 
         [RelayCommand]
-        private async Task UpdateItemAsync(Item item)
+        private void OpenEditItem(Item item)
         {
-            if (string.IsNullOrWhiteSpace(item.ItemName))
+            EditingItem = item;
+            EditItemName = item.ItemName;
+            EditItemNameEn = item.NameEn ?? string.Empty;
+            EditItemPriceText = item.Price.ToString("0");
+            EditItemCategory = System.Linq.Enumerable.FirstOrDefault(Categories, c => c.CategoryId == item.CategoryId);
+            EditItemIsActive = item.IsActive;
+            EditItemImagePath = item.ImagePath;
+            IsItemEditOpen = true;
+        }
+
+        [RelayCommand]
+        private void CancelEditItem()
+        {
+            IsItemEditOpen = false;
+            EditingItem = null;
+        }
+
+        [RelayCommand]
+        private void ChangeEditItemImage()
+        {
+            var path = ChooseImageFileRequested?.Invoke();
+            if (string.IsNullOrWhiteSpace(path) || !File.Exists(path)) return;
+            _pendingEditImageSourcePath = path;
+            EditItemImagePath = path; // shows the new local file as a preview until saved
+        }
+
+        [RelayCommand]
+        private void RemoveEditItemImage()
+        {
+            _pendingEditImageSourcePath = null;
+            _pendingRemoveImage = true;
+            EditItemImagePath = null;
+        }
+
+        private string? _pendingEditImageSourcePath;
+        private bool _pendingRemoveImage;
+
+        [RelayCommand]
+        private async Task SaveEditedItemAsync()
+        {
+            if (EditingItem is null) return;
+
+            if (string.IsNullOrWhiteSpace(EditItemName))
             {
                 StatusMessage = "اسم الصنف لا يمكن أن يكون فارغاً";
                 return;
             }
 
-            await _itemService.UpdateItemNameAsync(item.ItemId, item.ItemName, item.NameEn);
-            await _itemService.UpdateItemPriceAsync(item.ItemId, item.Price);
-            StatusMessage = $"تم تحديث {item.ItemName}";
-        }
+            if (!decimal.TryParse(EditItemPriceText, out var price) || price <= 0)
+            {
+                StatusMessage = "الرجاء إدخال سعر صحيح";
+                return;
+            }
 
-        [RelayCommand]
-        private async Task RemoveItemImageAsync(Item item)
-        {
-            await _itemService.RemoveItemImageAsync(item.ItemId);
-            await ReloadItemsAsync();
-        }
+            IsBusy = true;
+            try
+            {
+                var itemId = EditingItem.ItemId;
+                var nameEn = string.IsNullOrWhiteSpace(EditItemNameEn) ? null : EditItemNameEn;
 
-        [RelayCommand]
-        private async Task ChangeItemImageAsync(Item item)
-        {
-            var path = ChooseImageFileRequested?.Invoke();
-            if (string.IsNullOrWhiteSpace(path) || !File.Exists(path)) return;
+                await _itemService.UpdateItemNameAsync(itemId, EditItemName, nameEn);
+                await _itemService.UpdateItemPriceAsync(itemId, price);
 
-            var extension = Path.GetExtension(path);
-            var relativePath = $"Images/Items/{item.ItemId}{extension}";
-            var destinationFullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", "Items");
-            Directory.CreateDirectory(destinationFullPath);
-            File.Copy(path, Path.Combine(destinationFullPath, $"{item.ItemId}{extension}"), overwrite: true);
+                if (EditItemIsActive != EditingItem.IsActive)
+                    await _itemService.SetItemActiveAsync(itemId, EditItemIsActive);
 
-            await _itemService.UpdateItemImagePathAsync(item.ItemId, relativePath);
-            await ReloadItemsAsync();
-        }
+                if (_pendingEditImageSourcePath != null)
+                {
+                    var extension = Path.GetExtension(_pendingEditImageSourcePath);
+                    var relativePath = $"Images/Items/{itemId}{extension}";
+                    var destinationFullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", "Items");
+                    Directory.CreateDirectory(destinationFullPath);
+                    File.Copy(_pendingEditImageSourcePath, Path.Combine(destinationFullPath, $"{itemId}{extension}"), overwrite: true);
+                    await _itemService.UpdateItemImagePathAsync(itemId, relativePath);
+                }
+                else if (_pendingRemoveImage)
+                {
+                    await _itemService.RemoveItemImageAsync(itemId);
+                }
 
-        [RelayCommand]
-        private async Task ToggleActiveAsync(Item item)
-        {
-            await _itemService.SetItemActiveAsync(item.ItemId, !item.IsActive);
-            await ReloadItemsAsync();
+                _pendingEditImageSourcePath = null;
+                _pendingRemoveImage = false;
+
+                StatusMessage = $"تم تحديث {EditItemName}";
+                IsItemEditOpen = false;
+                EditingItem = null;
+                await ReloadItemsAsync();
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         [RelayCommand]
@@ -313,6 +383,53 @@ namespace SubZeroPOS.WPF.ViewModels
 
             StatusMessage = $"تم حذف {item.ItemName}";
             await ReloadItemsAsync();
+        }
+
+        // --- Category edit panel ---
+
+        [RelayCommand]
+        private void OpenEditCategory(Category category)
+        {
+            EditingCategory = category;
+            EditCategoryName = category.NameAr;
+            EditCategoryNameEn = category.NameEn ?? string.Empty;
+            IsCategoryEditOpen = true;
+        }
+
+        [RelayCommand]
+        private void CancelEditCategory()
+        {
+            IsCategoryEditOpen = false;
+            EditingCategory = null;
+        }
+
+        [RelayCommand]
+        private async Task SaveEditedCategoryAsync()
+        {
+            if (EditingCategory is null) return;
+
+            if (string.IsNullOrWhiteSpace(EditCategoryName))
+            {
+                StatusMessage = "اسم القسم لا يمكن أن يكون فارغاً";
+                return;
+            }
+
+            IsBusy = true;
+            try
+            {
+                var nameEn = string.IsNullOrWhiteSpace(EditCategoryNameEn) ? null : EditCategoryNameEn;
+                await _itemService.UpdateCategoryAsync(EditingCategory.CategoryId, EditCategoryName, nameEn);
+
+                StatusMessage = $"تم تحديث قسم \"{EditCategoryName}\"";
+                IsCategoryEditOpen = false;
+                EditingCategory = null;
+                await ReloadCategoriesAsync();
+                await ReloadItemsAsync(); // item rows show Category.NameAr, refresh them too
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         [RelayCommand]

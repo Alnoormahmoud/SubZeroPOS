@@ -38,9 +38,8 @@
         <Border Grid.Row="1" Width="500" HorizontalAlignment="Right" VerticalAlignment="Stretch"
                 Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1" CornerRadius="12" Padding="20">
-                 <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,0,10,0">
-
-                    <StackPanel>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
                 <TextBlock Text="بيانات المطعم" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
 
                 <TextBlock Text="اسم المطعم" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
@@ -65,7 +64,7 @@
 
                 <CheckBox Content="إظهار اسم الكاشير في الفاتورة" IsChecked="{Binding ShowCashierNameOnInvoice}"
                           FlowDirection="LeftToRight" HorizontalAlignment="left"
-                          Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,20" />
+                          Foreground="{StaticResource TextSecondaryBrush}" FontSize="15" Margin="0,0,0,20" />
 
                 <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,16" />
 

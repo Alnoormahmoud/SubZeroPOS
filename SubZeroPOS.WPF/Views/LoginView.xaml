@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              FlowDirection="RightToLeft"
               Background="{StaticResource BackgroundBrush}">
+          
 
     <Grid>
         <Border Width="360"
@@ -17,7 +18,7 @@
 
                 <!-- Logo (full lockup - icon + name already baked into the image) -->
                 <Image Source="pack://siteoforigin:,,,/Images/Branding/logo.png" Stretch="Uniform"
-                       Width="200" HorizontalAlignment="Center" Margin="0,0,0,19" />
+                       Width="200" HorizontalAlignment="Center" Margin="0,10,0,19" />
 
                 <TextBlock Text="تسجيل الدخول"
                            Foreground="{StaticResource TextSecondaryBrush}"
@@ -38,14 +39,14 @@
                            Foreground="{StaticResource TextSecondaryBrush}"
                            FontSize="12" Margin="0,0,0,4" />
                 <PasswordBox x:Name="PasswordBox"
-                             Style="{StaticResource DarkPasswordBoxStyle}"
+                              Style="{StaticResource DarkPasswordBoxStyle}"
                              Margin="0,0,0,10" />
 
                 <DockPanel Margin="0,0,0,10" LastChildFill="False">
                     <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
-                        <CheckBox IsChecked="{Binding RememberMe}" VerticalAlignment="Bottom" FlowDirection="LeftToRight"/>
+                        <CheckBox IsChecked="{Binding RememberMe}" VerticalAlignment="Bottom"    FlowDirection="LeftToRight" HorizontalAlignment="left"/>
                         <TextBlock Text="تذكرني" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"
-                                   VerticalAlignment="Center" Margin="7,3,0,0" />
+                                   VerticalAlignment="Center" Margin="6,0,0,0" />
                     </StackPanel>
                 </DockPanel>
 
@@ -54,15 +55,15 @@
                            Foreground="{StaticResource AccentRedBrush}"
                            FontSize="12"
                            TextWrapping="Wrap"
-                           Margin="0,0,0,10"
+                           Margin="0,10,0,15"
                            Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}" />
 
                 <!-- Login button -->
                 <Button Content="تسجيل الدخول"
                         Style="{StaticResource PrimaryButtonStyle}"
-                        Click="LoginButton_Click"        IsDefault="True"
+                        Click="LoginButton_Click"
+                        IsDefault="True" 
                         IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
-          
 
             </StackPanel>
         </Border>

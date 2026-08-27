@@ -16,9 +16,11 @@ namespace SubZeroPOS.Core.Interfaces
         Task<bool> SetItemActiveAsync(int itemId, bool isActive);
         Task<bool> UpdateItemImagePathAsync(int itemId, string imagePath);
         Task<bool> RemoveItemImageAsync(int itemId);
+        Task<bool> UpdateItemCategoryAsync(int itemId, int categoryId);
         Task<List<Item>> GetAllItemsForManagementAsync(); // includes inactive items
         Task<(bool Success, string? ErrorMessage)> DeleteItemAsync(int itemId);
         Task<Category> AddCategoryAsync(string nameAr, string? nameEn);
+        Task<bool> UpdateCategoryAsync(int categoryId, string nameAr, string? nameEn);
         Task<(bool Success, string? ErrorMessage)> DeleteCategoryAsync(int categoryId);
     }
 }

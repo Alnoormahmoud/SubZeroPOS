@@ -15,7 +15,7 @@ namespace SubZeroPOS.WPF.ViewModels
         private readonly IExpenseService _expenseService;
         private readonly IRestaurantSettingsService _settingsService;
         private readonly DispatcherTimer _clockTimer;
-        private string _clockFormat = "yyyy/MM/dd - HH:mm:ss";
+        private string _clockFormat = "yyyy/MM/dd - hh:mm:ss";
 
         public MainDashboardViewModel(IOrderService orderService, IExpenseService expenseService, IRestaurantSettingsService settingsService)
         {
@@ -36,10 +36,10 @@ namespace SubZeroPOS.WPF.ViewModels
         private string currentDateTime = string.Empty;
 
         [ObservableProperty]
-        private string todaysSales = "0.000";
+        private string todaysSales = "0";
 
         [ObservableProperty]
-        private string todaysExpenses = "0.000";
+        private string todaysExpenses = "0";
 
         [ObservableProperty]
         private string todaysOrderCount = "0";
@@ -73,11 +73,11 @@ namespace SubZeroPOS.WPF.ViewModels
             var orders = await _orderService.GetOrdersByDateAsync(today);
             var completedOrders = orders.Where(o => o.StatusCode == "Completed").ToList();
 
-            TodaysSales = completedOrders.Sum(o => o.TotalAmount).ToString("0.000");
+             TodaysSales = completedOrders.Sum(o => o.TotalAmount).ToString("#,##0");
             TodaysOrderCount = completedOrders.Count.ToString();
 
             var expenses = await _expenseService.GetExpensesByDateRangeAsync(today, today);
-            TodaysExpenses = expenses.Sum(e => e.Amount).ToString("0.000");
+            TodaysExpenses = expenses.Sum(e => e.Amount).ToString("#,##0");
         }
 
         [RelayCommand]

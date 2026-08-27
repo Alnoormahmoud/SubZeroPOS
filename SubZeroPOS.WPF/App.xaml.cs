@@ -15,8 +15,10 @@ namespace SubZeroPOS.WPF
         // TODO: move this to appsettings.json once the project is stable.
         // For now it's centralized here so it's the one place to edit
         // when deploying to your friend's machine.
+        //     private const string ConnectionString =            "Server=.\\SQLEXPRESS;Database=SubZeroPOS;Trusted_Connection=True;TrustServerCertificate=True;";
         private const string ConnectionString =
-            "Server=.;Database=SubZeroPOS;Trusted_Connection=True;TrustServerCertificate=True;";
+           "Server=.;Database=SubZeroPOS;Trusted_Connection=True;TrustServerCertificate=True;";
+
 
         private IHost? _host;
 

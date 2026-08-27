@@ -45,7 +45,7 @@ namespace SubZeroPOS.WPF.Views
             document.PageHeight = measuredHeight + 16;
 
             IDocumentPaginatorSource paginatorSource = document;
-            printDialog.PrintDocument(paginatorSource.DocumentPaginator, "فاتورة سوب زيرو");
+            printDialog.PrintDocument(paginatorSource.DocumentPaginator, "فاتورة ساب زيرو");
 
             // Also save a real PDF copy and open it, so the person can confirm
             // what was printed immediately, in a normal PDF viewer (Edge).
@@ -224,15 +224,15 @@ namespace SubZeroPOS.WPF.Views
 
             var items = NewTable();
             foreach (var item in order.Items)
-                AddRow(items, $"{item.Quantity} × {item.ItemName}", item.LineTotal.ToString("0.000"));
+                AddRow(items, $"{item.Quantity} × {item.ItemName}", item.LineTotal.ToString("#,##0"));
             if (order.HasDeliveryFee)
-                AddRow(items, "رسوم التوصيل", order.DeliveryFee.ToString("0.000"));
+                AddRow(items, "رسوم التوصيل", order.DeliveryFee.ToString("#,##0"));
             doc.Blocks.Add(items);
 
             doc.Blocks.Add(Divider());
 
             var totalTable = NewTable();
-            AddRow(totalTable, "الإجمالي", $"{order.TotalAmount:0.000} {order.CurrencySymbol}", bold: true);
+            AddRow(totalTable, "الإجمالي", $"{order.TotalAmount:#,##0} {order.CurrencySymbol}", bold: true);
             doc.Blocks.Add(totalTable);
 
             if (!string.IsNullOrWhiteSpace(order.FooterPrimary) || !string.IsNullOrWhiteSpace(order.FooterSecondary))
@@ -303,5 +303,7 @@ namespace SubZeroPOS.WPF.Views
 
             table.RowGroups[0].Rows.Add(row);
         }
+
+  
     }
 }

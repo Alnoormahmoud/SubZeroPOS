@@ -68,13 +68,13 @@ namespace SubZeroPOS.WPF.ViewModels
         private DateTime toDate = DateTime.Today;
 
         [ObservableProperty]
-        private string totalIncome = "0.000";
+        private string totalIncome = "0";
 
         [ObservableProperty]
-        private string totalExpenses = "0.000";
+        private string totalExpenses = "0";
 
         [ObservableProperty]
-        private string netProfit = "0.000";
+        private string netProfit = "0";
 
         [ObservableProperty]
         private string totalOrders = "0";
@@ -94,9 +94,9 @@ namespace SubZeroPOS.WPF.ViewModels
             {
                 var summary = await _reportService.GetSummaryAsync(FromDate, ToDate);
 
-                TotalIncome = summary.TotalIncome.ToString("0.000");
-                TotalExpenses = summary.TotalExpenses.ToString("0.000");
-                NetProfit = summary.NetProfit.ToString("0.000");
+                TotalIncome = summary.TotalIncome.ToString("#,##0");
+                TotalExpenses = summary.TotalExpenses.ToString("#,##0");
+                NetProfit = summary.NetProfit.ToString("#,##0");
                 TotalOrders = summary.TotalOrders.ToString();
 
                 ExpensesByCategory.Clear();

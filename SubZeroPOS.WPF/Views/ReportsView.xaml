@@ -125,31 +125,73 @@
                 </Grid>
 
                 <!-- Daily sales trend (bar chart) -->
-                <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="16" Margin="0,0,0,14">
-                    <StackPanel>
-                        <TextBlock Text="اتجاه المبيعات اليومي" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,14" />
-                        <ItemsControl ItemsSource="{Binding DailySalesChart}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Width="46" Margin="4,0,4,0" VerticalAlignment="Bottom">
-                                        <TextBlock Text="{Binding Total, StringFormat={}{0:0.0}}" Foreground="{StaticResource IceBlueBrush}"
-                                                   FontSize="9" HorizontalAlignment="Center" Margin="0,0,0,4" />
-                                        <Border Height="{Binding BarHeight}" Background="{StaticResource AccentRedBrush}"
-                                                CornerRadius="4,4,0,0" VerticalAlignment="Bottom" />
-                                        <TextBlock Text="{Binding DayLabel}" Foreground="{StaticResource TextSecondaryBrush}"
-                                                   FontSize="9" HorizontalAlignment="Center" Margin="0,4,0,0" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                </Border>
+                <!-- Daily sales trend (bar chart) -->
+                <Border Background="{StaticResource SurfaceBrush}"
+        BorderBrush="{StaticResource BorderBrush}"
+        BorderThickness="1"
+        CornerRadius="12"
+        Padding="16"
+        Margin="0,0,0,14">
 
+                    <StackPanel>
+
+                        <TextBlock Text="اتجاه المبيعات اليومي"
+                   Foreground="{StaticResource TextSecondaryBrush}"
+                   FontSize="13"
+                   Margin="0,0,0,14" />
+
+                        <!-- START SCROLL VIEWER -->
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Auto"
+                      MaxHeight="300">
+
+                            <!-- YOUR ITEMS CONTROL GOES HERE -->
+                            <ItemsControl ItemsSource="{Binding DailySalesChart}">
+
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+
+                                        <StackPanel Width="46"
+                                    Margin="4,0,4,0"
+                                    VerticalAlignment="Bottom">
+
+                                            <TextBlock Text="{Binding Total,
+                                      StringFormat={}{0:N0}}"
+                                       Foreground="{StaticResource IceBlueBrush}"
+                                       FontSize="9"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,4" />
+
+                                            <Border Height="{Binding BarHeight}"
+                                    Background="{StaticResource AccentRedBrush}"
+                                    CornerRadius="4,4,0,0"
+                                    VerticalAlignment="Bottom" />
+
+                                            <TextBlock Text="{Binding DayLabel}"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       FontSize="9"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,4,0,0" />
+
+                                        </StackPanel>
+
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+
+                            </ItemsControl>
+
+                        </ScrollViewer>
+                        <!-- END SCROLL VIEWER -->
+
+                    </StackPanel>
+
+                </Border>
                 <Grid Margin="0,0,0,14">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -178,7 +220,7 @@
                                                 <TextBlock Grid.Column="1" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11">
                                                     <Run Text="{Binding QuantitySold, Mode=OneWay}" />
                                                     <Run Text=" قطعة · " />
-                                                    <Run Text="{Binding TotalRevenue, StringFormat={}{0:#,##0.000}}" />
+                                                    <Run Text="{Binding TotalRevenue, StringFormat={}{0:N0}}" />
                                                 </TextBlock>
                                             </Grid>
                                             <Border Grid.Row="1" Height="8" Width="{Binding BarWidth}" HorizontalAlignment="Right"
@@ -211,7 +253,7 @@
                                                 <TextBlock Grid.Column="1" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11">
                                                     <Run Text="{Binding QuantitySold, Mode=OneWay}" />
                                                     <Run Text=" قطعة · " />
-                                                    <Run Text="{Binding TotalRevenue, StringFormat={}{0:#,##0.000}}" />
+                                                    <Run Text="{Binding TotalRevenue, StringFormat={}{0:N0}}" />
                                                 </TextBlock>
                                             </Grid>
                                             <Border Grid.Row="1" Height="8" Width="{Binding BarWidth}" HorizontalAlignment="Right"
@@ -255,7 +297,7 @@
                                                 <TextBlock Grid.Column="1" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11">
                                                     <Run Text="{Binding OrderCount, Mode=OneWay}" />
                                                     <Run Text=" طلب · " />
-                                                    <Run Text="{Binding TotalRevenue, StringFormat={}{0:#,##0.000}}" />
+                                                    <Run Text="{Binding TotalRevenue, StringFormat={}{0:N0}}" />
                                                 </TextBlock>
                                             </Grid>
                                             <Border Grid.Row="1" Height="8" Width="{Binding BarWidth}" HorizontalAlignment="Right"
@@ -280,7 +322,7 @@
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
                                             <TextBlock Grid.Column="0" Text="{Binding CategoryNameAr}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="13" />
-                                            <TextBlock Grid.Column="1" Text="{Binding Total, StringFormat={}{0:#,##0.000}}" Foreground="{StaticResource ExpenseBrush}" FontSize="13" />
+                                            <TextBlock Grid.Column="1" Text="{Binding Total, StringFormat={}{0:N0}}" Foreground="{StaticResource ExpenseBrush}" FontSize="13" />
                                         </Grid>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>

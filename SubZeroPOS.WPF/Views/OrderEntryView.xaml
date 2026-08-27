@@ -82,7 +82,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- Item grid: cards with image + name + price, wraps and reflows as window resizes -->
-            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,15,0">
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,10,0">
                 <ItemsControl ItemsSource="{Binding ItemsInCategory}" Margin="0,0,4,0">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -129,8 +129,8 @@
                                                 <StackPanel Grid.Row="1" Margin="8,6,8,8">
                                                     <TextBlock Text="{Binding ItemName}" Foreground="{StaticResource TextPrimaryBrush}"
                                                                FontSize="13" TextWrapping="Wrap" TextAlignment="Center" Margin="0,0,0,4" />
-                                                    <TextBlock Text="{Binding Price, StringFormat={}{0:#,##0.000}}"
-                                                               Foreground="{StaticResource IceBlueBrush}" FontSize="12" TextAlignment="Center" />
+                                                    
+                                                     <TextBlock Text="{Binding Price, StringFormat={}{0:N0}}" Foreground="{StaticResource IceBlueBrush}"  FontSize="12" TextAlignment="Center"   FlowDirection="LeftToRight" />
                                                 </StackPanel>
                                             </Grid>
                                         </Border>
@@ -177,8 +177,9 @@
 
                                             <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding ItemName}"
                                                        Foreground="{StaticResource TextPrimaryBrush}" FontSize="13" TextWrapping="Wrap" />
-                                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding LineTotal, StringFormat={}{0:#,##0.000}}"
-                                                       Foreground="{StaticResource IceBlueBrush}" FontSize="13" />
+                                        
+                                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding LineTotal, StringFormat={}{0:N0}}"
+                                            Foreground="{StaticResource IceBlueBrush}" FontSize="13" FlowDirection="LeftToRight" />
 
                                             <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                                                         Orientation="Horizontal" Margin="0,4,0,0">
@@ -219,6 +220,7 @@
                                 <TextBlock Text="رسوم التوصيل" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                                 <TextBox Text="{Binding DeliveryFeeText, UpdateSourceTrigger=PropertyChanged}"
                                          Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,10" />
+                                
                             </StackPanel>
 
                             <!-- Notes -->
@@ -245,8 +247,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="الإجمالي" Foreground="{StaticResource TextPrimaryBrush}"
                                        FontSize="15" FontWeight="Medium" />
-                            <TextBlock Grid.Column="1" Text="{Binding GrandTotal, StringFormat={}{0:#,##0.000}}"
-                                       Foreground="{StaticResource TextPrimaryBrush}" FontSize="15" FontWeight="Medium" />
+                             <TextBlock Grid.Column="1" Text="{Binding GrandTotal, StringFormat={}{0:N0}}"  Foreground="{StaticResource TextPrimaryBrush}" FontSize="15" FontWeight="Medium"           FlowDirection="LeftToRight" />
                         </Grid>
 
                         <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource IceBlueBrush}"

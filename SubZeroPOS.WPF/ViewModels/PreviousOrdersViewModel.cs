@@ -51,7 +51,7 @@ namespace SubZeroPOS.WPF.ViewModels
         private bool isBusy;
 
         [ObservableProperty]
-        private string totalForRange = "0.000";
+        private string totalForRange = "0";
 
         [ObservableProperty]
         private int currentPage = 1;
@@ -145,7 +145,7 @@ namespace SubZeroPOS.WPF.ViewModels
             }
 
             _filteredOrders = filtered.OrderByDescending(o => o.OrderDate).ToList();
-            TotalForRange = _filteredOrders.Sum(o => o.TotalAmount).ToString("0.000");
+            TotalForRange = _filteredOrders.Sum(o => o.TotalAmount).ToString("#,##0");
             TotalFilteredCount = _filteredOrders.Count;
 
             CurrentPage = 1; // any filter change resets to page 1

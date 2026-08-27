@@ -1,5 +1,4 @@
 using System.Windows.Controls;
-using System.Windows.Input;
 using SubZeroPOS.WPF.ViewModels;
 
 namespace SubZeroPOS.WPF.Views
@@ -10,7 +9,6 @@ namespace SubZeroPOS.WPF.Views
         {
             InitializeComponent();
             Loaded += LoginView_Loaded;
-
         }
 
         private void LoginView_Loaded(object sender, System.Windows.RoutedEventArgs e)
@@ -19,7 +17,7 @@ namespace SubZeroPOS.WPF.Views
             {
                 vm.LoadRememberedUsername();
             }
-            Keyboard.Focus(PasswordBox);
+           PasswordBox.Focus();
 
         }
 

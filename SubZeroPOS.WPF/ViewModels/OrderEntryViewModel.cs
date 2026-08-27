@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using SubZeroPOS.Core.DTOs;
 using SubZeroPOS.Core.Entities;
 using SubZeroPOS.Core.Interfaces;
+using System.Globalization;
 using SubZeroPOS.WPF.Session;
 
 namespace SubZeroPOS.WPF.ViewModels
@@ -83,8 +84,10 @@ namespace SubZeroPOS.WPF.ViewModels
             OnPropertyChanged(nameof(GrandTotal));
         }
 
+ 
+
         public decimal GrandTotal =>
-            CartTotal + (decimal.TryParse(DeliveryFeeText, out var fee) ? fee : 0);
+    CartTotal + (TryParseMoney(DeliveryFeeText, out var fee) ? fee : 0);
 
         public event Action<OrderInvoiceDto>? OrderCompleted;
 
@@ -249,18 +252,22 @@ namespace SubZeroPOS.WPF.ViewModels
                 return;
             }
 
+  
             decimal deliveryFee = 0;
-            if (IsDeliverySelected && !decimal.TryParse(DeliveryFeeText, out deliveryFee))
+
+            if (IsDeliverySelected &&
+                !TryParseMoney(DeliveryFeeText, out deliveryFee))
             {
                 StatusMessage = "الرجاء إدخال رسوم توصيل صحيحة";
                 return;
             }
-
             var confirmResult = System.Windows.MessageBox.Show(
-                $"هل أنت متأكد من إتمام الطلب بإجمالي {GrandTotal:0.000}؟",
+             $"هل أنت متأكد من إتمام الطلب بإجمالي {GrandTotal:N0}؟"
+,
                 "تأكيد الطلب",
                 System.Windows.MessageBoxButton.YesNo,
                 System.Windows.MessageBoxImage.Question);
+
 
             if (confirmResult != System.Windows.MessageBoxResult.Yes)
                 return;
@@ -332,6 +339,25 @@ namespace SubZeroPOS.WPF.ViewModels
             {
                 IsBusy = false;
             }
+        }
+        private static bool TryParseMoney(string? text, out decimal amount)
+        {
+            amount = 0;
+
+            if (string.IsNullOrWhiteSpace(text))
+                return true;
+
+            // Remove common thousands separators
+            text = text
+                .Trim()
+                .Replace(",", "")
+                .Replace("٬", "");
+
+            return decimal.TryParse(
+                text,
+                NumberStyles.Number,
+                CultureInfo.InvariantCulture,
+                out amount);
         }
     }
 }

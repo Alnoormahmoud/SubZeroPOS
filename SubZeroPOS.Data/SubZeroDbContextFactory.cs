@@ -16,8 +16,8 @@ namespace SubZeroPOS.Data
             var optionsBuilder = new DbContextOptionsBuilder<SubZeroDbContext>();
 
             // TODO: replace with your actual local SQL Server instance name
-            optionsBuilder.UseSqlServer(
-                "Server=.;Database=SubZeroPOS;Trusted_Connection=True;TrustServerCertificate=True;");
+            //optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=SubZeroPOS;Trusted_Connection=True;TrustServerCertificate=True;");
+            optionsBuilder.UseSqlServer("Server=.;Database=SubZeroPOS;Trusted_Connection=True;TrustServerCertificate=True;");
 
             return new SubZeroDbContext(optionsBuilder.Options);
         }

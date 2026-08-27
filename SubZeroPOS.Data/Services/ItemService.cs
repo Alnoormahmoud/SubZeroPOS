@@ -131,6 +131,18 @@ namespace SubZeroPOS.Data.Services
             return true;
         }
 
+        public async Task<bool> UpdateItemCategoryAsync(int itemId, int categoryId)
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+
+            var item = await context.Items.FindAsync(itemId);
+            if (item is null) return false;
+
+            item.CategoryId = categoryId;
+            await context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<bool> SetItemActiveAsync(int itemId, bool isActive)
         {
             await using var context = await _contextFactory.CreateDbContextAsync();
@@ -192,6 +204,19 @@ namespace SubZeroPOS.Data.Services
             context.Categories.Add(category);
             await context.SaveChangesAsync();
             return category;
+        }
+
+        public async Task<bool> UpdateCategoryAsync(int categoryId, string nameAr, string? nameEn)
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+
+            var category = await context.Categories.FindAsync(categoryId);
+            if (category is null) return false;
+
+            category.NameAr = nameAr;
+            category.NameEn = nameEn;
+            await context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<(bool Success, string? ErrorMessage)> DeleteCategoryAsync(int categoryId)
