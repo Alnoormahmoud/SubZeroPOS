@@ -6,7 +6,10 @@
              Background="{StaticResource BackgroundBrush}">
 
     <UserControl.Resources>
-        <converters:BoolToOpacityConverter x:Key="BoolToOpacityConverter"/>
+
+        <converters:BoolToOpacityConverter
+            x:Key="BoolToOpacityConverter"/>
+
     </UserControl.Resources>
 
     <Grid Margin="16">
@@ -215,7 +218,7 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Background="{StaticResource BackgroundBrush}" CornerRadius="8" Padding="10" Margin="0,0,0,8"
-                                        Opacity="{Binding IsActive, Converter={StaticResource BoolToOpacityConverter}}">
+                                            Opacity="{Binding IsActive, Converter={StaticResource BoolToOpacityConverter}}">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="48" />
@@ -333,10 +336,25 @@
                     <TextBlock Text="السعر" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                     <TextBox Text="{Binding EditItemPriceText, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
 
-                    <CheckBox Content="مفعّل" IsChecked="{Binding EditItemIsActive}" FlowDirection="LeftToRight" HorizontalAlignment="left"
-                              Foreground="{StaticResource TextSecondaryBrush}" FontSize="15" Margin="0,0,0,12" />
+                    <CheckBox Content="مفعّل" IsChecked="{Binding EditItemIsActive}" FlowDirection="LeftToRight" HorizontalAlignment="Left"
+                              Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,0,0,12" />
 
                     <TextBlock Text="صورة الصنف" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+
+                    <Border Width="90" Height="90" CornerRadius="10" ClipToBounds="True"
+                            HorizontalAlignment="Right" Margin="0,0,0,10">
+                        <Grid>
+                            <Image Source="{Binding EditItemImagePath, Converter={StaticResource ItemImagePathConverter}}" Stretch="UniformToFill"
+                                   Visibility="{Binding EditItemImagePath, Converter={StaticResource StringToVisibilityConverter}}" />
+                            <Border Background="{StaticResource AccentRedBrush}"
+                                    Visibility="{Binding EditItemHasNoImage, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <TextBlock Text="{Binding EditItemName}" Foreground="White" FontSize="11" FontWeight="Bold"
+                                           TextWrapping="Wrap" TextAlignment="Center" Margin="4"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.9" />
+                            </Border>
+                        </Grid>
+                    </Border>
+
                     <Grid Margin="0,0,0,16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />

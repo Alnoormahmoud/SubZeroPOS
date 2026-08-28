@@ -45,7 +45,7 @@
                 <DockPanel Margin="0,0,0,10" LastChildFill="False">
                     <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
                         <CheckBox IsChecked="{Binding RememberMe}" VerticalAlignment="Bottom"    FlowDirection="LeftToRight" HorizontalAlignment="left"/>
-                        <TextBlock Text="تذكرني" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"
+                        <TextBlock Text="تذكرني" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13"
                                    VerticalAlignment="Center" Margin="6,0,0,0" />
                     </StackPanel>
                 </DockPanel>

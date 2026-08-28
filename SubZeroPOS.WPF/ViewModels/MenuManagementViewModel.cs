@@ -56,7 +56,11 @@ namespace SubZeroPOS.WPF.ViewModels
         [ObservableProperty] private string editItemPriceText = string.Empty;
         [ObservableProperty] private Category? editItemCategory;
         [ObservableProperty] private bool editItemIsActive;
-        [ObservableProperty] private string? editItemImagePath; // current relative path shown as preview
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(EditItemHasNoImage))]
+        private string? editItemImagePath; // current relative path shown as preview
+
+        public bool EditItemHasNoImage => string.IsNullOrWhiteSpace(EditItemImagePath);
 
         // Category edit panel - same idea, kept separate from the add-category form.
         [ObservableProperty] private bool isCategoryEditOpen;
@@ -270,7 +274,7 @@ namespace SubZeroPOS.WPF.ViewModels
             EditingItem = item;
             EditItemName = item.ItemName;
             EditItemNameEn = item.NameEn ?? string.Empty;
-            EditItemPriceText = item.Price.ToString("0");
+            EditItemPriceText = item.Price.ToString("#,##0");
             EditItemCategory = System.Linq.Enumerable.FirstOrDefault(Categories, c => c.CategoryId == item.CategoryId);
             EditItemIsActive = item.IsActive;
             EditItemImagePath = item.ImagePath;

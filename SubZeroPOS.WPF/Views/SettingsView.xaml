@@ -64,7 +64,7 @@
 
                 <CheckBox Content="إظهار اسم الكاشير في الفاتورة" IsChecked="{Binding ShowCashierNameOnInvoice}"
                           FlowDirection="LeftToRight" HorizontalAlignment="left"
-                          Foreground="{StaticResource TextSecondaryBrush}" FontSize="15" Margin="0,0,0,20" />
+                          Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,20" />
 
                 <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,16" />
 
