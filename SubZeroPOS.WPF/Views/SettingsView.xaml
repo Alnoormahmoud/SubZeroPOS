@@ -66,7 +66,76 @@
                           FlowDirection="LeftToRight" HorizontalAlignment="left"
                           Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,20" />
 
-                <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,16" />
+                    <!-- ========================================= -->
+                    <!-- Printing and Invoice Settings -->
+                    <!-- ========================================= -->
+
+                    <Rectangle Height="1"
+           Fill="{StaticResource BorderBrush}"
+           Margin="0,0,0,16" />
+
+                    <TextBlock Text="إعدادات الطباعة والفاتورة"
+           Foreground="{StaticResource TextSecondaryBrush}"
+           FontSize="13"
+           FontWeight="SemiBold"
+           Margin="0,0,0,12" />
+
+                    <!-- Paper Width -->
+                    <TextBlock Text="حجم ورق الفاتورة"
+           Foreground="{StaticResource TextSecondaryBrush}"
+           FontSize="11"
+           Margin="0,0,0,4" />
+
+                    <ComboBox ItemsSource="{Binding ReceiptPaperSizes}"
+          SelectedItem="{Binding SelectedReceiptPaperSize}"
+          DisplayMemberPath="DisplayName"
+          Margin="0,0,0,16"
+          Padding="8" />
+
+
+                    <!-- Print Options -->
+
+                    <CheckBox Content="إظهار شعار المطعم في الفاتورة"
+          IsChecked="{Binding ShowLogoOnInvoice}"
+                          FlowDirection="LeftToRight" HorizontalAlignment="left"
+
+          Foreground="{StaticResource TextSecondaryBrush}"
+          FontSize="13"
+          Margin="0,0,0,20" />
+
+
+                    <CheckBox Content="إظهار رقم الطلب في الفاتورة"
+          IsChecked="{Binding ShowOrderNumberOnInvoice}"
+          FlowDirection="LeftToRight" HorizontalAlignment="left"
+          Foreground="{StaticResource TextSecondaryBrush}"
+          FontSize="13"
+          Margin="0,0,0,20" />
+
+
+                    <CheckBox Content="إظهار اسم الزبون في الفاتورة"
+          IsChecked="{Binding ShowCustomerNameOnInvoice}"
+          FlowDirection="LeftToRight" HorizontalAlignment="left"
+          Foreground="{StaticResource TextSecondaryBrush}"
+          FontSize="13"
+          Margin="0,0,0,20" />
+
+
+                    <CheckBox Content="الطباعة تلقائياً بعد حفظ الطلب"
+          IsChecked="{Binding AutoPrintReceipt}"
+          FlowDirection="LeftToRight" HorizontalAlignment="left"
+          Foreground="{StaticResource TextSecondaryBrush}"
+          FontSize="13"
+          Margin="0,0,0,20" />
+
+
+                    <CheckBox Content="فتح نسخة PDF بعد الطباعة"
+          IsChecked="{Binding OpenPdfAfterPrinting}"
+          FlowDirection="LeftToRight" HorizontalAlignment="left"
+          Foreground="{StaticResource TextSecondaryBrush}"
+          FontSize="13"
+          Margin="0,0,0,20" />
+
+                    <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,16" />
 
                 <TextBlock Text="نصوص الفاتورة" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
 

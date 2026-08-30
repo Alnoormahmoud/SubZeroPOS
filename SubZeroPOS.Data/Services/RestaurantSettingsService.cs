@@ -9,53 +9,150 @@ namespace SubZeroPOS.Data.Services
     {
         private readonly IDbContextFactory<SubZeroDbContext> _contextFactory;
 
-        public RestaurantSettingsService(IDbContextFactory<SubZeroDbContext> contextFactory)
+        public RestaurantSettingsService(
+            IDbContextFactory<SubZeroDbContext> contextFactory)
         {
             _contextFactory = contextFactory;
         }
 
+
         public async Task<RestaurantSettings> GetSettingsAsync()
         {
-            await using var context = await _contextFactory.CreateDbContextAsync();
+            await using var context =
+                await _contextFactory.CreateDbContextAsync();
 
-            var settings = await context.RestaurantSettings.FirstOrDefaultAsync();
-            if (settings != null) return settings;
+            var settings =
+                await context.RestaurantSettings.FirstOrDefaultAsync();
 
-            // No row yet (fresh install) - create sensible defaults so the
-            // invoice/settings screen always has something to show and edit.
+            if (settings != null)
+                return settings;
+
+
+            // ==========================================
+            // Fresh installation defaults
+            // ==========================================
+
             settings = new RestaurantSettings
             {
                 RestaurantName = "سوب زيرو",
-                InvoiceFooterPrimary = "شكراً لزيارتكم",
-                InvoiceFooterSecondary = null
+
+                InvoiceFooterPrimary =
+                    "شكراً لزيارتكم",
+
+                InvoiceFooterSecondary = null,
+
+                CurrencyCode = "SDG",
+                CurrencySymbol = "ج.س",
+
+                DateFormat = "yyyy-MM-dd HH:mm",
+
+                ShowCashierNameOnInvoice = true,
+
+                ShowLogoOnInvoice = true,
+
+                ShowOrderNumberOnInvoice = true,
+
+                ShowCustomerNameOnInvoice = true,
+
+                ReceiptPaperWidthMm = 80,
+
+                AutoPrintReceipt = false,
+
+                OpenPdfAfterPrinting = false
             };
+
             context.RestaurantSettings.Add(settings);
+
             await context.SaveChangesAsync();
 
             return settings;
         }
 
-        public async Task SaveSettingsAsync(RestaurantSettings settings)
-        {
-            await using var context = await _contextFactory.CreateDbContextAsync();
 
-            var existing = await context.RestaurantSettings.FirstOrDefaultAsync();
+        public async Task SaveSettingsAsync(
+            RestaurantSettings settings)
+        {
+            await using var context =
+                await _contextFactory.CreateDbContextAsync();
+
+            var existing =
+                await context.RestaurantSettings.FirstOrDefaultAsync();
+
+
+            // ==========================================
+            // First settings record
+            // ==========================================
+
             if (existing is null)
             {
                 context.RestaurantSettings.Add(settings);
             }
+
+            // ==========================================
+            // Update existing settings
+            // ==========================================
+
             else
             {
-                existing.RestaurantName = settings.RestaurantName;
-                existing.Phone = settings.Phone;
-                existing.Address = settings.Address;
-                existing.InvoiceFooterPrimary = settings.InvoiceFooterPrimary;
-                existing.InvoiceFooterSecondary = settings.InvoiceFooterSecondary;
-                existing.CurrencyCode = settings.CurrencyCode;
-                existing.CurrencySymbol = settings.CurrencySymbol;
-                existing.DateFormat = settings.DateFormat;
-                existing.ShowCashierNameOnInvoice = settings.ShowCashierNameOnInvoice;
+                // Restaurant information
+                existing.RestaurantName =
+                    settings.RestaurantName;
+
+                existing.Phone =
+                    settings.Phone;
+
+                existing.Address =
+                    settings.Address;
+
+
+                // Invoice footer
+                existing.InvoiceFooterPrimary =
+                    settings.InvoiceFooterPrimary;
+
+                existing.InvoiceFooterSecondary =
+                    settings.InvoiceFooterSecondary;
+
+
+                // Currency
+                existing.CurrencyCode =
+                    settings.CurrencyCode;
+
+                existing.CurrencySymbol =
+                    settings.CurrencySymbol;
+
+
+                // Date
+                existing.DateFormat =
+                    settings.DateFormat;
+
+
+                // Invoice display
+                existing.ShowCashierNameOnInvoice =
+                    settings.ShowCashierNameOnInvoice;
+
+                existing.ShowLogoOnInvoice =
+                    settings.ShowLogoOnInvoice;
+
+                existing.ShowOrderNumberOnInvoice =
+                    settings.ShowOrderNumberOnInvoice;
+
+                existing.ShowCustomerNameOnInvoice =
+                    settings.ShowCustomerNameOnInvoice;
+
+
+                // Paper
+                existing.ReceiptPaperWidthMm =
+                    settings.ReceiptPaperWidthMm;
+
+
+                // Printing behavior
+                existing.AutoPrintReceipt =
+                    settings.AutoPrintReceipt;
+
+                existing.OpenPdfAfterPrinting =
+                    settings.OpenPdfAfterPrinting;
             }
+
 
             await context.SaveChangesAsync();
         }

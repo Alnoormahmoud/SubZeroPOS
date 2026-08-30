@@ -19,7 +19,13 @@ namespace SubZeroPOS.WPF.Views
             InitializeComponent();
         }
 
-        private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        // =========================================================
+        // DATA CONTEXT
+        // =========================================================
+
+        private void OnDataContextChanged(
+            object sender,
+            DependencyPropertyChangedEventArgs e)
         {
             if (DataContext is OrderInvoiceViewModel vm)
             {
@@ -27,283 +33,1043 @@ namespace SubZeroPOS.WPF.Views
             }
         }
 
+        // =========================================================
+        // PRINT RECEIPT
+        // =========================================================
+
         private void PrintReceipt()
         {
-            if (DataContext is not OrderInvoiceViewModel vm || vm.Order is null) return;
+            if (DataContext is not OrderInvoiceViewModel vm ||
+                vm.Order is null)
+            {
+                return;
+            }
 
             var printDialog = new PrintDialog();
-            if (printDialog.ShowDialog() != true) return;
 
+            if (printDialog.ShowDialog() != true)
+                return;
+
+            // Build the professional RTL receipt.
             var document = BuildReceiptDocument(vm.Order);
 
-            // Previous attempt used VisualTreeHelper.GetDescendantBounds() on a
-            // paginator page - that always returns the full requested PageSize,
-            // not the actual ink extent, so it didn't fix the blank-space issue.
-            // Measuring via a FlowDocumentScrollViewer with infinite available
-            // height gives the document's true natural content height.
-            double measuredHeight = MeasureDocumentHeight(document, document.PageWidth);
-            document.PageHeight = measuredHeight + 16;
+            // Measure the natural height of the document.
+            double measuredHeight =
+                MeasureDocumentHeight(
+                    document,
+                    document.PageWidth);
 
-            IDocumentPaginatorSource paginatorSource = document;
-            printDialog.PrintDocument(paginatorSource.DocumentPaginator, "فاتورة ساب زيرو");
+            document.PageHeight =
+                measuredHeight + 16;
 
-            // Also save a real PDF copy and open it, so the person can confirm
-            // what was printed immediately, in a normal PDF viewer (Edge).
-            // We deliberately do NOT ask PdfSharp to draw the Arabic text
-            // itself - PdfSharp has no Arabic glyph-shaping support, so hand-
-            // drawn Arabic text would render as disconnected/incorrect
-            // characters. Instead we rasterize the SAME on-screen receipt
-            // (ReceiptBorder), which WPF already renders with fully correct
-            // Arabic shaping, and embed that image into the PDF page. This
-            // guarantees the PDF looks identical to what's on screen.
-            // Wrapped in try/catch since this is a convenience feature only -
-            // failure here should never block or break the actual print,
-            // which already succeeded above.
-            try
+            // Print.
+            IDocumentPaginatorSource paginatorSource =
+                document;
+
+            printDialog.PrintDocument(
+                paginatorSource.DocumentPaginator,
+                "فاتورة ساب زيرو");
+
+            // Open PDF only if enabled in settings.
+            if (vm.Order.OpenPdfAfterPrinting)
             {
-                OpenReceiptAsPdf(vm.Order.OrderId);
-            }
-            catch
-            {
-                // Non-critical - the actual print already succeeded above.
+                try
+                {
+                    OpenReceiptAsPdf(vm.Order);
+                }
+                catch
+                {
+                    // PDF generation is optional.
+                    // Printing has already succeeded.
+                }
             }
         }
 
-        private void OpenReceiptAsPdf(int orderId)
+        // =========================================================
+        // PDF
+        // =========================================================
+
+        private void OpenReceiptAsPdf(OrderInvoiceDto order)
         {
             ReceiptBorder.UpdateLayout();
 
             double width = ReceiptBorder.ActualWidth;
             double height = ReceiptBorder.ActualHeight;
-            if (width <= 0 || height <= 0) return;
+
+            if (width <= 0 || height <= 0)
+                return;
 
             double dpiScale = 2.0;
-            int pixelWidth = (int)(width * dpiScale);
-            int pixelHeight = (int)(height * dpiScale);
 
-            var renderBitmap = new RenderTargetBitmap(
-                pixelWidth, pixelHeight, 96 * dpiScale, 96 * dpiScale, PixelFormats.Pbgra32);
+            int pixelWidth =
+                (int)(width * dpiScale);
+
+            int pixelHeight =
+                (int)(height * dpiScale);
+
+            var renderBitmap =
+                new RenderTargetBitmap(
+                    pixelWidth,
+                    pixelHeight,
+                    96 * dpiScale,
+                    96 * dpiScale,
+                    PixelFormats.Pbgra32);
+
             renderBitmap.Render(ReceiptBorder);
 
-            // Encode to PNG bytes so PdfSharp's XImage can read it.
+            // Convert WPF visual to PNG.
             var encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
+
+            encoder.Frames.Add(
+                BitmapFrame.Create(renderBitmap));
+
             byte[] pngBytes;
+
             using (var ms = new MemoryStream())
             {
                 encoder.Save(ms);
                 pngBytes = ms.ToArray();
             }
 
-            using var pdfDocument = new PdfDocument();
-            var page = pdfDocument.AddPage();
+            using var pdfDocument =
+                new PdfDocument();
 
-            // WPF's ActualWidth/Height are in device-independent pixels
-            // (1/96 inch). PDF points are 1/72 inch, so convert: pt = dip * 0.75.
-            page.Width = XUnit.FromPoint(width * 0.75);
-            page.Height = XUnit.FromPoint(height * 0.75);
+            var page =
+                pdfDocument.AddPage();
 
-            using var gfx = XGraphics.FromPdfPage(page);
-            using var imageStream = new MemoryStream(pngBytes);
-            var ximage = XImage.FromStream(imageStream);
-            gfx.DrawImage(ximage, 0, 0, page.Width.Point, page.Height.Point);
+            // WPF uses DIP (96 DPI).
+            // PDF uses points (72 DPI).
+            page.Width =
+                XUnit.FromPoint(width * 0.75);
 
-            string tempPath = Path.Combine(Path.GetTempPath(), $"SubZero_Invoice_{orderId}.pdf");
+            page.Height =
+                XUnit.FromPoint(height * 0.75);
+
+            using var gfx =
+                XGraphics.FromPdfPage(page);
+
+            using var imageStream =
+                new MemoryStream(pngBytes);
+
+            var ximage =
+                XImage.FromStream(imageStream);
+
+            gfx.DrawImage(
+                ximage,
+                0,
+                0,
+                page.Width.Point,
+                page.Height.Point);
+
+            string tempPath =
+                Path.Combine(
+                    Path.GetTempPath(),
+                    $"SubZero_Invoice_{order.OrderId}.pdf");
+
             if (File.Exists(tempPath))
                 File.Delete(tempPath);
+
             pdfDocument.Save(tempPath);
 
-            // Try to open explicitly in Microsoft Edge (common install paths).
-            // Falls back to the OS default PDF handler if Edge isn't found -
-            // this never throws, so it can't break the print flow above.
+            // Open PDF.
             string[] possibleEdgePaths =
             {
                 @"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
                 @"C:\Program Files\Microsoft\Edge\Application\msedge.exe"
             };
 
-            string? edgePath = Array.Find(possibleEdgePaths, File.Exists);
+            string? edgePath =
+                Array.Find(
+                    possibleEdgePaths,
+                    File.Exists);
 
             if (edgePath != null)
             {
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(edgePath, $"\"{tempPath}\"")
-                {
-                    UseShellExecute = true
-                });
+                System.Diagnostics.Process.Start(
+                    new System.Diagnostics.ProcessStartInfo(
+                        edgePath,
+                        $"\"{tempPath}\"")
+                    {
+                        UseShellExecute = true
+                    });
             }
             else
             {
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(tempPath)
-                {
-                    UseShellExecute = true
-                });
+                System.Diagnostics.Process.Start(
+                    new System.Diagnostics.ProcessStartInfo(
+                        tempPath)
+                    {
+                        UseShellExecute = true
+                    });
             }
         }
 
-        private static double MeasureDocumentHeight(FlowDocument doc, double width)
+        // =========================================================
+        // MEASURE DOCUMENT
+        // =========================================================
+
+        private static double MeasureDocumentHeight(
+            FlowDocument doc,
+            double width)
         {
-            var host = new FlowDocumentScrollViewer
-            {
-                Document = doc,
-                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
-                VerticalScrollBarVisibility = ScrollBarVisibility.Disabled
-            };
+            var host =
+                new FlowDocumentScrollViewer
+                {
+                    Document = doc,
 
-            host.Measure(new Size(width, double.PositiveInfinity));
-            double height = host.DesiredSize.Height;
+                    HorizontalScrollBarVisibility =
+                        ScrollBarVisibility.Disabled,
 
-            // Release the document from this temporary host so it can be
-            // reassigned to the print paginator afterward - a FlowDocument can
-            // only be "owned" by one container at a time.
+                    VerticalScrollBarVisibility =
+                        ScrollBarVisibility.Disabled
+                };
+
+            host.Measure(
+                new Size(
+                    width,
+                    double.PositiveInfinity));
+
+            double height =
+                host.DesiredSize.Height;
+
+            // Release the document.
             host.Document = null;
 
             return height;
         }
 
-        private FlowDocument BuildReceiptDocument(OrderInvoiceDto order)
+        // =========================================================
+        // BUILD RECEIPT
+        // =========================================================
+
+        private FlowDocument BuildReceiptDocument(
+            OrderInvoiceDto order)
         {
-            var doc = new FlowDocument
-            {
-                FlowDirection = FlowDirection.RightToLeft,
-                FontFamily = new FontFamily("Segoe UI"),
-                FontSize = 13,
-                PagePadding = new Thickness(16),
-                PageWidth = 320,
-                ColumnWidth = 320
-            };
+            // 58mm receipt ≈ 232 DIP
+            // 80mm receipt ≈ 302 DIP
+            double pageWidth =
+                order.ReceiptPaperWidthMm <= 58
+                    ? 232
+                    : 302;
 
-            // Logo, if the file exists next to the exe - printing shouldn't
-            // fail just because the logo is missing on a fresh install.
-            // Uses the full lockup (icon + Arabic + English name already
-            // baked into the image) to match the on-screen invoice exactly -
-            // so no separate restaurant-name text line is needed below it.
-            try
-            {
-                var logoUri = new Uri("pack://siteoforigin:,,,/Images/Branding/logo.png", UriKind.Absolute);
-                var logoBitmap = new System.Windows.Media.Imaging.BitmapImage(logoUri);
-                var logoImage = new System.Windows.Controls.Image
+            var doc =
+                new FlowDocument
                 {
-                    Source = logoBitmap,
-                    Width = 140,
-                    Stretch = Stretch.Uniform
+                    FlowDirection =
+                        FlowDirection.RightToLeft,
+
+                    FontFamily =
+                        new FontFamily("Segoe UI"),
+
+                    FontSize = 12,
+
+                    PagePadding =
+                        new Thickness(
+                            10,
+                            12,
+                            10,
+                            12),
+
+                    PageWidth =
+                        pageWidth,
+
+                    ColumnWidth =
+                        pageWidth,
+
+                    TextAlignment =
+                        TextAlignment.Right
                 };
-                var logoContainer = new BlockUIContainer(logoImage)
-                {
-                    TextAlignment = TextAlignment.Center,
-                    Margin = new Thickness(0, 0, 0, 8)
-                };
-                doc.Blocks.Add(logoContainer);
-            }
-            catch
+
+            // =====================================================
+            // LOGO
+            // =====================================================
+
+            if (order.ShowLogoOnInvoice)
             {
-                // Logo file missing/unreadable - fall back to plain text name
-                // so the receipt still identifies the restaurant.
-                doc.Blocks.Add(Centered(order.RestaurantName, 17, FontWeights.Bold));
+                try
+                {
+                    var logoUri =
+                        new Uri(
+                            "pack://siteoforigin:,,,/Images/Branding/logo.png",
+                            UriKind.Absolute);
+
+                    var logoBitmap =
+                        new BitmapImage(logoUri);
+
+                    var logoImage =
+                        new Image
+                        {
+                            Source = logoBitmap,
+
+                            Width =
+                                order.ReceiptPaperWidthMm <= 58
+                                    ? 115
+                                    : 140,
+
+                            Stretch =
+                                Stretch.Uniform
+                        };
+
+                    var logoContainer =
+                        new BlockUIContainer(
+                            logoImage)
+                        {
+                            TextAlignment =
+                                TextAlignment.Center,
+
+                            Margin =
+                                new Thickness(
+                                    0,
+                                    0,
+                                    0,
+                                    6)
+                        };
+
+                    doc.Blocks.Add(
+                        logoContainer);
+                }
+                catch
+                {
+                    // If logo doesn't exist,
+                    // show restaurant name instead.
+                    doc.Blocks.Add(
+                        Centered(
+                            order.RestaurantName,
+                            17,
+                            FontWeights.Bold));
+                }
+            }
+            else
+            {
+                doc.Blocks.Add(
+                    Centered(
+                        order.RestaurantName,
+                        17,
+                        FontWeights.Bold));
             }
 
-            if (!string.IsNullOrWhiteSpace(order.RestaurantAddress))
-                doc.Blocks.Add(Centered(order.RestaurantAddress, 11, FontWeights.Normal, Brushes.Gray));
-            if (!string.IsNullOrWhiteSpace(order.RestaurantPhone))
-                doc.Blocks.Add(Centered(order.RestaurantPhone, 11, FontWeights.Normal, Brushes.Gray, bottomMargin: 10));
+            // =====================================================
+            // RESTAURANT ADDRESS
+            // =====================================================
 
-            doc.Blocks.Add(Divider());
+            if (!string.IsNullOrWhiteSpace(
+                    order.RestaurantAddress))
+            {
+                doc.Blocks.Add(
+                    Centered(
+                        order.RestaurantAddress,
+                        10,
+                        FontWeights.Normal,
+                        Brushes.Gray));
+            }
 
-            // Meta info as simple right-aligned "label: value" lines instead of
-            // a 2-column table - the table approach produced uneven, off-center
-            // spacing since columns auto-sized to content rather than the full
-            // page width.
+            // =====================================================
+            // RESTAURANT PHONE
+            // =====================================================
+
+            if (!string.IsNullOrWhiteSpace(
+                    order.RestaurantPhone))
+            {
+                doc.Blocks.Add(
+                    Centered(
+                        order.RestaurantPhone,
+                        10,
+                        FontWeights.Normal,
+                        Brushes.Gray,
+                        8));
+            }
+
+            // =====================================================
+            // TOP SEPARATOR
+            // =====================================================
+
+            doc.Blocks.Add(
+                Divider());
+
+            // =====================================================
+            // INVOICE TITLE
+            // =====================================================
+
+            doc.Blocks.Add(
+                Centered(
+                    "فاتورة بيع",
+                    16,
+                    FontWeights.Bold,
+                    Brushes.Black,
+                    8));
+
+            // =====================================================
+            // ORDER DETAILS
+            //
+            // Everything starts from the RIGHT.
+            // Labels and values have the same bold styling.
+            // =====================================================
+
+            if (order.ShowOrderNumberOnInvoice)
+            {
+                AddLine(
+                    doc,
+                    "رقم الفاتورة",
+                    order.OrderId.ToString());
+            }
+
             if (order.ShowCashierName)
-                AddLine(doc, "الكاشير", order.CashierName);
-            AddLine(doc, "التاريخ والوقت", order.OrderDateFormatted);
-            AddLine(doc, "نوع الطلب", order.OrderTypeNameAr);
-            if (!string.IsNullOrWhiteSpace(order.CustomerName))
-                AddLine(doc, "اسم الزبون", order.CustomerName);
-            AddLine(doc, "طريقة الدفع", order.PaymentMethodNameAr);
-
-            doc.Blocks.Add(Divider());
-
-            var items = NewTable();
-            foreach (var item in order.Items)
-                AddRow(items, $"{item.Quantity} × {item.ItemName}", item.LineTotal.ToString("#,##0"));
-            if (order.HasDeliveryFee)
-                AddRow(items, "رسوم التوصيل", order.DeliveryFee.ToString("#,##0"));
-            doc.Blocks.Add(items);
-
-            doc.Blocks.Add(Divider());
-
-            var totalTable = NewTable();
-            AddRow(totalTable, "الإجمالي", $"{order.TotalAmount:#,##0} {order.CurrencySymbol}", bold: true);
-            doc.Blocks.Add(totalTable);
-
-            if (!string.IsNullOrWhiteSpace(order.FooterPrimary) || !string.IsNullOrWhiteSpace(order.FooterSecondary))
             {
-                doc.Blocks.Add(Divider());
-                if (!string.IsNullOrWhiteSpace(order.FooterPrimary))
-                    doc.Blocks.Add(Centered(order.FooterPrimary, 13, FontWeights.Medium));
-                if (!string.IsNullOrWhiteSpace(order.FooterSecondary))
-                    doc.Blocks.Add(Centered(order.FooterSecondary, 10, FontWeights.Normal, Brushes.Gray));
+                AddLine(
+                    doc,
+                    "الكاشير",
+                    order.CashierName);
+            }
+
+            AddLine(
+                doc,
+                "التاريخ والوقت",
+                order.OrderDateFormatted);
+
+            AddLine(
+                doc,
+                "نوع الطلب",
+                order.OrderTypeNameAr);
+
+            if (order.ShowCustomerNameOnInvoice &&
+                !string.IsNullOrWhiteSpace(
+                    order.CustomerName))
+            {
+                AddLine(
+                    doc,
+                    "اسم الزبون",
+                    order.CustomerName);
+            }
+
+            AddLine(
+                doc,
+                "طريقة الدفع",
+                order.PaymentMethodNameAr);
+
+            // =====================================================
+            // IMPORTANT SEPARATOR
+            //
+            // This is the line between:
+            // Order details
+            // and
+            // Items
+            // =====================================================
+
+            doc.Blocks.Add(
+                Divider());
+
+            // =====================================================
+            // ITEMS TITLE
+            // =====================================================
+
+            doc.Blocks.Add(
+                Centered(
+                    "تفاصيل الطلب",
+                    13,
+                    FontWeights.Bold,
+                    Brushes.Black,
+                    6));
+
+            // =====================================================
+            // ITEMS TABLE
+            // =====================================================
+
+            var itemsTable =
+                CreateItemsTable(order);
+
+            doc.Blocks.Add(
+                itemsTable);
+
+            // =====================================================
+            // DELIVERY FEE
+            // =====================================================
+
+            if (order.HasDeliveryFee)
+            {
+                doc.Blocks.Add(
+                    Divider());
+
+                AddAmountLine(
+                    doc,
+                    "رسوم التوصيل",
+                    order.DeliveryFee,
+                    order.CurrencySymbol);
+            }
+
+            // =====================================================
+            // TOTAL
+            // =====================================================
+
+            doc.Blocks.Add(
+                Divider());
+
+            AddTotalLine(
+                doc,
+                "الإجمالي",
+                order.TotalAmount,
+                order.CurrencySymbol);
+
+            // =====================================================
+            // NOTES
+            // =====================================================
+
+            if (!string.IsNullOrWhiteSpace(
+                    order.Notes))
+            {
+                doc.Blocks.Add(
+                    Divider());
+
+                doc.Blocks.Add(
+                    RightAlignedText(
+                        "ملاحظات",
+                        11,
+                        FontWeights.Bold,
+                        Brushes.Black,
+                        2));
+
+                doc.Blocks.Add(
+                    RightAlignedText(
+                        order.Notes,
+                        10,
+                        FontWeights.Normal,
+                        Brushes.Black,
+                        6));
+            }
+
+            // =====================================================
+            // FOOTER
+            // =====================================================
+
+            if (!string.IsNullOrWhiteSpace(
+                    order.FooterPrimary) ||
+                !string.IsNullOrWhiteSpace(
+                    order.FooterSecondary))
+            {
+                doc.Blocks.Add(
+                    Divider());
+
+                if (!string.IsNullOrWhiteSpace(
+                        order.FooterPrimary))
+                {
+                    doc.Blocks.Add(
+                        Centered(
+                            order.FooterPrimary,
+                            12,
+                            FontWeights.Bold,
+                            Brushes.Black,
+                            3));
+                }
+
+                if (!string.IsNullOrWhiteSpace(
+                        order.FooterSecondary))
+                {
+                    doc.Blocks.Add(
+                        Centered(
+                            order.FooterSecondary,
+                            9,
+                            FontWeights.Normal,
+                            Brushes.Gray,
+                            3));
+                }
             }
 
             return doc;
         }
 
-        private static void AddLine(FlowDocument doc, string label, string value)
+        // =========================================================
+        // ORDER DETAIL LINE
+        //
+        // Example:
+        //
+        // رقم الفاتورة: 105
+        // الكاشير: أحمد
+        // نوع الطلب: سفري
+        //
+        // All aligned to the RIGHT.
+        // =========================================================
+
+        private static void AddLine(
+            FlowDocument doc,
+            string label,
+            string value)
         {
-            var p = new Paragraph { TextAlignment = TextAlignment.Right, FontSize = 11, Margin = new Thickness(0, 0, 0, 3) };
-            p.Inlines.Add(new Run($"{label}: ") { Foreground = Brushes.Gray });
-            p.Inlines.Add(new Run(value) { Foreground = Brushes.Black });
-            doc.Blocks.Add(p);
+            var paragraph =
+                new Paragraph
+                {
+                    FlowDirection =
+                        FlowDirection.RightToLeft,
+
+                    TextAlignment =
+                        TextAlignment.Right,
+
+                    FontSize = 11,
+
+                    Margin =
+                        new Thickness(
+                            0,
+                            0,
+                            0,
+                            4)
+                };
+
+            paragraph.Inlines.Add(
+                new Run(
+                    label + ": ")
+                {
+                    FontWeight =
+                        FontWeights.Bold,
+
+                    Foreground =
+                        Brushes.Black
+                });
+
+            paragraph.Inlines.Add(
+                new Run(
+                    value ?? string.Empty)
+                {
+                    FontWeight =
+                        FontWeights.Bold,
+
+                    Foreground =
+                        Brushes.Black
+                });
+
+            doc.Blocks.Add(
+                paragraph);
         }
 
-        private static Paragraph Centered(string text, double size, FontWeight weight, Brush? foreground = null, double bottomMargin = 2)
+        // =========================================================
+        // ITEMS TABLE
+        //
+        // RTL layout:
+        //
+        // الصنف | الكمية | السعر | الإجمالي
+        //
+        // =========================================================
+
+        private static Table CreateItemsTable(
+            OrderInvoiceDto order)
         {
-            return new Paragraph(new Run(text))
+            var table =
+                new Table
+                {
+                    FlowDirection =
+                        FlowDirection.RightToLeft,
+
+                    CellSpacing = 0,
+
+                    TextAlignment =
+                        TextAlignment.Right
+                };
+
+            // -----------------------------------------------------
+            // COLUMN WIDTHS
+            // -----------------------------------------------------
+
+            table.Columns.Add(
+                new TableColumn
+                {
+                    Width =
+                        new GridLength(
+                            1.5,
+                            GridUnitType.Star)
+                });
+
+            table.Columns.Add(
+                new TableColumn
+                {
+                    Width =
+                        new GridLength(
+                            0.8,
+                            GridUnitType.Star)
+                });
+
+            table.Columns.Add(
+                new TableColumn
+                {
+                    Width =
+                        new GridLength(
+                            0.8,
+                            GridUnitType.Star)
+                });
+
+            table.Columns.Add(
+                new TableColumn
+                {
+                    Width =
+                        new GridLength(
+                            1.2,
+                            GridUnitType.Star)
+                });
+
+            var group =
+                new TableRowGroup();
+
+            table.RowGroups.Add(
+                group);
+
+            // =====================================================
+            // HEADER
+            // =====================================================
+
+            var header =
+                new TableRow
+                {
+                    Background =
+                        Brushes.LightGray
+                };
+
+            header.Cells.Add(
+                CreateCell(
+                    "الصنف",
+                    true,
+                    TextAlignment.Right));
+
+            header.Cells.Add(
+                CreateCell(
+                    "الكمية",
+                    true,
+                    TextAlignment.Center));
+
+            header.Cells.Add(
+                CreateCell(
+                    "السعر",
+                    true,
+                    TextAlignment.Center));
+
+            header.Cells.Add(
+                CreateCell(
+                    "الإجمالي",
+                    true,
+                    TextAlignment.Left));
+
+            group.Rows.Add(
+                header);
+
+            // =====================================================
+            // ITEMS
+            // =====================================================
+
+            foreach (var item in order.Items)
             {
-                TextAlignment = TextAlignment.Center,
-                FontSize = size,
-                FontWeight = weight,
-                Foreground = foreground ?? Brushes.Black,
-                Margin = new Thickness(0, 0, 0, bottomMargin)
+                var row =
+                    new TableRow();
+
+                row.Cells.Add(
+                    CreateCell(
+                        item.ItemName,
+                        false,
+                        TextAlignment.Right));
+
+                row.Cells.Add(
+                    CreateCell(
+                        item.Quantity.ToString(),
+                        false,
+                        TextAlignment.Center));
+
+                row.Cells.Add(
+                    CreateCell(
+                        item.UnitPrice.ToString(
+                            "#,##0"),
+                        false,
+                        TextAlignment.Center));
+
+                row.Cells.Add(
+                    CreateCell(
+                        item.LineTotal.ToString(
+                            "#,##0"),
+                        false,
+                        TextAlignment.Left));
+
+                group.Rows.Add(
+                    row);
+            }
+
+            return table;
+        }
+
+        // =========================================================
+        // TABLE CELL
+        // =========================================================
+
+        private static TableCell CreateCell(
+            string text,
+            bool header,
+            TextAlignment alignment)
+        {
+            var paragraph =
+                new Paragraph(
+                    new Run(text))
+                {
+                    FlowDirection =
+                        FlowDirection.RightToLeft,
+
+                    TextAlignment =
+                        alignment,
+
+                    FontSize =
+                        header
+                            ? 9.5
+                            : 10.5,
+
+                    FontWeight =
+                        header
+                            ? FontWeights.Bold
+                            : FontWeights.Normal,
+
+                    Margin =
+                        new Thickness(
+                            2,
+                            3,
+                            2,
+                            3)
+                };
+
+            return new TableCell(
+                paragraph)
+            {
+                FlowDirection =
+                    FlowDirection.RightToLeft,
+
+                TextAlignment =
+                    alignment,
+
+                BorderBrush =
+                    Brushes.LightGray,
+
+                BorderThickness =
+                    new Thickness(
+                        0,
+                        0,
+                        0,
+                        0.5)
             };
         }
+
+        // =========================================================
+        // AMOUNT LINE
+        // =========================================================
+
+        private static void AddAmountLine(
+            FlowDocument doc,
+            string label,
+            decimal amount,
+            string currency)
+        {
+            var paragraph =
+                new Paragraph
+                {
+                    FlowDirection =
+                        FlowDirection.RightToLeft,
+
+                    TextAlignment =
+                        TextAlignment.Right,
+
+                    FontSize = 11,
+
+                    FontWeight =
+                        FontWeights.Bold,
+
+                    Margin =
+                        new Thickness(
+                            0,
+                            0,
+                            0,
+                            5)
+                };
+
+            paragraph.Inlines.Add(
+                new Run(
+                    label + ": ")
+                {
+                    FontWeight =
+                        FontWeights.Bold,
+
+                    Foreground =
+                        Brushes.Black
+                });
+
+            paragraph.Inlines.Add(
+                new Run(
+                    $"{amount:#,##0} {currency}")
+                {
+                    FontWeight =
+                        FontWeights.Bold,
+
+                    Foreground =
+                        Brushes.Black
+                });
+
+            doc.Blocks.Add(
+                paragraph);
+        }
+
+        // =========================================================
+        // TOTAL
+        // =========================================================
+
+        private static void AddTotalLine(
+            FlowDocument doc,
+            string label,
+            decimal amount,
+            string currency)
+        {
+            var paragraph =
+                new Paragraph
+                {
+                    FlowDirection =
+                        FlowDirection.RightToLeft,
+
+                    TextAlignment =
+                        TextAlignment.Right,
+
+                    FontSize = 16,
+
+                    FontWeight =
+                        FontWeights.Bold,
+
+                    Margin =
+                        new Thickness(
+                            0,
+                            4,
+                            0,
+                            8)
+                };
+
+            paragraph.Inlines.Add(
+                new Run(
+                    label + ": ")
+                {
+                    FontWeight =
+                        FontWeights.Bold
+                });
+
+            paragraph.Inlines.Add(
+                new Run(
+                    $"{amount:#,##0} {currency}")
+                {
+                    FontWeight =
+                        FontWeights.Bold
+                });
+
+            doc.Blocks.Add(
+                paragraph);
+        }
+
+        // =========================================================
+        // RIGHT-ALIGNED TEXT
+        // =========================================================
+
+        private static Paragraph RightAlignedText(
+            string text,
+            double fontSize,
+            FontWeight fontWeight,
+            Brush foreground,
+            double bottomMargin = 3)
+        {
+            return new Paragraph(
+                new Run(text))
+            {
+                FlowDirection =
+                    FlowDirection.RightToLeft,
+
+                TextAlignment =
+                    TextAlignment.Right,
+
+                FontSize =
+                    fontSize,
+
+                FontWeight =
+                    fontWeight,
+
+                Foreground =
+                    foreground,
+
+                Margin =
+                    new Thickness(
+                        0,
+                        0,
+                        0,
+                        bottomMargin)
+            };
+        }
+
+        // =========================================================
+        // CENTERED TEXT
+        // =========================================================
+
+        private static Paragraph Centered(
+            string text,
+            double size,
+            FontWeight weight,
+            Brush? foreground = null,
+            double bottomMargin = 2)
+        {
+            return new Paragraph(
+                new Run(text))
+            {
+                FlowDirection =
+                    FlowDirection.RightToLeft,
+
+                TextAlignment =
+                    TextAlignment.Center,
+
+                FontSize =
+                    size,
+
+                FontWeight =
+                    weight,
+
+                Foreground =
+                    foreground ??
+                    Brushes.Black,
+
+                Margin =
+                    new Thickness(
+                        0,
+                        0,
+                        0,
+                        bottomMargin)
+            };
+        }
+
+        // =========================================================
+        // SEPARATOR
+        // =========================================================
 
         private static Paragraph Divider()
         {
             return new Paragraph
             {
-                BorderBrush = Brushes.LightGray,
-                BorderThickness = new Thickness(0, 0, 0, 1),
-                Margin = new Thickness(0, 6, 0, 6)
+                FlowDirection =
+                    FlowDirection.RightToLeft,
+
+                BorderBrush =
+                    Brushes.Gray,
+
+                BorderThickness =
+                    new Thickness(
+                        0,
+                        0,
+                        0,
+                        1),
+
+                Margin =
+                    new Thickness(
+                        0,
+                        7,
+                        0,
+                        7),
+
+                Padding =
+                    new Thickness(0)
             };
         }
 
-        private static Table NewTable()
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var table = new Table();
-            // Star widths force the table to span the FULL page width with
-            // proportional columns - fixing the "not centered/aligned" look
-            // that Auto-width columns produced (they shrink-wrapped to content
-            // instead of spanning evenly).
-            table.Columns.Add(new TableColumn { Width = new GridLength(1, GridUnitType.Star) });
-            table.Columns.Add(new TableColumn { Width = new GridLength(1, GridUnitType.Star) });
-            table.RowGroups.Add(new TableRowGroup());
-            return table;
+
         }
-
-        private static void AddRow(Table table, string label, string value, bool bold = false)
-        {
-            var row = new TableRow();
-            var weight = bold ? FontWeights.Bold : FontWeights.Normal;
-            var size = bold ? 15.0 : 12.0;
-
-            row.Cells.Add(new TableCell(new Paragraph(new Run(label)) { FontSize = size, FontWeight = weight })
-            { TextAlignment = TextAlignment.Right });
-            row.Cells.Add(new TableCell(new Paragraph(new Run(value)) { FontSize = size, FontWeight = weight, Foreground = bold ? Brushes.Black : Brushes.DarkSlateGray })
-            { TextAlignment = TextAlignment.Left });
-
-            table.RowGroups[0].Rows.Add(row);
-        }
-
-  
     }
 }
+ 

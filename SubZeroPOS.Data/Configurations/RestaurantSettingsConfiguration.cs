@@ -4,13 +4,18 @@ using SubZeroPOS.Core.Entities;
 
 namespace SubZeroPOS.Data.Configurations
 {
-    public class RestaurantSettingsConfiguration : IEntityTypeConfiguration<RestaurantSettings>
+    public class RestaurantSettingsConfiguration
+        : IEntityTypeConfiguration<RestaurantSettings>
     {
         public void Configure(EntityTypeBuilder<RestaurantSettings> builder)
         {
             builder.ToTable("RestaurantSettings");
 
             builder.HasKey(s => s.SettingsId);
+
+            // ==========================================
+            // Restaurant information
+            // ==========================================
 
             builder.Property(s => s.RestaurantName)
                 .IsRequired()
@@ -25,6 +30,11 @@ namespace SubZeroPOS.Data.Configurations
                 .HasMaxLength(300)
                 .IsUnicode(true);
 
+
+            // ==========================================
+            // Invoice footer
+            // ==========================================
+
             builder.Property(s => s.InvoiceFooterPrimary)
                 .HasMaxLength(200)
                 .IsUnicode(true);
@@ -32,6 +42,11 @@ namespace SubZeroPOS.Data.Configurations
             builder.Property(s => s.InvoiceFooterSecondary)
                 .HasMaxLength(300)
                 .IsUnicode(true);
+
+
+            // ==========================================
+            // Currency
+            // ==========================================
 
             builder.Property(s => s.CurrencyCode)
                 .IsRequired()
@@ -45,15 +60,59 @@ namespace SubZeroPOS.Data.Configurations
                 .IsUnicode(true)
                 .HasDefaultValue("ج.س");
 
+
+            // ==========================================
+            // Date format
+            // ==========================================
+
             builder.Property(s => s.DateFormat)
                 .IsRequired()
-                .HasMaxLength(30)
+                .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasDefaultValue("yyyy-MM-dd HH:mm");
+
+
+            // ==========================================
+            // Invoice display settings
+            // ==========================================
 
             builder.Property(s => s.ShowCashierNameOnInvoice)
                 .IsRequired()
                 .HasDefaultValue(true);
+
+            builder.Property(s => s.ShowLogoOnInvoice)
+                .IsRequired()
+                .HasDefaultValue(true);
+
+            builder.Property(s => s.ShowOrderNumberOnInvoice)
+                .IsRequired()
+                .HasDefaultValue(true);
+
+            builder.Property(s => s.ShowCustomerNameOnInvoice)
+                .IsRequired()
+                .HasDefaultValue(true);
+
+
+            // ==========================================
+            // Paper settings
+            // ==========================================
+
+            builder.Property(s => s.ReceiptPaperWidthMm)
+                .IsRequired()
+                .HasDefaultValue(80);
+
+
+            // ==========================================
+            // Printing behavior
+            // ==========================================
+
+            builder.Property(s => s.AutoPrintReceipt)
+                .IsRequired()
+                .HasDefaultValue(false);
+
+            builder.Property(s => s.OpenPdfAfterPrinting)
+                .IsRequired()
+                .HasDefaultValue(false);
         }
     }
 }

@@ -21,10 +21,16 @@
             <StackPanel>
 
                 <!-- Restaurant logo (full lockup - icon + name already baked into the image) -->
-                <Image Source="pack://siteoforigin:,,,/Images/Branding/logo.png" Stretch="Uniform"
-                       Width="180" HorizontalAlignment="Center" Margin="0,0,0,10" />
+               
+                    <Image Source="pack://siteoforigin:,,,/Images/Branding/logo.png"
+       Stretch="Uniform"
+       Width="180"
+       HorizontalAlignment="Center"
+       Margin="0,0,0,10"
+       Visibility="{Binding Order.ShowLogoOnInvoice,
+                            Converter={StaticResource BoolToVisibilityConverter}}" />
 
-                <!-- Restaurant info -->
+                    <!-- Restaurant info -->
                 <TextBlock Text="{Binding Order.RestaurantAddress}" Foreground="{StaticResource TextSecondaryBrush}"
                            FontSize="11" HorizontalAlignment="Center" TextWrapping="Wrap"
                            Visibility="{Binding Order.RestaurantAddress, Converter={StaticResource StringToVisibilityConverter}}" Margin="0,0,0,2" />
@@ -42,12 +48,18 @@
                                HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Border>
                 <TextBlock Text="تم حفظ الطلب بنجاح" Foreground="{StaticResource TextPrimaryBrush}"
-                           FontSize="17" FontWeight="Medium" HorizontalAlignment="Center" Margin="0,0,0,4" />
-                <TextBlock Text="{Binding Order.OrderId, StringFormat='رقم الطلب: {0}'}"
-                           Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"
-                           HorizontalAlignment="Center" Margin="0,0,0,16" />
+                           FontSize="17" FontWeight="Medium" HorizontalAlignment="Center" Margin="0, 2,0,8" />
+           
+                    <TextBlock Text="{Binding Order.OrderId,
+                  StringFormat='رقم الطلب: {0}'}"
+           Foreground="{StaticResource TextSecondaryBrush}"
+           FontSize="12"
+           HorizontalAlignment="Center"
+           Margin="0,0,0,16"
+           Visibility="{Binding Order.ShowOrderNumberOnInvoice,
+                                Converter={StaticResource BoolToVisibilityConverter}}" />
 
-                <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,14" />
+                    <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,14" />
 
                 <Grid Margin="0,0,0,4" Visibility="{Binding Order.ShowCashierName, Converter={StaticResource BoolToVisibilityConverter}}">
                     <Grid.ColumnDefinitions>
@@ -74,12 +86,14 @@
                     <TextBlock Grid.Column="0" Text="نوع الطلب" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
                     <TextBlock Grid.Column="1" Text="{Binding Order.OrderTypeNameAr}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
                 </Grid>
-                <Grid Margin="0,0,0,4" Visibility="{Binding Order.CustomerName, Converter={StaticResource StringToVisibilityConverter}}">
-                    <Grid.ColumnDefinitions>
+                <Grid Margin="0,0,0,4" Visibility="{Binding Order.ShouldShowCustomerName,
+                           Converter={StaticResource BoolToVisibilityConverter}}">
+                            <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="اسم الزبون" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                    
                     <TextBlock Grid.Column="1" Text="{Binding Order.CustomerName}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
                 </Grid>
                 <Grid Margin="0,0,0,14">
@@ -93,27 +107,138 @@
 
                 <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,10" />
 
-                <ItemsControl ItemsSource="{Binding Order.Items}" Margin="0,0,0,10">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Margin="0,0,0,6">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Foreground="{StaticResource TextPrimaryBrush}" FontSize="13" TextWrapping="Wrap">
-                                    <Run Text="{Binding Quantity, Mode=OneWay}" />
-                                    <Run Text=" × " />
-                                    <Run Text="{Binding ItemName, Mode=OneWay}" />
-                                </TextBlock>
-                                    <TextBlock Grid.Column="1" Text="{Binding LineTotal, StringFormat={}{0:N0}}"
-                                           Foreground="{StaticResource IceBlueBrush}" FontSize="13" />
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                    <StackPanel Margin="0,0,0,10">
 
-                <Grid Margin="0,0,0,6" Visibility="{Binding Order.HasDeliveryFee, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <!-- Table header -->
+                        <Grid Margin="0,0,0,6">
+
+                            <Grid.ColumnDefinitions>
+
+                                <!-- Item -->
+                                <ColumnDefinition Width="*" />
+
+                                <!-- Quantity -->
+                                <ColumnDefinition Width="55" />
+
+                                <!-- Unit price -->
+                                <ColumnDefinition Width="70" />
+
+                                <!-- Total -->
+                                <ColumnDefinition Width="75" />
+
+                            </Grid.ColumnDefinitions>
+
+
+                            <TextBlock Grid.Column="0"
+               Text="الصنف"
+               FontSize="11"
+               FontWeight="Bold"
+               Foreground="{StaticResource TextSecondaryBrush}" />
+
+
+                            <TextBlock Grid.Column="1"
+               Text="الكمية"
+               FontSize="11"
+               FontWeight="Bold"
+               Foreground="{StaticResource TextSecondaryBrush}"
+               HorizontalAlignment="Center" />
+
+
+                            <TextBlock Grid.Column="2"
+               Text="السعر"
+               FontSize="11"
+               FontWeight="Bold"
+               Foreground="{StaticResource TextSecondaryBrush}"
+               HorizontalAlignment="Center" />
+
+
+                            <TextBlock Grid.Column="3"
+               Text="الإجمالي"
+               FontSize="11"
+               FontWeight="Bold"
+               Foreground="{StaticResource TextSecondaryBrush}"
+               HorizontalAlignment="Left" />
+
+                        </Grid>
+
+
+                        <Rectangle Height="1"
+           Fill="{StaticResource BorderBrush}"
+           Margin="0,0,0,8" />
+
+
+                        <!-- Items -->
+                        <ItemsControl ItemsSource="{Binding Order.Items}">
+
+                            <ItemsControl.ItemTemplate>
+
+                                <DataTemplate>
+
+                                    <Grid Margin="0,0,0,8">
+
+                                        <Grid.ColumnDefinitions>
+
+                                            <ColumnDefinition Width="*" />
+
+                                            <ColumnDefinition Width="55" />
+
+                                            <ColumnDefinition Width="70" />
+
+                                            <ColumnDefinition Width="75" />
+
+                                        </Grid.ColumnDefinitions>
+
+
+                                        <!-- Item name -->
+
+                                        <TextBlock Grid.Column="0"
+                           Text="{Binding ItemName}"
+                           FontSize="12"
+                           Foreground="{StaticResource TextPrimaryBrush}"
+                           TextWrapping="Wrap" />
+
+
+                                        <!-- Quantity -->
+
+                                        <TextBlock Grid.Column="1"
+                           Text="{Binding Quantity}"
+                           FontSize="12"
+                           Foreground="{StaticResource TextPrimaryBrush}"
+                           HorizontalAlignment="Center" />
+
+
+                                        <!-- Unit price -->
+
+                                        <TextBlock Grid.Column="2"
+                           Text="{Binding UnitPrice,
+                                          StringFormat={}{0:N0}}"
+                           FontSize="12"
+                           Foreground="{StaticResource TextPrimaryBrush}"
+                           HorizontalAlignment="Center" />
+
+
+                                        <!-- Line total -->
+
+                                        <TextBlock Grid.Column="3"
+                           Text="{Binding LineTotal,
+                                          StringFormat={}{0:N0}}"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource IceBlueBrush}"
+                           HorizontalAlignment="Left" />
+
+                                    </Grid>
+
+                                </DataTemplate>
+
+                            </ItemsControl.ItemTemplate>
+
+                        </ItemsControl>
+
+                    </StackPanel>
+
+
+                    <Grid Margin="0,0,0,6" Visibility="{Binding Order.HasDeliveryFee, Converter={StaticResource BoolToVisibilityConverter}}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
@@ -174,7 +299,7 @@
                 </Button>
 
                 <Button Content="طلب جديد" Command="{Binding NewOrderCommand}"
-                        Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,0,8" />
+                        Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,0,8" Click="Button_Click" />
 
                 <Button Content="{Binding BackButtonLabel}" Command="{Binding GoBackCommand}"
                         Background="Transparent"

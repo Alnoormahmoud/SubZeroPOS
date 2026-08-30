@@ -15,9 +15,8 @@ namespace SubZeroPOS.WPF
         // TODO: move this to appsettings.json once the project is stable.
         // For now it's centralized here so it's the one place to edit
         // when deploying to your friend's machine.
-        //     private const string ConnectionString =            "Server=.\\SQLEXPRESS;Database=SubZeroPOS;Trusted_Connection=True;TrustServerCertificate=True;";
-        private const string ConnectionString =
-           "Server=.;Database=SubZeroPOS;Trusted_Connection=True;TrustServerCertificate=True;";
+      //  private const string ConnectionString =            "Server=.\\SQLEXPRESS;Database=SubZeroPOS;Trusted_Connection=True;TrustServerCertificate=True;";
+        private const string ConnectionString =           "Server=.;Database=SubZeroPOS;Trusted_Connection=True;TrustServerCertificate=True;";
 
 
         private IHost? _host;
@@ -41,13 +40,14 @@ namespace SubZeroPOS.WPF
                         options.UseSqlServer(ConnectionString));
 
                     // Services (Core interface -> Data implementation)
-                    services.AddScoped<IAuthService, AuthService>();
-                    services.AddScoped<IItemService, ItemService>();
-                    services.AddScoped<IOrderService, OrderService>();
-                    services.AddScoped<IExpenseService, ExpenseService>();
-                    services.AddScoped<IRestaurantSettingsService, RestaurantSettingsService>();
-                    services.AddScoped<IUserService, UserService>();
-                    services.AddScoped<IReportService, ReportService>();
+
+                    services.AddTransient<IAuthService, AuthService>();
+                    services.AddTransient<IItemService, ItemService>();
+                    services.AddTransient<IOrderService, OrderService>();
+                    services.AddTransient<IExpenseService, ExpenseService>();
+                    services.AddTransient<IRestaurantSettingsService, RestaurantSettingsService>();
+                    services.AddTransient<IUserService, UserService>();
+                    services.AddTransient<IReportService, ReportService>();
 
                     // ViewModels
                     services.AddTransient<LoginViewModel>();

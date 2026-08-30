@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -11,129 +12,479 @@ namespace SubZeroPOS.WPF.ViewModels
     public partial class SettingsViewModel : ObservableObject
     {
         private readonly IRestaurantSettingsService _settingsService;
+
         private int _settingsId;
 
-        public SettingsViewModel(IRestaurantSettingsService settingsService)
+
+        public SettingsViewModel(
+            IRestaurantSettingsService settingsService)
         {
             _settingsService = settingsService;
 
-            Currencies = new ObservableCollection<CurrencyOption>
-            {
-                new() { Code = "SDG", Symbol = "ج.س" }, // Sudanese Pound - default
-                new() { Code = "USD", Symbol = "$" },
-                new() { Code = "SAR", Symbol = "ر.س" },
-                new() { Code = "EGP", Symbol = "ج.م" },
-                new() { Code = "AED", Symbol = "د.إ" }
-            };
 
-            DateFormats = new ObservableCollection<DateFormatOption>
-            {
-                new() { FormatString = "yyyy-MM-dd HH:mm" },        // 2026-08-10 14:30
-                new() { FormatString = "dd/MM/yyyy hh:mm" },         // 10/08/2026 14:30
-                new() { FormatString = "dd-MM-yyyy hh:mm tt" },      // 10-08-2026 02:30 PM
-                new() { FormatString = "MMM dd, yyyy HH:mm" },       // Aug 10, 2026 14:30
-                new() { FormatString = "yyyy/MM/dd hh:mm" },         // 2026/08/10 14:30
-                new() { FormatString = "dd/MM/yyyy hh:mm tt" },      // 10/08/2026 02:30 PM
-                new() { FormatString = "MM/dd/yyyy hh:mm" },         // 08/10/2026 14:30 (US style)
-                new() { FormatString = "dd MMMM yyyy - hh:mm" },     // 10 August 2026 - 14:30
-                new() { FormatString = "yyyy-MM-dd" },               // 2026-08-10 (date only)
-                new() { FormatString = "dd/MM/yyyy" },               // 10/08/2026 (date only)
-                new() { FormatString = "hh:mm - dd/MM/yyyy" },       // 14:30 - 10/08/2026 (time first)
-            };
+            // ==========================================
+            // Currency options
+            // ==========================================
+
+            Currencies =
+                new ObservableCollection<CurrencyOption>
+                {
+                    new()
+                    {
+                        Code = "SDG",
+                        Symbol = "ج.س"
+                    },
+
+                    new()
+                    {
+                        Code = "USD",
+                        Symbol = "$"
+                    },
+
+                    new()
+                    {
+                        Code = "SAR",
+                        Symbol = "ر.س"
+                    },
+
+                    new()
+                    {
+                        Code = "EGP",
+                        Symbol = "ج.م"
+                    },
+
+                    new()
+                    {
+                        Code = "AED",
+                        Symbol = "د.إ"
+                    }
+                };
+
+
+            // ==========================================
+            // Date formats
+            // ==========================================
+
+            DateFormats =
+                new ObservableCollection<DateFormatOption>
+                {
+                    new()
+                    {
+                        FormatString = "yyyy-MM-dd HH:mm"
+                    },
+
+                    new()
+                    {
+                        FormatString = "dd/MM/yyyy hh:mm"
+                    },
+
+                    new()
+                    {
+                        FormatString = "dd-MM-yyyy hh:mm tt"
+                    },
+
+                    new()
+                    {
+                        FormatString = "MMM dd, yyyy HH:mm"
+                    },
+
+                    new()
+                    {
+                        FormatString = "yyyy/MM/dd hh:mm"
+                    },
+
+                    new()
+                    {
+                        FormatString = "dd/MM/yyyy hh:mm tt"
+                    },
+
+                    new()
+                    {
+                        FormatString = "MM/dd/yyyy hh:mm"
+                    },
+
+                    new()
+                    {
+                        FormatString = "dd MMMM yyyy - hh:mm"
+                    },
+
+                    new()
+                    {
+                        FormatString = "yyyy-MM-dd"
+                    },
+
+                    new()
+                    {
+                        FormatString = "dd/MM/yyyy"
+                    },
+
+                    new()
+                    {
+                        FormatString = "hh:mm - dd/MM/yyyy"
+                    }
+                };
+
+
+            // ==========================================
+            // Receipt paper sizes
+            // ==========================================
+
+            ReceiptPaperSizes =
+                new ObservableCollection<ReceiptPaperSizeOption>
+                {
+                    new()
+                    {
+                        DisplayName = "58 mm",
+                        WidthMillimeters = 58
+                    },
+
+                    new()
+                    {
+                        DisplayName = "80 mm",
+                        WidthMillimeters = 80
+                    }
+                };
         }
 
-        public ObservableCollection<CurrencyOption> Currencies { get; }
-        public ObservableCollection<DateFormatOption> DateFormats { get; }
+
+        // ==============================================
+        // Collections
+        // ==============================================
+
+        public ObservableCollection<CurrencyOption>
+            Currencies
+        {
+            get;
+        }
+
+
+        public ObservableCollection<DateFormatOption>
+            DateFormats
+        {
+            get;
+        }
+
+
+        public ObservableCollection<ReceiptPaperSizeOption>
+            ReceiptPaperSizes
+        {
+            get;
+        }
+
+
+        // ==============================================
+        // Restaurant information
+        // ==============================================
 
         [ObservableProperty]
         private string restaurantName = string.Empty;
 
+
         [ObservableProperty]
         private string phone = string.Empty;
+
 
         [ObservableProperty]
         private string address = string.Empty;
 
+
+        // ==============================================
+        // Invoice footer
+        // ==============================================
+
         [ObservableProperty]
         private string invoiceFooterPrimary = string.Empty;
+
 
         [ObservableProperty]
         private string invoiceFooterSecondary = string.Empty;
 
+
+        // ==============================================
+        // Currency
+        // ==============================================
+
         [ObservableProperty]
         private CurrencyOption? selectedCurrency;
+
+
+        // ==============================================
+        // Date format
+        // ==============================================
 
         [ObservableProperty]
         private DateFormatOption? selectedDateFormat;
 
+
+        // ==============================================
+        // Paper size
+        // ==============================================
+
+        [ObservableProperty]
+        private ReceiptPaperSizeOption?
+            selectedReceiptPaperSize;
+
+
+        // ==============================================
+        // Invoice display settings
+        // ==============================================
+
         [ObservableProperty]
         private bool showCashierNameOnInvoice = true;
+
+
+        [ObservableProperty]
+        private bool showLogoOnInvoice = true;
+
+
+        [ObservableProperty]
+        private bool showOrderNumberOnInvoice = true;
+
+
+        [ObservableProperty]
+        private bool showCustomerNameOnInvoice = true;
+
+
+        // ==============================================
+        // Printing behavior
+        // ==============================================
+
+        [ObservableProperty]
+        private bool autoPrintReceipt;
+
+
+        [ObservableProperty]
+        private bool openPdfAfterPrinting;
+
+
+        // ==============================================
+        // UI state
+        // ==============================================
 
         [ObservableProperty]
         private string statusMessage = string.Empty;
 
+
         [ObservableProperty]
         private bool isBusy;
 
+
+        // ==============================================
+        // Navigation event
+        // ==============================================
+
         public event Action? BackRequested;
+
+
+        // ==============================================
+        // Load settings
+        // ==============================================
 
         public async Task InitializeAsync()
         {
             IsBusy = true;
+
             try
             {
-                var settings = await _settingsService.GetSettingsAsync();
-                _settingsId = settings.SettingsId;
-                RestaurantName = settings.RestaurantName;
-                Phone = settings.Phone ?? string.Empty;
-                Address = settings.Address ?? string.Empty;
-                InvoiceFooterPrimary = settings.InvoiceFooterPrimary ?? string.Empty;
-                InvoiceFooterSecondary = settings.InvoiceFooterSecondary ?? string.Empty;
-                ShowCashierNameOnInvoice = settings.ShowCashierNameOnInvoice;
+                var settings =
+                    await _settingsService.GetSettingsAsync();
 
-                SelectedCurrency = System.Linq.Enumerable.FirstOrDefault(Currencies, c => c.Code == settings.CurrencyCode)
+
+                _settingsId =
+                    settings.SettingsId;
+
+
+                // Restaurant information
+                RestaurantName =
+                    settings.RestaurantName;
+
+                Phone =
+                    settings.Phone
+                    ?? string.Empty;
+
+                Address =
+                    settings.Address
+                    ?? string.Empty;
+
+
+                // Invoice footer
+                InvoiceFooterPrimary =
+                    settings.InvoiceFooterPrimary
+                    ?? string.Empty;
+
+                InvoiceFooterSecondary =
+                    settings.InvoiceFooterSecondary
+                    ?? string.Empty;
+
+
+                // Currency
+                SelectedCurrency =
+                    Currencies.FirstOrDefault(
+                        c => c.Code == settings.CurrencyCode)
                     ?? Currencies[0];
 
-                SelectedDateFormat = System.Linq.Enumerable.FirstOrDefault(DateFormats, d => d.FormatString == settings.DateFormat)
+
+                // Date format
+                SelectedDateFormat =
+                    DateFormats.FirstOrDefault(
+                        d => d.FormatString
+                             == settings.DateFormat)
                     ?? DateFormats[0];
+
+
+                // Invoice display
+                ShowCashierNameOnInvoice =
+                    settings.ShowCashierNameOnInvoice;
+
+                ShowLogoOnInvoice =
+                    settings.ShowLogoOnInvoice;
+
+                ShowOrderNumberOnInvoice =
+                    settings.ShowOrderNumberOnInvoice;
+
+                ShowCustomerNameOnInvoice =
+                    settings.ShowCustomerNameOnInvoice;
+
+
+                // Paper size
+                SelectedReceiptPaperSize =
+                    ReceiptPaperSizes.FirstOrDefault(
+                        p => p.WidthMillimeters
+                             == settings.ReceiptPaperWidthMm)
+                    ?? ReceiptPaperSizes.Last();
+
+
+                // Printing behavior
+                AutoPrintReceipt =
+                    settings.AutoPrintReceipt;
+
+                OpenPdfAfterPrinting =
+                    settings.OpenPdfAfterPrinting;
+
+
+                StatusMessage = string.Empty;
+            }
+            catch (Exception ex)
+            {
+                StatusMessage =
+                    $"حدث خطأ أثناء تحميل الإعدادات: {ex.Message}";
             }
             finally
             {
                 IsBusy = false;
             }
         }
+
+
+        // ==============================================
+        // Save settings
+        // ==============================================
 
         [RelayCommand]
         private async Task SaveAsync()
         {
             if (string.IsNullOrWhiteSpace(RestaurantName))
             {
-                StatusMessage = "الرجاء إدخال اسم المطعم";
+                StatusMessage =
+                    "الرجاء إدخال اسم المطعم";
+
                 return;
             }
 
+
             IsBusy = true;
+
+
             try
             {
-                await _settingsService.SaveSettingsAsync(new RestaurantSettings
-                {
-                    SettingsId = _settingsId,
-                    RestaurantName = RestaurantName,
-                    Phone = string.IsNullOrWhiteSpace(Phone) ? null : Phone,
-                    Address = string.IsNullOrWhiteSpace(Address) ? null : Address,
-                    InvoiceFooterPrimary = string.IsNullOrWhiteSpace(InvoiceFooterPrimary) ? null : InvoiceFooterPrimary,
-                    InvoiceFooterSecondary = string.IsNullOrWhiteSpace(InvoiceFooterSecondary) ? null : InvoiceFooterSecondary,
-                    CurrencyCode = SelectedCurrency?.Code ?? "SDG",
-                    CurrencySymbol = SelectedCurrency?.Symbol ?? "ج.س",
-                    DateFormat = SelectedDateFormat?.FormatString ?? "yyyy-MM-dd HH:mm",
-                    ShowCashierNameOnInvoice = ShowCashierNameOnInvoice
-                });
+                await _settingsService.SaveSettingsAsync(
+                    new RestaurantSettings
+                    {
+                        SettingsId = _settingsId,
 
-                StatusMessage = "تم حفظ الإعدادات بنجاح";
+
+                        // Restaurant information
+                        RestaurantName =
+                            RestaurantName.Trim(),
+
+                        Phone =
+                            string.IsNullOrWhiteSpace(Phone)
+                                ? null
+                                : Phone.Trim(),
+
+                        Address =
+                            string.IsNullOrWhiteSpace(Address)
+                                ? null
+                                : Address.Trim(),
+
+
+                        // Invoice footer
+                        InvoiceFooterPrimary =
+                            string.IsNullOrWhiteSpace(
+                                InvoiceFooterPrimary)
+                                ? null
+                                : InvoiceFooterPrimary.Trim(),
+
+                        InvoiceFooterSecondary =
+                            string.IsNullOrWhiteSpace(
+                                InvoiceFooterSecondary)
+                                ? null
+                                : InvoiceFooterSecondary.Trim(),
+
+
+                        // Currency
+                        CurrencyCode =
+                            SelectedCurrency?.Code
+                            ?? "SDG",
+
+                        CurrencySymbol =
+                            SelectedCurrency?.Symbol
+                            ?? "ج.س",
+
+
+                        // Date format
+                        DateFormat =
+                            SelectedDateFormat?.FormatString
+                            ?? "yyyy-MM-dd HH:mm",
+
+
+                        // Invoice display
+                        ShowCashierNameOnInvoice =
+                            ShowCashierNameOnInvoice,
+
+                        ShowLogoOnInvoice =
+                            ShowLogoOnInvoice,
+
+                        ShowOrderNumberOnInvoice =
+                            ShowOrderNumberOnInvoice,
+
+                        ShowCustomerNameOnInvoice =
+                            ShowCustomerNameOnInvoice,
+
+
+                        // Paper size
+                        ReceiptPaperWidthMm =
+                            SelectedReceiptPaperSize
+                                ?.WidthMillimeters
+                            ?? 80,
+
+
+                        // Printing behavior
+                        AutoPrintReceipt =
+                            AutoPrintReceipt,
+
+                        OpenPdfAfterPrinting =
+                            OpenPdfAfterPrinting
+                    });
+
+
+                StatusMessage =
+                    "تم حفظ الإعدادات بنجاح";
             }
             catch (Exception ex)
             {
-                StatusMessage = $"حدث خطأ: {ex.Message}";
+                StatusMessage =
+                    $"حدث خطأ: {ex.Message}";
             }
             finally
             {
@@ -141,7 +492,15 @@ namespace SubZeroPOS.WPF.ViewModels
             }
         }
 
+
+        // ==============================================
+        // Back navigation
+        // ==============================================
+
         [RelayCommand]
-        private void Back() => BackRequested?.Invoke();
+        private void Back()
+        {
+            BackRequested?.Invoke();
+        }
     }
 }

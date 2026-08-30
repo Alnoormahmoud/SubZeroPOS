@@ -76,7 +76,7 @@ namespace SubZeroPOS.WPF.ViewModels
         private PaymentMethodOption? selectedPaymentMethod;
 
         // Shows/hides the delivery-fee field based on selected order type
-        public bool IsDeliverySelected => SelectedOrderType?.TypeCode == "Delivery";
+        public bool IsDeliverySelected => SelectedOrderType?.TypeCode == "DELIVERY";
 
         partial void OnSelectedOrderTypeChanged(OrderType? value)
         {
@@ -299,25 +299,113 @@ namespace SubZeroPOS.WPF.ViewModels
 
                 var invoice = new OrderInvoiceDto
                 {
-                    OrderId = createdOrder.OrderId,
+// ==========================================
+// Order information
+// ==========================================
+
+ OrderId = createdOrder.OrderId,
+
                     OrderDate = createdOrder.OrderDate,
+
                     CashierName = CurrentSession.FullName,
+
                     OrderTypeNameAr = SelectedOrderType.NameAr,
+
                     CustomerName = dto.CustomerName,
+
                     Notes = dto.Notes,
+
                     DeliveryFee = dto.DeliveryFee,
-                    PaymentMethodNameAr = SelectedPaymentMethod.NameAr,
-                    TotalAmount = createdOrder.TotalAmount,
-                    Items = dto.Items,
-                    RestaurantName = restaurantSettings.RestaurantName,
-                    RestaurantPhone = restaurantSettings.Phone,
-                    RestaurantAddress = restaurantSettings.Address,
-                    FooterPrimary = restaurantSettings.InvoiceFooterPrimary,
-                    FooterSecondary = restaurantSettings.InvoiceFooterSecondary,
-                    CurrencySymbol = restaurantSettings.CurrencySymbol,
-                    DateFormat = restaurantSettings.DateFormat,
-                    ShowCashierName = restaurantSettings.ShowCashierNameOnInvoice
+
+                    PaymentMethodNameAr =
+                    SelectedPaymentMethod.NameAr,
+
+                    TotalAmount =
+                    createdOrder.TotalAmount,
+
+                    Items =
+                    dto.Items,
+
+
+                    // ==========================================
+                    // Restaurant information
+                    // ==========================================
+
+                    RestaurantName =
+                    restaurantSettings.RestaurantName,
+
+                    RestaurantPhone =
+                    restaurantSettings.Phone,
+
+                    RestaurantAddress =
+                    restaurantSettings.Address,
+
+
+                    // ==========================================
+                    // Invoice footer
+                    // ==========================================
+
+                    FooterPrimary =
+                    restaurantSettings.InvoiceFooterPrimary,
+
+                    FooterSecondary =
+                    restaurantSettings.InvoiceFooterSecondary,
+
+
+                    // ==========================================
+                    // Currency
+                    // ==========================================
+
+                    CurrencySymbol =
+                    restaurantSettings.CurrencySymbol,
+
+
+                    // ==========================================
+                    // Date format
+                    // ==========================================
+
+                    DateFormat =
+                    restaurantSettings.DateFormat,
+
+
+                    // ==========================================
+                    // Invoice display settings
+                    // ==========================================
+
+                    ShowCashierName =
+                    restaurantSettings.ShowCashierNameOnInvoice,
+
+                    ShowLogoOnInvoice =
+                    restaurantSettings.ShowLogoOnInvoice,
+
+                    ShowOrderNumberOnInvoice =
+                    restaurantSettings.ShowOrderNumberOnInvoice,
+
+                    ShowCustomerNameOnInvoice =
+                    restaurantSettings.ShowCustomerNameOnInvoice,
+
+
+                    // ==========================================
+                    // Receipt paper size
+                    // ==========================================
+
+                    ReceiptPaperWidthMm =
+                    restaurantSettings.ReceiptPaperWidthMm,
+
+
+                    // ==========================================
+                    // Printing behavior
+                    // ==========================================
+
+                    OpenPdfAfterPrinting =
+                    restaurantSettings.OpenPdfAfterPrinting,
+
+                    AutoPrintReceipt =
+    restaurantSettings.AutoPrintReceipt,
+
+
                 };
+
 
                 // Reset the form for the next order
                 Cart.Clear();
