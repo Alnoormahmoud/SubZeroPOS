@@ -139,6 +139,31 @@
 
                     <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,16" />
 
+                    <TextBlock Text="النسخ الاحتياطي" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
+
+                    <TextBlock Text="ينشئ نسخة كاملة من قاعدة البيانات على جهاز السيرفر مباشرة"
+           Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,12" />
+
+                    <Button Content="إنشاء نسخة احتياطية الآن" Command="{Binding BackupNowCommand}"
+        Background="{StaticResource SurfaceBrush}" Foreground="{StaticResource TextPrimaryBrush}"
+        BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+        Padding="12" Margin="0,0,0,10" Cursor="Hand"
+        IsEnabled="{Binding IsBackupRunning, Converter={StaticResource InverseBoolConverter}}">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <TextBlock Text="{Binding BackupStatusMessage}" Foreground="{StaticResource IceBlueBrush}"
+           FontSize="11" TextWrapping="Wrap" Margin="0,0,0,16" />
+
+                    <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,16" />
+
                 <TextBlock Text="نصوص الفاتورة" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
 
                 <TextBlock Text="رسالة الشكر (أسفل الفاتورة)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />

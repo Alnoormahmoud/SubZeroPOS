@@ -9,5 +9,17 @@ namespace SubZeroPOS.Core.Interfaces
         Task<ShiftClosing> OpenShiftAsync(int userId, decimal openingCash);
         Task<decimal> CalculateExpectedCashAsync(int shiftId);
         Task<(bool Success, string? ErrorMessage)> CloseShiftAsync(int shiftId, decimal actualCash, string? notes);
+        Task<ShiftSummary> GetShiftSummaryAsync(int shiftId);
+    }
+
+    public class ShiftSummary
+    {
+        public ShiftClosing? Shift { get; set; }
+        public int TotalOrderCount { get; set; }
+        public int CashOrderCount { get; set; }
+        public int BankOrderCount { get; set; }
+        public decimal TotalSales { get; set; }
+        public decimal CashSales { get; set; }
+        public decimal BankSales { get; set; }
     }
 }

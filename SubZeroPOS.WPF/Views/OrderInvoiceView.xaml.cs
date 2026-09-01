@@ -592,7 +592,7 @@ namespace SubZeroPOS.WPF.Views
             // Line total
             // ==========================================
 
-            row.Cells.Add(CreateItemCell(lineTotal.ToString("N0"), TextAlignment.Justify));
+            row.Cells.Add(CreateItemCell(lineTotal.ToString("N0"), TextAlignment.JustifyAMO));
 
             table.RowGroups[0].Rows.Add(row);
         }

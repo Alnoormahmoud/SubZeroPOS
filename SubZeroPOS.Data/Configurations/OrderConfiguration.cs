@@ -59,6 +59,13 @@ namespace SubZeroPOS.Data.Configurations
             // matches: CREATE INDEX IX_Orders_OrderDate ON Orders(OrderDate);
             builder.HasIndex(o => o.OrderDate)
                 .HasDatabaseName("IX_Orders_OrderDate");
+
+            builder.Property(o => o.ShiftId);
+
+            builder.HasOne<ShiftClosing>()
+                .WithMany()
+                .HasForeignKey(o => o.ShiftId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

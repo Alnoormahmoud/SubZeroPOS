@@ -49,15 +49,13 @@ namespace SubZeroPOS.Data.Services
             var shift = await context.ShiftClosings.FindAsync(shiftId);
             if (shift is null) return 0;
 
-            var periodEnd = shift.ClosedAt ?? DateTime.Now;
-
-            // Only cash orders affect the physical drawer - bank transfers don't.
+            // Now uses the real ShiftId link instead of guessing by date
+            // range - accurate even if an order gets edited/backdated later.
             var cashSales = await context.Orders
-                .Where(o => o.OrderDate >= shift.OpenedAt && o.OrderDate < periodEnd
-                            && o.StatusCode == "Completed" && o.PaymentMethodCode == "Cash")
+                .Where(o => o.ShiftId == shiftId && o.StatusCode == "Completed" && o.PaymentMethodCode == "Cash")
                 .SumAsync(o => (decimal?)o.TotalAmount) ?? 0;
 
-            // Expenses are assumed paid out of the till, same as most small shops.
+            var periodEnd = shift.ClosedAt ?? DateTime.Now;
             var expensesPaid = await context.Expenses
                 .Where(e => e.ExpenseDate >= shift.OpenedAt && e.ExpenseDate < periodEnd)
                 .SumAsync(e => (decimal?)e.Amount) ?? 0;
@@ -82,6 +80,29 @@ namespace SubZeroPOS.Data.Services
 
             await context.SaveChangesAsync();
             return (true, null);
+        }
+
+        public async Task<ShiftSummary> GetShiftSummaryAsync(int shiftId)
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+
+            var shift = await context.ShiftClosings.Include(s => s.User).FirstOrDefaultAsync(s => s.ShiftId == shiftId);
+            if (shift is null) return new ShiftSummary();
+
+            var orders = await context.Orders
+                .Where(o => o.ShiftId == shiftId && o.StatusCode == "Completed")
+                .ToListAsync();
+
+            return new ShiftSummary
+            {
+                Shift = shift,
+                TotalOrderCount = orders.Count,
+                CashOrderCount = orders.Count(o => o.PaymentMethodCode == "Cash"),
+                BankOrderCount = orders.Count(o => o.PaymentMethodCode == "Bankak"),
+                TotalSales = orders.Sum(o => o.TotalAmount),
+                CashSales = orders.Where(o => o.PaymentMethodCode == "Cash").Sum(o => o.TotalAmount),
+                BankSales = orders.Where(o => o.PaymentMethodCode == "Bankak").Sum(o => o.TotalAmount)
+            };
         }
     }
 }

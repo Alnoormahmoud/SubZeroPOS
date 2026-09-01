@@ -1,25 +1,27 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SubZeroPOS.Core.Entities;
 using SubZeroPOS.Core.Interfaces;
+using SubZeroPOS.Data.Services;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SubZeroPOS.WPF.ViewModels
 {
     public partial class SettingsViewModel : ObservableObject
     {
         private readonly IRestaurantSettingsService _settingsService;
+        private readonly IBackupService _backupService;
 
         private int _settingsId;
 
 
-        public SettingsViewModel(
-            IRestaurantSettingsService settingsService)
+        public SettingsViewModel(IRestaurantSettingsService settingsService, IBackupService backupService)
         {
             _settingsService = settingsService;
+            _backupService = backupService;
 
 
             // ==========================================
@@ -274,6 +276,12 @@ namespace SubZeroPOS.WPF.ViewModels
 
         [ObservableProperty]
         private bool isBusy;
+
+        [ObservableProperty]
+        private string backupStatusMessage = string.Empty;
+
+        [ObservableProperty]
+        private bool isBackupRunning;
 
 
         // ==============================================
@@ -550,6 +558,25 @@ namespace SubZeroPOS.WPF.ViewModels
         private void Back()
         {
             BackRequested?.Invoke();
+        }
+
+        [RelayCommand]
+        private async Task BackupNowAsync()
+        {
+            IsBackupRunning = true;
+            BackupStatusMessage = "جاري إنشاء النسخة الاحتياطية...";
+
+            try
+            {
+                var (success, message) = await _backupService.CreateBackupAsync();
+                BackupStatusMessage = success
+                    ? $"تم إنشاء النسخة الاحتياطية بنجاح:\n{message}"
+                    : message;
+            }
+            finally
+            {
+                IsBackupRunning = false;
+            }
         }
     }
 }

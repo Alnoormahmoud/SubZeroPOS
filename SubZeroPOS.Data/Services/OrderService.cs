@@ -25,6 +25,14 @@ namespace SubZeroPOS.Data.Services
 
             await using var context = await _contextFactory.CreateDbContextAsync();
 
+            // Automatically tag this order with whichever shift is currently open,
+            // so shift totals/history are based on real assignment, not guessed
+            // by comparing timestamps.
+            var openShift = await context.ShiftClosings
+                .Where(s => s.ClosedAt == null)
+                .OrderByDescending(s => s.OpenedAt)
+                .FirstOrDefaultAsync();
+
             var order = new Order
             {
                 OrderTypeId = orderDto.OrderTypeId,
@@ -35,8 +43,11 @@ namespace SubZeroPOS.Data.Services
                 Notes = orderDto.Notes,
                 OrderDate = DateTime.Now,
                 StatusCode = "Completed",
-                TotalAmount = orderDto.Items.Sum(i => i.UnitPrice * i.Quantity) + orderDto.DeliveryFee
+                TotalAmount = orderDto.Items.Sum(i => i.UnitPrice * i.Quantity) + orderDto.DeliveryFee,
+                ShiftId = openShift?.ShiftId,
             };
+
+        
 
             foreach (var cartItem in orderDto.Items)
             {

@@ -6,6 +6,7 @@ namespace SubZeroPOS.Core.Entities
     public class Order
     {
         public int OrderId { get; set; }
+        public int? ShiftId { get; set; } // which shift this order was placed under, if any was open
         public int OrderTypeId { get; set; }
         public string? CustomerName { get; set; }
         public DateTime OrderDate { get; set; } = DateTime.Now;
