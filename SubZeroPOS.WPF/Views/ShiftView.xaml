@@ -110,5 +110,83 @@
 
             </StackPanel>
         </Border>
+        <!-- Closing summary popup - shown right after a shift is closed -->
+        <Border Background="#CC000000" Visibility="{Binding ShowClosingSummary, Converter={StaticResource BoolToVisibilityConverter}}"
+        Grid.RowSpan="2">
+            <Border Width="420" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
+            BorderThickness="1" CornerRadius="14" Padding="24" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel>
+                    <TextBlock Text="ملخص إغلاق الوردية" Foreground="{StaticResource TextPrimaryBrush}"
+                       FontSize="17" FontWeight="Medium" HorizontalAlignment="Center" Margin="0,0,0,16" />
+
+                    <Grid Margin="0,0,0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="إجمالي الطلبات" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                        <TextBlock Grid.Column="1" Text="{Binding SummaryOrderCount}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
+                    </Grid>
+                    <Grid Margin="0,0,0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="نقدي / بنكك" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                        <TextBlock Grid.Column="1" FontSize="12" Foreground="{StaticResource TextPrimaryBrush}">
+                    <Run Text="{Binding SummaryCashOrderCount, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding SummaryBankOrderCount, Mode=OneWay}" />
+                        </TextBlock>
+                    </Grid>
+                    <Grid Margin="0,0,0,14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="إجمالي المبيعات" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                        <TextBlock Grid.Column="1" Text="{Binding SummaryTotalSales}" Foreground="{StaticResource IceBlueBrush}" FontSize="14" FontWeight="Medium" />
+                    </Grid>
+
+                    <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,14" />
+
+                    <Grid Margin="0,0,0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="المتوقع في الدرج" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                        <TextBlock Grid.Column="1" Text="{Binding SummaryExpected}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
+                    </Grid>
+                    <Grid Margin="0,0,0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="الفعلي في الدرج" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                        <TextBlock Grid.Column="1" Text="{Binding SummaryActual}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
+                    </Grid>
+                    <Grid Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="الفرق" Foreground="{StaticResource TextPrimaryBrush}" FontSize="14" FontWeight="Medium" />
+                        <TextBlock Grid.Column="1" Text="{Binding SummaryDifference}" FontSize="14" FontWeight="Medium">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="#8FD98F" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SummaryHasShortage}" Value="True">
+                                            <Setter Property="Foreground" Value="{StaticResource AccentRedBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+
+                    <Button Content="حسناً" Command="{Binding CloseSummaryCommand}" Style="{StaticResource PrimaryButtonStyle}" />
+                </StackPanel>
+            </Border>
+        </Border>
     </Grid>
 </UserControl>

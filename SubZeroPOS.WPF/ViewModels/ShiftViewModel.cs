@@ -37,16 +37,50 @@ namespace SubZeroPOS.WPF.ViewModels
         private string openedAtText = string.Empty;
 
         [ObservableProperty]
-        private string openingCashDisplay = "0";
+        private string openingCashDisplay = "0.000";
 
         [ObservableProperty]
-        private string expectedCashDisplay = "0";
+        private string expectedCashDisplay = "0.000";
 
         [ObservableProperty]
         private string statusMessage = string.Empty;
 
         [ObservableProperty]
         private bool isBusy;
+
+        // Closing summary - shown as a popup right after closing
+        [ObservableProperty]
+        private bool showClosingSummary;
+
+        [ObservableProperty]
+        private string summaryOrderCount = "0";
+
+        [ObservableProperty]
+        private string summaryCashOrderCount = "0";
+
+        [ObservableProperty]
+        private string summaryBankOrderCount = "0";
+
+        [ObservableProperty]
+        private string summaryTotalSales = "0.000";
+
+        [ObservableProperty]
+        private string summaryCashSales = "0.000";
+
+        [ObservableProperty]
+        private string summaryBankSales = "0.000";
+
+        [ObservableProperty]
+        private string summaryExpected = "0.000";
+
+        [ObservableProperty]
+        private string summaryActual = "0.000";
+
+        [ObservableProperty]
+        private string summaryDifference = "0.000";
+
+        [ObservableProperty]
+        private bool summaryHasShortage;
 
         public event Action? BackRequested;
 
@@ -110,14 +144,31 @@ namespace SubZeroPOS.WPF.ViewModels
             IsBusy = true;
             try
             {
-                var (success, error) = await _shiftService.CloseShiftAsync(_openShift.ShiftId, actual, CloseNotes);
+                var closedShiftId = _openShift.ShiftId;
+                var (success, error) = await _shiftService.CloseShiftAsync(closedShiftId, actual, CloseNotes);
                 if (!success)
                 {
                     StatusMessage = error ?? "حدث خطأ";
                     return;
                 }
 
-                StatusMessage = "تم إغلاق الوردية بنجاح";
+                // Build the closing summary popup before resetting the form
+                var summary = await _shiftService.GetShiftSummaryAsync(closedShiftId);
+                SummaryOrderCount = summary.TotalOrderCount.ToString();
+                SummaryCashOrderCount = summary.CashOrderCount.ToString();
+                SummaryBankOrderCount = summary.BankOrderCount.ToString();
+                SummaryTotalSales = summary.TotalSales.ToString("#,##0.000");
+                SummaryCashSales = summary.CashSales.ToString("#,##0.000");
+                SummaryBankSales = summary.BankSales.ToString("#,##0.000");
+                SummaryExpected = (summary.Shift?.ExpectedCash ?? 0).ToString("#,##0.000");
+                SummaryActual = (summary.Shift?.ActualCash ?? 0).ToString("#,##0.000");
+
+                var difference = (summary.Shift?.ActualCash ?? 0) - (summary.Shift?.ExpectedCash ?? 0);
+                SummaryDifference = difference.ToString("#,##0.000");
+                SummaryHasShortage = difference < 0;
+
+                ShowClosingSummary = true;
+
                 ActualCashText = string.Empty;
                 CloseNotes = string.Empty;
                 await InitializeAsync();
@@ -127,6 +178,9 @@ namespace SubZeroPOS.WPF.ViewModels
                 IsBusy = false;
             }
         }
+
+        [RelayCommand]
+        private void CloseSummary() => ShowClosingSummary = false;
 
         [RelayCommand]
         private void Back() => BackRequested?.Invoke();

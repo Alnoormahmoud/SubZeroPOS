@@ -49,7 +49,7 @@ namespace SubZeroPOS.WPF
                     services.AddTransient<IUserService, UserService>();
                     services.AddTransient<IReportService, ReportService>();
                     services.AddTransient<IShiftService, ShiftService>();
-                    services.AddT<IBackupService, BackupService>();
+                    services.AddTransient<IBackupService, BackupService>();
 
                     // ViewModels
                     services.AddTransient<LoginViewModel>();

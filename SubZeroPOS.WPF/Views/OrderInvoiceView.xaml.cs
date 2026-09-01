@@ -284,7 +284,7 @@ namespace SubZeroPOS.WPF.Views
 
 
             // Date
-            AddDetailRow(detailsTable, "التاريخ",order.OrderDateFormatted,true);
+            AddDetailRow(detailsTable, "تاريخ العمليه",order.OrderDateFormatted,true);
 
 
             // Customer name
@@ -359,7 +359,7 @@ namespace SubZeroPOS.WPF.Views
             {
                 var deliveryTable =     CreateDetailsTable();
 
-                AddDetailRow(deliveryTable, "رسوم التوصيل", $"{order.DeliveryFee:N0} {order.CurrencySymbol}", true);
+                AddDetailRowForTotalandDelivary(deliveryTable, "رسوم التوصيل", $"{order.DeliveryFee:N0} {order.CurrencySymbol}", true);
 
                 doc.Blocks.Add(deliveryTable);
             }
@@ -376,7 +376,7 @@ namespace SubZeroPOS.WPF.Views
 
                 var notesTitle = new Paragraph
                 {
-                    TextAlignment = TextAlignment.Right,
+                    TextAlignment = TextAlignment.Left,
                     FontWeight = FontWeights.Bold,
                     FontSize = 11,
                     Margin = new Thickness(0, 0, 0, 2)
@@ -389,7 +389,7 @@ namespace SubZeroPOS.WPF.Views
 
                 var notes = new Paragraph(new Run(order.Notes))
                 {
-                    TextAlignment = TextAlignment.Right,
+                    TextAlignment = TextAlignment.Left,
                     FontSize = 11,
                     Margin = new Thickness(0, 0, 0, 5)
                 };
@@ -410,7 +410,7 @@ namespace SubZeroPOS.WPF.Views
 
             var totalTable = CreateDetailsTable();
 
-            AddDetailRow(totalTable, "الإجمالي", $"{order.TotalAmount:N0} {order.CurrencySymbol}", true);
+            AddDetailRowForTotalandDelivary(totalTable, "الإجمالي", $"{order.TotalAmount:N0} {order.CurrencySymbol}", true);
 
             doc.Blocks.Add(totalTable);
 
@@ -468,6 +468,68 @@ namespace SubZeroPOS.WPF.Views
             return table;
         }
 
+        private static void AddDetailRowForTotalandDelivary(Table table, string label, string? value, bool bold = false)
+        {
+            var row = new TableRow();
+
+
+            // ==========================================
+            // Label
+            // ==========================================
+
+            var labelParagraph =
+                new Paragraph(
+                    new Run(label))
+                {
+                    TextAlignment = TextAlignment.Center,
+
+                    FontSize = bold ? 14 : 11,
+
+                    FontWeight = bold ? FontWeights.Bold : FontWeights.Normal,
+
+                    Margin = new Thickness(0)
+                };
+
+
+            var labelCell = new TableCell(labelParagraph)
+            {
+                Padding = new Thickness(0, 2, 5, 2),
+
+                TextAlignment = TextAlignment.Right
+            };
+
+            // ==========================================
+            // Value
+            // ==========================================
+
+            var valueParagraph = new Paragraph(new Run(value ?? string.Empty))
+            {
+                TextAlignment = TextAlignment.Center,
+
+                FontSize = bold ? 14 : 11,
+
+                FontWeight = bold ? FontWeights.Bold : FontWeights.Normal,
+
+                Margin = new Thickness(0)
+            };
+
+
+            var valueCell =
+                new TableCell(valueParagraph)
+                {
+                    Padding =
+                        new Thickness(5, 2, 0, 2),
+                    TextAlignment = TextAlignment.Left
+                };
+
+
+            row.Cells.Add(labelCell);
+
+            row.Cells.Add(valueCell);
+
+
+            table.RowGroups[0].Rows.Add(row);
+        }
         private static void AddDetailRow(Table table,string label,string? value,bool bold = false)
         {
             var row = new TableRow();
@@ -592,7 +654,7 @@ namespace SubZeroPOS.WPF.Views
             // Line total
             // ==========================================
 
-            row.Cells.Add(CreateItemCell(lineTotal.ToString("N0"), TextAlignment.JustifyAMO));
+            row.Cells.Add(CreateItemCell(lineTotal.ToString("N0"), TextAlignment.Justify));
 
             table.RowGroups[0].Rows.Add(row);
         }
