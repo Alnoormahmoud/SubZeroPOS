@@ -8,7 +8,7 @@ namespace SubZeroPOS.Core.DTOs
     {
         public int OrderId { get; set; }
 
-    public DateTime OrderDate { get; set; }
+        public DateTime OrderDate { get; set; }
 
         public string CashierName { get; set; } = string.Empty;
 
@@ -60,7 +60,8 @@ namespace SubZeroPOS.Core.DTOs
         // Date and time
         // ==========================================
 
-        public string DateFormat { get; set; } = "yyyy-MM-dd HH:mm";
+        public string DateFormat { get; set; } = "yyyy-MM-dd hh:mm tt";
+
 
         public string OrderDateFormatted
         {
@@ -68,14 +69,31 @@ namespace SubZeroPOS.Core.DTOs
             {
                 try
                 {
-                    return OrderDate.ToString(
+                    // Use the saved date format.
+                    // hh = 12-hour format.
+                    string formattedDate = OrderDate.ToString(
                         DateFormat,
-                        CultureInfo.CurrentCulture);
+                        CultureInfo.InvariantCulture);
+
+                    // Replace English AM/PM with Arabic words.
+                    formattedDate = formattedDate
+                        .Replace("AM", "صباح")
+                        .Replace("PM", "مساء");
+
+                    return formattedDate;
                 }
                 catch
                 {
-                    return OrderDate.ToString(
-                        "yyyy-MM-dd HH:mm");
+                    // Safe fallback.
+                    string formattedDate = OrderDate.ToString(
+                        "yyyy-MM-dd hh:mm tt",
+                        CultureInfo.InvariantCulture);
+
+                    formattedDate = formattedDate
+                        .Replace("AM", "صباح")
+                        .Replace("PM", "مساء");
+
+                    return formattedDate;
                 }
             }
         }
@@ -108,8 +126,8 @@ namespace SubZeroPOS.Core.DTOs
         public bool OpenPdfAfterPrinting { get; set; } = false;
 
         public bool ShouldShowCustomerName =>
-    ShowCustomerNameOnInvoice &&
-    !string.IsNullOrWhiteSpace(CustomerName);
+            ShowCustomerNameOnInvoice &&
+            !string.IsNullOrWhiteSpace(CustomerName);
 
         public bool AutoPrintReceipt { get; set; }
     }

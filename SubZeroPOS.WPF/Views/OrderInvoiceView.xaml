@@ -39,7 +39,7 @@
                            Visibility="{Binding Order.RestaurantPhone, Converter={StaticResource StringToVisibilityConverter}}" Margin="0,0,0,10" />
 
 
-                <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,10" />
+                <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,5,0,15" />
 
                 <Border Width="48" Height="48" CornerRadius="24"
                         Background="{StaticResource AccentRedBrush}"
@@ -59,7 +59,7 @@
            Visibility="{Binding Order.ShowOrderNumberOnInvoice,
                                 Converter={StaticResource BoolToVisibilityConverter}}" />
 
-                    <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,14" />
+                    <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,5,0,20" />
 
                 <Grid Margin="0,0,0,4" Visibility="{Binding Order.ShowCashierName, Converter={StaticResource BoolToVisibilityConverter}}">
                     <Grid.ColumnDefinitions>
@@ -164,7 +164,7 @@
 
                         <Rectangle Height="1"
            Fill="{StaticResource BorderBrush}"
-           Margin="0,0,0,8" />
+           Margin="0,5,0,5" />
 
 
                         <!-- Items -->
@@ -299,7 +299,7 @@
                 </Button>
 
                 <Button Content="طلب جديد" Command="{Binding NewOrderCommand}"
-                        Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,0,8" Click="Button_Click" />
+                        Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,0,8" />
 
                 <Button Content="{Binding BackButtonLabel}" Command="{Binding GoBackCommand}"
                         Background="Transparent"

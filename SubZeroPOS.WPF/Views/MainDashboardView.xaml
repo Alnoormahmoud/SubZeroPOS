@@ -154,10 +154,9 @@
                 </StackPanel>
             </Button>
 
-            <!-- Reports - Manager only -->
-            <Button Grid.Row="1" Grid.Column="0" Command="{Binding OpenReportsCommand}"
-                    Visibility="{Binding IsManager, Converter={StaticResource BoolToVisibilityConverter}}"
-                    Background="{StaticResource SurfaceBrush}" Margin="0,0,6,10"
+            <!-- Previous Orders - always visible, spans both columns -->
+            <Button Grid.Row="1" Grid.Column="0" Command="{Binding OpenPreviousOrdersCommand}"
+                     Background="{StaticResource SurfaceBrush}" Margin="0,0,6,10"
                     Padding="20,18" Cursor="Hand" HorizontalContentAlignment="Right">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
@@ -169,13 +168,32 @@
                     </ControlTemplate>
                 </Button.Template>
                 <StackPanel>
-                    <TextBlock Text="التقارير" Foreground="{StaticResource TextPrimaryBrush}" FontSize="15" FontWeight="Medium" />
-                    <TextBlock Text="الدخل مقابل المصروف" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                    <TextBlock Text="الطلبات السابقة" Foreground="{StaticResource TextPrimaryBrush}" FontSize="15" FontWeight="Medium" />
+                    <TextBlock Text="عرض وطباعة طلب سابق" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                </StackPanel>
+            </Button>
+
+            <!-- Shift - always visible -->
+            <Button Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Command="{Binding OpenShiftCommand}"
+    Background="{StaticResource SurfaceBrush}"  Margin="6,0,0,10"
+    Padding="20,18" Cursor="Hand" HorizontalContentAlignment="Right">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                CornerRadius="12" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter />
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+                <StackPanel>
+                    <TextBlock Text="الوردية" Foreground="{StaticResource TextPrimaryBrush}" FontSize="15" FontWeight="Medium" />
+                    <TextBlock Text="فتح / إغلاق الوردية" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
                 </StackPanel>
             </Button>
 
             <!-- Menu Management - Manager only -->
-            <Button Grid.Row="1" Grid.Column="1" Command="{Binding OpenMenuManagementCommand}"
+            <Button Grid.Row="2" Grid.Column="1" Command="{Binding OpenMenuManagementCommand}"
                     Visibility="{Binding IsManager, Converter={StaticResource BoolToVisibilityConverter}}"
                     Background="{StaticResource SurfaceBrush}" Margin="6,0,0,10"
                     Padding="20,18" Cursor="Hand" HorizontalContentAlignment="Right">
@@ -193,6 +211,8 @@
                     <TextBlock Text="إضافة وتعديل الأصناف والأسعار" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
                 </StackPanel>
             </Button>
+            
+            
 
             <!-- User Management - Manager only -->
             <Button Grid.Row="2" Grid.Column="0" Command="{Binding OpenUserManagementCommand}"
@@ -214,24 +234,28 @@
                 </StackPanel>
             </Button>
 
-            <!-- Previous Orders - always visible, spans both columns -->
-            <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Command="{Binding OpenPreviousOrdersCommand}"
-                    Background="{StaticResource SurfaceBrush}" Margin="0,10,0,0"
-                    Padding="20,18" Cursor="Hand" HorizontalContentAlignment="Right">
+                <!-- Reports - Manager only -->
+
+                 <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Command="{Binding OpenReportsCommand}"
+                             Visibility="{Binding IsManager, Converter={StaticResource BoolToVisibilityConverter}}"
+
+               Background="{StaticResource SurfaceBrush}" Margin="0,10,0,0"
+               Padding="20,18" Cursor="Hand" HorizontalContentAlignment="Right">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
-                                CornerRadius="12" Padding="{TemplateBinding Padding}">
+                           BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                           CornerRadius="12" Padding="{TemplateBinding Padding}">
                             <ContentPresenter />
                         </Border>
                     </ControlTemplate>
                 </Button.Template>
                 <StackPanel>
-                    <TextBlock Text="الطلبات السابقة" Foreground="{StaticResource TextPrimaryBrush}" FontSize="15" FontWeight="Medium" />
-                    <TextBlock Text="عرض وطباعة طلب سابق" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                    <TextBlock Text="التقارير" Foreground="{StaticResource TextPrimaryBrush}" FontSize="15" FontWeight="Medium" />
+                    <TextBlock Text="الدخل مقابل المصروف" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
                 </StackPanel>
             </Button>
+ 
         </Grid>
     </Grid>
 </UserControl>

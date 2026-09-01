@@ -278,6 +278,7 @@
 
                             <Button Grid.Column="2" Content="تأكيد الطلب" Command="{Binding CompleteOrderCommand}"
                                     Style="{StaticResource PrimaryButtonStyle}"
+                                                            IsDefault="True" 
                                     IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
                         </Grid>
                     </StackPanel>

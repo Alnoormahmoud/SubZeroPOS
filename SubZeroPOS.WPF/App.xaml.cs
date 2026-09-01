@@ -48,6 +48,7 @@ namespace SubZeroPOS.WPF
                     services.AddTransient<IRestaurantSettingsService, RestaurantSettingsService>();
                     services.AddTransient<IUserService, UserService>();
                     services.AddTransient<IReportService, ReportService>();
+                    services.AddTransient<IShiftService, ShiftService>();
 
                     // ViewModels
                     services.AddTransient<LoginViewModel>();
@@ -60,6 +61,7 @@ namespace SubZeroPOS.WPF
                     services.AddTransient<MenuManagementViewModel>();
                     services.AddTransient<PreviousOrdersViewModel>();
                     services.AddTransient<ReportsViewModel>();
+                    services.AddTransient<ShiftViewModel>();
 
                     // Views
                     services.AddTransient<LoginView>();
@@ -72,6 +74,7 @@ namespace SubZeroPOS.WPF
                     services.AddTransient<MenuManagementView>();
                     services.AddTransient<PreviousOrdersView>();
                     services.AddTransient<ReportsView>();
+                    services.AddTransient<ShiftView>();
 
                     // Main window
                     services.AddSingleton<MainWindow>();

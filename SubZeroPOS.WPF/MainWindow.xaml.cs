@@ -26,6 +26,8 @@ namespace SubZeroPOS.WPF
         private readonly PreviousOrdersViewModel _previousOrdersViewModel;
         private readonly ReportsView _reportsView;
         private readonly ReportsViewModel _reportsViewModel;
+        private readonly ShiftView _shiftView;
+        private readonly ShiftViewModel _shiftViewModel;
 
         public MainWindow(
             LoginView loginView,
@@ -47,7 +49,9 @@ namespace SubZeroPOS.WPF
             PreviousOrdersView previousOrdersView,
             PreviousOrdersViewModel previousOrdersViewModel,
             ReportsView reportsView,
-            ReportsViewModel reportsViewModel)
+            ReportsViewModel reportsViewModel,
+            ShiftView shiftView,
+            ShiftViewModel shiftViewModel)
         {
             InitializeComponent();
 
@@ -71,6 +75,8 @@ namespace SubZeroPOS.WPF
             _previousOrdersViewModel = previousOrdersViewModel;
             _reportsView = reportsView;
             _reportsViewModel = reportsViewModel;
+            _shiftView = shiftView;
+            _shiftViewModel = shiftViewModel;
 
             _loginView.DataContext = _loginViewModel;
             _loginViewModel.LoginSucceeded += ShowDashboard;
@@ -83,6 +89,9 @@ namespace SubZeroPOS.WPF
             _dashboardViewModel.UserManagementRequested += ShowUserManagement;
             _dashboardViewModel.MenuManagementRequested += ShowMenuManagement;
             _dashboardViewModel.PreviousOrdersRequested += ShowPreviousOrders;
+            _dashboardViewModel.ShiftRequested += ShowShift;
+
+   
 
             _orderEntryView.DataContext = _orderEntryViewModel;
             _orderEntryView.BackRequested += ShowDashboard;
@@ -119,6 +128,9 @@ namespace SubZeroPOS.WPF
             _reportsView.DataContext = _reportsViewModel;
             _reportsViewModel.BackRequested += ShowDashboard;
             _dashboardViewModel.ReportsRequested += ShowReports;
+
+            _shiftView.DataContext = _shiftViewModel;
+            _shiftViewModel.BackRequested += ShowDashboard;
 
             // Placeholder handlers for screens not built yet.
 
@@ -183,6 +195,12 @@ namespace SubZeroPOS.WPF
         {
             RootContent.Children.Clear();
             RootContent.Children.Add(_reportsView);
+        }
+
+        private void ShowShift()
+        {
+            RootContent.Children.Clear();
+            RootContent.Children.Add(_shiftView);
         }
     }
 }

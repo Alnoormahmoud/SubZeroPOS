@@ -63,6 +63,7 @@ namespace SubZeroPOS.WPF.ViewModels
 
             // ==========================================
             // Date formats
+            // 12-hour format with Arabic AM/PM indicator
             // ==========================================
 
             DateFormats =
@@ -70,27 +71,7 @@ namespace SubZeroPOS.WPF.ViewModels
                 {
                     new()
                     {
-                        FormatString = "yyyy-MM-dd HH:mm"
-                    },
-
-                    new()
-                    {
-                        FormatString = "dd/MM/yyyy hh:mm"
-                    },
-
-                    new()
-                    {
-                        FormatString = "dd-MM-yyyy hh:mm tt"
-                    },
-
-                    new()
-                    {
-                        FormatString = "MMM dd, yyyy HH:mm"
-                    },
-
-                    new()
-                    {
-                        FormatString = "yyyy/MM/dd hh:mm"
+                        FormatString = "yyyy-MM-dd hh:mm tt"
                     },
 
                     new()
@@ -100,14 +81,45 @@ namespace SubZeroPOS.WPF.ViewModels
 
                     new()
                     {
-                        FormatString = "MM/dd/yyyy hh:mm"
+                        FormatString = "dd-MM-yyyy hh:mm tt"
                     },
 
                     new()
                     {
-                        FormatString = "dd MMMM yyyy - hh:mm"
+                        FormatString = "MMM dd, yyyy hh:mm tt"
                     },
 
+                    new()
+                    {
+                        FormatString = "yyyy/MM/dd hh:mm tt"
+                    },
+
+                    new()
+                    {
+                        FormatString = "MM/dd/yyyy hh:mm tt"
+                    },
+
+                    new()
+                    {
+                        FormatString = "dd MMMM yyyy - hh:mm tt"
+                    },
+
+                    new()
+                    {
+                        FormatString = "hh:mm tt - dd/MM/yyyy"
+                    },
+
+                    new()
+                    {
+                        FormatString = "hh:mm tt - dd-MM-yyyy"
+                    },
+
+                    new()
+                    {
+                        FormatString = "dd MMMM yyyy - hh:mm tt"
+                    },
+
+                    // Date only
                     new()
                     {
                         FormatString = "yyyy-MM-dd"
@@ -116,11 +128,6 @@ namespace SubZeroPOS.WPF.ViewModels
                     new()
                     {
                         FormatString = "dd/MM/yyyy"
-                    },
-
-                    new()
-                    {
-                        FormatString = "hh:mm - dd/MM/yyyy"
                     }
                 };
 
@@ -294,7 +301,10 @@ namespace SubZeroPOS.WPF.ViewModels
                     settings.SettingsId;
 
 
+                // ==========================================
                 // Restaurant information
+                // ==========================================
+
                 RestaurantName =
                     settings.RestaurantName;
 
@@ -307,7 +317,10 @@ namespace SubZeroPOS.WPF.ViewModels
                     ?? string.Empty;
 
 
+                // ==========================================
                 // Invoice footer
+                // ==========================================
+
                 InvoiceFooterPrimary =
                     settings.InvoiceFooterPrimary
                     ?? string.Empty;
@@ -317,14 +330,20 @@ namespace SubZeroPOS.WPF.ViewModels
                     ?? string.Empty;
 
 
+                // ==========================================
                 // Currency
+                // ==========================================
+
                 SelectedCurrency =
                     Currencies.FirstOrDefault(
                         c => c.Code == settings.CurrencyCode)
                     ?? Currencies[0];
 
 
+                // ==========================================
                 // Date format
+                // ==========================================
+
                 SelectedDateFormat =
                     DateFormats.FirstOrDefault(
                         d => d.FormatString
@@ -332,7 +351,10 @@ namespace SubZeroPOS.WPF.ViewModels
                     ?? DateFormats[0];
 
 
+                // ==========================================
                 // Invoice display
+                // ==========================================
+
                 ShowCashierNameOnInvoice =
                     settings.ShowCashierNameOnInvoice;
 
@@ -346,7 +368,10 @@ namespace SubZeroPOS.WPF.ViewModels
                     settings.ShowCustomerNameOnInvoice;
 
 
+                // ==========================================
                 // Paper size
+                // ==========================================
+
                 SelectedReceiptPaperSize =
                     ReceiptPaperSizes.FirstOrDefault(
                         p => p.WidthMillimeters
@@ -354,7 +379,10 @@ namespace SubZeroPOS.WPF.ViewModels
                     ?? ReceiptPaperSizes.Last();
 
 
+                // ==========================================
                 // Printing behavior
+                // ==========================================
+
                 AutoPrintReceipt =
                     settings.AutoPrintReceipt;
 
@@ -403,7 +431,10 @@ namespace SubZeroPOS.WPF.ViewModels
                         SettingsId = _settingsId,
 
 
+                        // ==========================================
                         // Restaurant information
+                        // ==========================================
+
                         RestaurantName =
                             RestaurantName.Trim(),
 
@@ -418,7 +449,10 @@ namespace SubZeroPOS.WPF.ViewModels
                                 : Address.Trim(),
 
 
+                        // ==========================================
                         // Invoice footer
+                        // ==========================================
+
                         InvoiceFooterPrimary =
                             string.IsNullOrWhiteSpace(
                                 InvoiceFooterPrimary)
@@ -432,7 +466,10 @@ namespace SubZeroPOS.WPF.ViewModels
                                 : InvoiceFooterSecondary.Trim(),
 
 
+                        // ==========================================
                         // Currency
+                        // ==========================================
+
                         CurrencyCode =
                             SelectedCurrency?.Code
                             ?? "SDG",
@@ -442,13 +479,19 @@ namespace SubZeroPOS.WPF.ViewModels
                             ?? "ج.س",
 
 
+                        // ==========================================
                         // Date format
+                        // ==========================================
+
                         DateFormat =
                             SelectedDateFormat?.FormatString
-                            ?? "yyyy-MM-dd HH:mm",
+                            ?? "yyyy-MM-dd hh:mm tt",
 
 
+                        // ==========================================
                         // Invoice display
+                        // ==========================================
+
                         ShowCashierNameOnInvoice =
                             ShowCashierNameOnInvoice,
 
@@ -462,14 +505,20 @@ namespace SubZeroPOS.WPF.ViewModels
                             ShowCustomerNameOnInvoice,
 
 
+                        // ==========================================
                         // Paper size
+                        // ==========================================
+
                         ReceiptPaperWidthMm =
                             SelectedReceiptPaperSize
                                 ?.WidthMillimeters
                             ?? 80,
 
 
+                        // ==========================================
                         // Printing behavior
+                        // ==========================================
+
                         AutoPrintReceipt =
                             AutoPrintReceipt,
 

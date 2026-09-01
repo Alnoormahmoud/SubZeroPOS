@@ -62,10 +62,7 @@
                 <ComboBox ItemsSource="{Binding DateFormats}" SelectedItem="{Binding SelectedDateFormat}"
                           DisplayMemberPath="DisplayName" Margin="0,0,0,20" Padding="8" />
 
-                <CheckBox Content="إظهار اسم الكاشير في الفاتورة" IsChecked="{Binding ShowCashierNameOnInvoice}"
-                          FlowDirection="LeftToRight" HorizontalAlignment="left"
-                          Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,20" />
-
+            
                     <!-- ========================================= -->
                     <!-- Printing and Invoice Settings -->
                     <!-- ========================================= -->
@@ -94,6 +91,11 @@
 
 
                     <!-- Print Options -->
+
+                    <CheckBox Content="إظهار اسم الكاشير في الفاتورة" IsChecked="{Binding ShowCashierNameOnInvoice}"
+              FlowDirection="LeftToRight" HorizontalAlignment="left"
+              Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,20" />
+
 
                     <CheckBox Content="إظهار شعار المطعم في الفاتورة"
           IsChecked="{Binding ShowLogoOnInvoice}"
@@ -128,7 +130,7 @@
           Margin="0,0,0,20" />
 
 
-                    <CheckBox Content="فتح نسخة PDF بعد الطباعة"
+                    <CheckBox Content="بعد الطباعة PD فتح نسخة"
           IsChecked="{Binding OpenPdfAfterPrinting}"
           FlowDirection="LeftToRight" HorizontalAlignment="left"
           Foreground="{StaticResource TextSecondaryBrush}"

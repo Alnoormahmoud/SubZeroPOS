@@ -261,16 +261,7 @@ namespace SubZeroPOS.WPF.ViewModels
                 StatusMessage = "الرجاء إدخال رسوم توصيل صحيحة";
                 return;
             }
-            var confirmResult = System.Windows.MessageBox.Show(
-             $"هل أنت متأكد من إتمام الطلب بإجمالي {GrandTotal:N0}؟"
-,
-                "تأكيد الطلب",
-                System.Windows.MessageBoxButton.YesNo,
-                System.Windows.MessageBoxImage.Question);
-
-
-            if (confirmResult != System.Windows.MessageBoxResult.Yes)
-                return;
+         
 
             IsBusy = true;
             StatusMessage = string.Empty;
