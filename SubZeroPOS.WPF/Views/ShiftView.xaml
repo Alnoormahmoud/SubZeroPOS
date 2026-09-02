@@ -49,7 +49,7 @@
 
                     <Button Content="فتح الوردية" Command="{Binding OpenShiftCommand}"
                             Style="{StaticResource PrimaryButtonStyle}"
-                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" IsDefault="True"/>
                 </StackPanel>
 
                 <!-- CLOSE SHIFT FORM - shown when a shift is already open -->
@@ -118,52 +118,181 @@
                 <StackPanel>
                     <TextBlock Text="ملخص إغلاق الوردية" Foreground="{StaticResource TextPrimaryBrush}"
                        FontSize="17" FontWeight="Medium" HorizontalAlignment="Center" Margin="0,0,0,16" />
+                    <!-- Number of orders -->
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                    <Grid Margin="0,0,0,6">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="إجمالي الطلبات" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
-                        <TextBlock Grid.Column="1" Text="{Binding SummaryOrderCount}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
-                    </Grid>
-                    <Grid Margin="0,0,0,6">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="نقدي / بنكك" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
-                        <TextBlock Grid.Column="1" FontSize="12" Foreground="{StaticResource TextPrimaryBrush}">
-                    <Run Text="{Binding SummaryCashOrderCount, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding SummaryBankOrderCount, Mode=OneWay}" />
-                        </TextBlock>
-                    </Grid>
-                    <Grid Margin="0,0,0,14">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="إجمالي المبيعات" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
-                        <TextBlock Grid.Column="1" Text="{Binding SummaryTotalSales}" Foreground="{StaticResource IceBlueBrush}" FontSize="14" FontWeight="Medium" />
+                        <TextBlock
+                    Grid.Column="0"
+                    Text="عدد الطلبات"
+                    Foreground="{StaticResource TextSecondaryBrush}"
+                    FontSize="13"/>
+
+                        <TextBlock
+                    Grid.Column="1"
+                    Text="{Binding SummaryOrderCount}"
+                    Foreground="{StaticResource TextPrimaryBrush}"
+                    FontSize="13"
+                    FontWeight="Medium"/>
                     </Grid>
 
-                    <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,14" />
+                    <!-- Cash orders -->
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                    <Grid Margin="0,0,0,6">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="المتوقع في الدرج" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
-                        <TextBlock Grid.Column="1" Text="{Binding SummaryExpected}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
+                        <TextBlock
+                    Grid.Column="0"
+                    Text="طلبات النقد"
+                    Foreground="{StaticResource TextSecondaryBrush}"
+                    FontSize="13"/>
+
+                        <TextBlock
+                    Grid.Column="1"
+                    Text="{Binding SummaryCashOrderCount}"
+                    Foreground="{StaticResource TextPrimaryBrush}"
+                    FontSize="13"/>
                     </Grid>
-                    <Grid Margin="0,0,0,6">
+
+                    <!-- Bank orders -->
+                    <Grid Margin="0,0,0,8">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="الفعلي في الدرج" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
-                        <TextBlock Grid.Column="1" Text="{Binding SummaryActual}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
+
+                        <TextBlock
+                    Grid.Column="0"
+                    Text="طلبات البنك"
+                    Foreground="{StaticResource TextSecondaryBrush}"
+                    FontSize="13"/>
+
+                        <TextBlock
+                    Grid.Column="1"
+                    Text="{Binding SummaryBankOrderCount}"
+                    Foreground="{StaticResource TextPrimaryBrush}"
+                    FontSize="13"/>
                     </Grid>
+
+                    <Rectangle
+                Height="1"
+                Fill="{StaticResource BorderBrush}"
+                Margin="0,8,0,16"/>
+
+                    <!-- Total sales -->
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                    Grid.Column="0"
+                    Text="إجمالي المبيعات"
+                    Foreground="{StaticResource TextSecondaryBrush}"
+                    FontSize="13"/>
+
+                        <TextBlock
+                    Grid.Column="1"
+                    Text="{Binding SummaryTotalSales}"
+                    Foreground="{StaticResource TextPrimaryBrush}"
+                    FontSize="13"
+                    FontWeight="Bold"/>
+                    </Grid>
+
+                    <!-- Cash sales -->
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                    Grid.Column="0"
+                    Text="مبيعات النقد"
+                    Foreground="{StaticResource TextSecondaryBrush}"
+                    FontSize="13"/>
+
+                        <TextBlock
+                    Grid.Column="1"
+                    Text="{Binding SummaryCashSales}"
+                    Foreground="{StaticResource TextPrimaryBrush}"
+                    FontSize="13"/>
+                    </Grid>
+
+                    <!-- Bank sales -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                    Grid.Column="0"
+                    Text="مبيعات البنك"
+                    Foreground="{StaticResource TextSecondaryBrush}"
+                    FontSize="13"/>
+
+                        <TextBlock
+                    Grid.Column="1"
+                    Text="{Binding SummaryBankSales}"
+                    Foreground="{StaticResource TextPrimaryBrush}"
+                    FontSize="13"/>
+                    </Grid>
+
+                    <Rectangle
+                Height="1"
+                Fill="{StaticResource BorderBrush}"
+                Margin="0,0,0,16"/>
+
+                    <!-- Expected cash -->
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                    Grid.Column="0"
+                    Text="المبلغ المتوقع"
+                    Foreground="{StaticResource TextSecondaryBrush}"
+                    FontSize="13"/>
+
+                        <TextBlock
+                    Grid.Column="1"
+                    Text="{Binding SummaryExpected}"
+                    Foreground="{StaticResource IceBlueBrush}"
+                    FontSize="14"
+                    FontWeight="Bold"/>
+                    </Grid>
+
+                    <!-- Actual cash -->
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                    Grid.Column="0"
+                    Text="المبلغ الفعلي"
+                    Foreground="{StaticResource TextSecondaryBrush}"
+                    FontSize="13"/>
+
+                        <TextBlock
+                    Grid.Column="1"
+                    Text="{Binding SummaryActual}"
+                    Foreground="{StaticResource TextPrimaryBrush}"
+                    FontSize="14"
+                    FontWeight="Bold"/>
+                    </Grid>
+
+                    <!-- Difference -->
                     <Grid Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -183,8 +312,9 @@
                             </TextBlock.Style>
                         </TextBlock>
                     </Grid>
-
+                    
                     <Button Content="حسناً" Command="{Binding CloseSummaryCommand}" Style="{StaticResource PrimaryButtonStyle}" />
+             
                 </StackPanel>
             </Border>
         </Border>

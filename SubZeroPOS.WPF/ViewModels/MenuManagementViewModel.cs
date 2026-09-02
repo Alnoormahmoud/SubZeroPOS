@@ -1,4 +1,4 @@
-using System;
+ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.IO;
@@ -23,61 +23,159 @@ namespace SubZeroPOS.WPF.ViewModels
             _itemService = itemService;
         }
 
-        public ObservableCollection<Item> Items { get; } = new(); // current page only
+        public ObservableCollection<Item> Items { get; } = new();
         public ObservableCollection<Category> Categories { get; } = new();
 
-        // Add-item form
-        [ObservableProperty] private string newItemName = string.Empty;
-        [ObservableProperty] private string newItemNameEn = string.Empty;
-        [ObservableProperty] private string newItemPriceText = string.Empty;
-        [ObservableProperty] private Category? selectedNewItemCategory;
-        [ObservableProperty] private string? newItemImageFilePath; // full path to the chosen source file on disk
-        [ObservableProperty] private string statusMessage = string.Empty;
-        [ObservableProperty] private bool isBusy;
-        [ObservableProperty] private int currentPage = 1;
-        [ObservableProperty] private int totalPages = 1;
-        [ObservableProperty] private int totalItemCount;
+        // =========================================================
+        // ADD ITEM
+        // =========================================================
+
+        [ObservableProperty]
+        private string newItemName = string.Empty;
+
+        [ObservableProperty]
+        private string newItemNameEn = string.Empty;
+
+        [ObservableProperty]
+        private string newItemPriceText = string.Empty;
+
+        [ObservableProperty]
+        private Category? selectedNewItemCategory;
+
+        [ObservableProperty]
+        private string? newItemImageFilePath;
+
+        [ObservableProperty]
+        private string addItemStatusMessage = string.Empty;
+
+        // =========================================================
+        // GENERAL
+        // =========================================================
+
+        [ObservableProperty]
+        private bool isBusy;
+
+        [ObservableProperty]
+        private int currentPage = 1;
+
+        [ObservableProperty]
+        private int totalPages = 1;
+
+        [ObservableProperty]
+        private int totalItemCount;
 
         public string PageInfoText => $"الصفحة {CurrentPage} من {TotalPages}";
+
         public bool CanGoNext => CurrentPage < TotalPages;
+
         public bool CanGoPrevious => CurrentPage > 1;
 
-        // Add-category form
-        [ObservableProperty] private string newCategoryName = string.Empty;
-        [ObservableProperty] private string newCategoryNameEn = string.Empty;
-        [ObservableProperty] private bool showAddCategoryForm;
 
-        // Item edit panel - opens when tapping "تعديل" on a row, instead of
-        // editing inline in the crowded list row.
-        [ObservableProperty] private bool isItemEditOpen;
-        [ObservableProperty] private Item? editingItem;
-        [ObservableProperty] private string editItemName = string.Empty;
-        [ObservableProperty] private string editItemNameEn = string.Empty;
-        [ObservableProperty] private string editItemPriceText = string.Empty;
-        [ObservableProperty] private Category? editItemCategory;
-        [ObservableProperty] private bool editItemIsActive;
+        // =========================================================
+        // ADD CATEGORY
+        // =========================================================
+
+        [ObservableProperty]
+        private string newCategoryName = string.Empty;
+
+        [ObservableProperty]
+        private string newCategoryNameEn = string.Empty;
+
+        [ObservableProperty]
+        private bool showAddCategoryForm;
+
+        [ObservableProperty]
+        private string addCategoryStatusMessage = string.Empty;
+
+
+        // =========================================================
+        // EDIT ITEM
+        // =========================================================
+
+        [ObservableProperty]
+        private bool isItemEditOpen;
+
+        [ObservableProperty]
+        private Item? editingItem;
+
+        [ObservableProperty]
+        private string editItemName = string.Empty;
+
+        [ObservableProperty]
+        private string editItemNameEn = string.Empty;
+
+        [ObservableProperty]
+        private string editItemPriceText = string.Empty;
+
+        [ObservableProperty]
+        private Category? editItemCategory;
+
+        [ObservableProperty]
+        private bool editItemIsActive;
+
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(EditItemHasNoImage))]
-        private string? editItemImagePath; // current relative path shown as preview
+        private string? editItemImagePath;
 
-        public bool EditItemHasNoImage => string.IsNullOrWhiteSpace(EditItemImagePath);
+        [ObservableProperty]
+        private string editItemStatusMessage = string.Empty;
 
-        // Category edit panel - same idea, kept separate from the add-category form.
-        [ObservableProperty] private bool isCategoryEditOpen;
-        [ObservableProperty] private Category? editingCategory;
-        [ObservableProperty] private string editCategoryName = string.Empty;
-        [ObservableProperty] private string editCategoryNameEn = string.Empty;
+        public bool EditItemHasNoImage =>
+            string.IsNullOrWhiteSpace(EditItemImagePath);
+
+
+        // =========================================================
+        // EDIT CATEGORY
+        // =========================================================
+
+        [ObservableProperty]
+        private bool isCategoryEditOpen;
+
+        [ObservableProperty]
+        private Category? editingCategory;
+
+        [ObservableProperty]
+        private string editCategoryName = string.Empty;
+
+        [ObservableProperty]
+        private string editCategoryNameEn = string.Empty;
+
+        [ObservableProperty]
+        private string editCategoryStatusMessage = string.Empty;
+
+
+        // =========================================================
+        // PRIVATE IMAGE VARIABLES
+        // =========================================================
+
+        private string? _pendingEditImageSourcePath;
+        private bool _pendingRemoveImage;
+
+
+        // =========================================================
+        // EVENTS
+        // =========================================================
 
         public event Action? BackRequested;
-        public event Func<string?>? ChooseImageFileRequested; // code-behind shows OpenFileDialog, returns chosen path or null
+
+        public event Func<string?>? ChooseImageFileRequested;
+
+
+        // =========================================================
+        // INITIALIZATION
+        // =========================================================
 
         public async Task InitializeAsync()
         {
             IsBusy = true;
+
             try
             {
                 await ReloadCategoriesAsync();
-                if (Categories.Count > 0) SelectedNewItemCategory = Categories[0];
+
+                if (Categories.Count > 0)
+                    SelectedNewItemCategory = Categories[0];
+
                 await ReloadItemsAsync();
             }
             finally
@@ -86,67 +184,118 @@ namespace SubZeroPOS.WPF.ViewModels
             }
         }
 
+
+        // =========================================================
+        // LOAD CATEGORIES
+        // =========================================================
+
         private async Task ReloadCategoriesAsync()
         {
-            var previouslySelectedId = SelectedNewItemCategory?.CategoryId;
+            var previouslySelectedId =
+                SelectedNewItemCategory?.CategoryId;
+
             Categories.Clear();
+
             foreach (var c in await _itemService.GetCategoriesAsync())
                 Categories.Add(c);
 
             if (previouslySelectedId.HasValue)
             {
-                var stillThere = System.Linq.Enumerable.FirstOrDefault(Categories, c => c.CategoryId == previouslySelectedId.Value);
-                if (stillThere != null) SelectedNewItemCategory = stillThere;
+                var stillThere =
+                    Categories.FirstOrDefault(
+                        c => c.CategoryId == previouslySelectedId.Value);
+
+                if (stillThere != null)
+                    SelectedNewItemCategory = stillThere;
             }
         }
 
+
+        // =========================================================
+        // LOAD ITEMS
+        // =========================================================
+
         private async Task ReloadItemsAsync()
         {
-            _allItems = await _itemService.GetAllItemsForManagementAsync();
+            _allItems =
+                await _itemService.GetAllItemsForManagementAsync();
+
             TotalItemCount = _allItems.Count;
+
             CurrentPage = 1;
+
             UpdatePagedItems();
         }
 
+
+        // =========================================================
+        // PAGINATION
+        // =========================================================
+
         private void UpdatePagedItems()
         {
-            TotalPages = Math.Max(1, (int)Math.Ceiling(_allItems.Count / (double)PageSize));
-            if (CurrentPage > TotalPages) CurrentPage = TotalPages;
+            TotalPages = Math.Max(
+                1,
+                (int)Math.Ceiling(
+                    _allItems.Count / (double)PageSize));
 
-            var pageItems = _allItems.Skip((CurrentPage - 1) * PageSize).Take(PageSize);
+            if (CurrentPage > TotalPages)
+                CurrentPage = TotalPages;
+
+            var pageItems =
+                _allItems
+                    .Skip((CurrentPage - 1) * PageSize)
+                    .Take(PageSize);
 
             Items.Clear();
-            foreach (var i in pageItems)
-                Items.Add(i);
+
+            foreach (var item in pageItems)
+                Items.Add(item);
 
             OnPropertyChanged(nameof(PageInfoText));
             OnPropertyChanged(nameof(CanGoNext));
             OnPropertyChanged(nameof(CanGoPrevious));
         }
 
+
         [RelayCommand]
         private void NextPage()
         {
-            if (!CanGoNext) return;
+            if (!CanGoNext)
+                return;
+
             CurrentPage++;
+
             UpdatePagedItems();
         }
+
 
         [RelayCommand]
         private void PreviousPage()
         {
-            if (!CanGoPrevious) return;
+            if (!CanGoPrevious)
+                return;
+
             CurrentPage--;
+
             UpdatePagedItems();
         }
+
+
+        // =========================================================
+        // ADD ITEM IMAGE
+        // =========================================================
 
         [RelayCommand]
         private void ChooseImage()
         {
-            var path = ChooseImageFileRequested?.Invoke();
+            var path =
+                ChooseImageFileRequested?.Invoke();
+
             if (!string.IsNullOrWhiteSpace(path))
                 NewItemImageFilePath = path;
         }
+
 
         [RelayCommand]
         private void RemoveNewItemImage()
@@ -154,58 +303,119 @@ namespace SubZeroPOS.WPF.ViewModels
             NewItemImageFilePath = null;
         }
 
+
+        // =========================================================
+        // ADD ITEM
+        // =========================================================
+
         [RelayCommand]
         private async Task AddItemAsync()
         {
-            StatusMessage = string.Empty;
+            AddItemStatusMessage = string.Empty;
 
             if (string.IsNullOrWhiteSpace(NewItemName))
             {
-                StatusMessage = "الرجاء إدخال اسم الصنف";
+                AddItemStatusMessage =
+                    "الرجاء إدخال اسم الصنف";
+
                 return;
             }
 
-            if (!decimal.TryParse(NewItemPriceText, out var price) || price <= 0)
+            if (!decimal.TryParse(
+                    NewItemPriceText,
+                    out var price)
+                || price <= 0)
             {
-                StatusMessage = "الرجاء إدخال سعر صحيح";
+                AddItemStatusMessage =
+                    "الرجاء إدخال سعر صحيح";
+
                 return;
             }
 
             if (SelectedNewItemCategory is null)
             {
-                StatusMessage = "الرجاء اختيار القسم";
+                AddItemStatusMessage =
+                    "الرجاء اختيار القسم";
+
                 return;
             }
 
             IsBusy = true;
+
             try
             {
-                var nameEn = string.IsNullOrWhiteSpace(NewItemNameEn) ? null : NewItemNameEn;
-                var item = await _itemService.AddItemAsync(SelectedNewItemCategory.CategoryId, NewItemName, price, nameEn);
+                var nameEn =
+                    string.IsNullOrWhiteSpace(NewItemNameEn)
+                        ? null
+                        : NewItemNameEn;
 
-                // If an image was chosen, copy it into Images/Items/{ItemId}.{ext}
-                // next to the running app, then store that relative path.
-                if (!string.IsNullOrWhiteSpace(NewItemImageFilePath) && File.Exists(NewItemImageFilePath))
+                var item =
+                    await _itemService.AddItemAsync(
+                        SelectedNewItemCategory.CategoryId,
+                        NewItemName,
+                        price,
+                        nameEn);
+
+
+                // Save selected image
+                if (!string.IsNullOrWhiteSpace(
+                        NewItemImageFilePath)
+                    &&
+                    File.Exists(NewItemImageFilePath))
                 {
-                    var extension = Path.GetExtension(NewItemImageFilePath);
-                    var relativePath = $"Images/Items/{item.ItemId}{extension}";
-                    var destinationFullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", "Items");
-                    Directory.CreateDirectory(destinationFullPath);
-                    File.Copy(NewItemImageFilePath, Path.Combine(destinationFullPath, $"{item.ItemId}{extension}"), overwrite: true);
+                    var extension =
+                        Path.GetExtension(
+                            NewItemImageFilePath);
 
-                    await _itemService.UpdateItemImagePathAsync(item.ItemId, relativePath);
+                    var relativePath =
+                        $"Images/Items/{item.ItemId}{extension}";
+
+                    var destinationFolder =
+                        Path.Combine(
+                            AppDomain.CurrentDomain.BaseDirectory,
+                            "Images",
+                            "Items");
+
+                    Directory.CreateDirectory(
+                        destinationFolder);
+
+                    var destinationPath =
+                        Path.Combine(
+                            destinationFolder,
+                            $"{item.ItemId}{extension}");
+
+                    File.Copy(
+                        NewItemImageFilePath,
+                        destinationPath,
+                        overwrite: true);
+
+                    await _itemService
+                        .UpdateItemImagePathAsync(
+                            item.ItemId,
+                            relativePath);
                 }
 
+
+                // Clear form
                 NewItemName = string.Empty;
                 NewItemNameEn = string.Empty;
                 NewItemPriceText = string.Empty;
                 NewItemImageFilePath = null;
-                StatusMessage = "تم إضافة الصنف بنجاح";
+
+
+                AddItemStatusMessage =
+                    "تم إضافة الصنف بنجاح";
+
                 await ReloadItemsAsync();
+
+                // Automatically clear message
+                _ = ClearMessageAfterDelayAsync(
+                    () => AddItemStatusMessage = string.Empty);
             }
             catch (Exception ex)
             {
-                StatusMessage = $"حدث خطأ: {ex.Message}";
+                AddItemStatusMessage =
+                    $"حدث خطأ: {ex.Message}";
             }
             finally
             {
@@ -213,30 +423,71 @@ namespace SubZeroPOS.WPF.ViewModels
             }
         }
 
+
+        // =========================================================
+        // ADD CATEGORY
+        // =========================================================
+
         [RelayCommand]
-        private void ToggleAddCategoryForm() => ShowAddCategoryForm = !ShowAddCategoryForm;
+        private void ToggleAddCategoryForm()
+        {
+            ShowAddCategoryForm =
+                !ShowAddCategoryForm;
+
+            AddCategoryStatusMessage =
+                string.Empty;
+        }
+
 
         [RelayCommand]
         private async Task AddCategoryAsync()
         {
-            if (string.IsNullOrWhiteSpace(NewCategoryName))
+            AddCategoryStatusMessage =
+                string.Empty;
+
+            if (string.IsNullOrWhiteSpace(
+                    NewCategoryName))
             {
-                StatusMessage = "الرجاء إدخال اسم القسم";
+                AddCategoryStatusMessage =
+                    "الرجاء إدخال اسم القسم";
+
                 return;
             }
 
             IsBusy = true;
+
             try
             {
-                var nameEn = string.IsNullOrWhiteSpace(NewCategoryNameEn) ? null : NewCategoryNameEn;
-                var category = await _itemService.AddCategoryAsync(NewCategoryName, nameEn);
+                var nameEn =
+                    string.IsNullOrWhiteSpace(
+                        NewCategoryNameEn)
+                        ? null
+                        : NewCategoryNameEn;
+
+                var category =
+                    await _itemService.AddCategoryAsync(
+                        NewCategoryName,
+                        nameEn);
+
 
                 NewCategoryName = string.Empty;
                 NewCategoryNameEn = string.Empty;
-                ShowAddCategoryForm = false;
-                StatusMessage = $"تم إضافة قسم \"{category.NameAr}\" بنجاح";
+
+
+                AddCategoryStatusMessage =
+                    $"تم إضافة قسم \"{category.NameAr}\" بنجاح";
 
                 await ReloadCategoriesAsync();
+
+
+                _ = ClearMessageAfterDelayAsync(
+                    () => AddCategoryStatusMessage =
+                        string.Empty);
+            }
+            catch (Exception ex)
+            {
+                AddCategoryStatusMessage =
+                    $"حدث خطأ: {ex.Message}";
             }
             finally
             {
@@ -244,120 +495,330 @@ namespace SubZeroPOS.WPF.ViewModels
             }
         }
 
+
+        // =========================================================
+        // DELETE CATEGORY
+        // =========================================================
+
         [RelayCommand]
-        private async Task DeleteCategoryAsync(Category category)
+        private async Task DeleteCategoryAsync(
+            Category category)
         {
-            var confirm = System.Windows.MessageBox.Show(
-                $"هل أنت متأكد من حذف قسم \"{category.NameAr}\" نهائياً؟",
-                "تأكيد الحذف",
-                System.Windows.MessageBoxButton.YesNo,
-                System.Windows.MessageBoxImage.Warning);
+            var confirm =
+                System.Windows.MessageBox.Show(
+                    $"هل أنت متأكد من حذف قسم \"{category.NameAr}\" نهائياً؟",
+                    "تأكيد الحذف",
+                    System.Windows.MessageBoxButton.YesNo,
+                    System.Windows.MessageBoxImage.Warning);
 
-            if (confirm != System.Windows.MessageBoxResult.Yes) return;
+            if (confirm !=
+                System.Windows.MessageBoxResult.Yes)
+                return;
 
-            var (success, errorMessage) = await _itemService.DeleteCategoryAsync(category.CategoryId);
+
+            var (success, errorMessage) =
+                await _itemService.DeleteCategoryAsync(
+                    category.CategoryId);
+
 
             if (!success)
             {
-                System.Windows.MessageBox.Show(errorMessage, "تعذر الحذف",
-                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                System.Windows.MessageBox.Show(
+                    errorMessage,
+                    "تعذر الحذف",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Information);
+
                 return;
             }
 
-            StatusMessage = $"تم حذف قسم \"{category.NameAr}\"";
+
+            AddCategoryStatusMessage =
+                $"تم حذف قسم \"{category.NameAr}\"";
+
             await ReloadCategoriesAsync();
+
+
+            _ = ClearMessageAfterDelayAsync(
+                () => AddCategoryStatusMessage =
+                    string.Empty);
         }
+
+
+        // =========================================================
+        // OPEN EDIT ITEM
+        // =========================================================
 
         [RelayCommand]
         private void OpenEditItem(Item item)
         {
+            EditItemStatusMessage =
+                string.Empty;
+
+            _pendingEditImageSourcePath = null;
+            _pendingRemoveImage = false;
+
+
             EditingItem = item;
-            EditItemName = item.ItemName;
-            EditItemNameEn = item.NameEn ?? string.Empty;
-            EditItemPriceText = item.Price.ToString("#,##0");
-            EditItemCategory = System.Linq.Enumerable.FirstOrDefault(Categories, c => c.CategoryId == item.CategoryId);
-            EditItemIsActive = item.IsActive;
-            EditItemImagePath = item.ImagePath;
-            IsItemEditOpen = true;
+
+            EditItemName =
+                item.ItemName;
+
+            EditItemNameEn =
+                item.NameEn ?? string.Empty;
+
+            EditItemPriceText =
+                item.Price.ToString("#,##0");
+
+            EditItemCategory =
+                Categories.FirstOrDefault(
+                    c => c.CategoryId ==
+                         item.CategoryId);
+
+            EditItemIsActive =
+                item.IsActive;
+
+            EditItemImagePath =
+                item.ImagePath;
+
+            IsItemEditOpen =
+                true;
         }
+
 
         [RelayCommand]
         private void CancelEditItem()
         {
-            IsItemEditOpen = false;
-            EditingItem = null;
+            IsItemEditOpen =
+                false;
+
+            EditingItem =
+                null;
+
+            EditItemStatusMessage =
+                string.Empty;
+
+            _pendingEditImageSourcePath =
+                null;
+
+            _pendingRemoveImage =
+                false;
         }
+
+
+        // =========================================================
+        // EDIT ITEM IMAGE
+        // =========================================================
 
         [RelayCommand]
         private void ChangeEditItemImage()
         {
-            var path = ChooseImageFileRequested?.Invoke();
-            if (string.IsNullOrWhiteSpace(path) || !File.Exists(path)) return;
-            _pendingEditImageSourcePath = path;
-            EditItemImagePath = path; // shows the new local file as a preview until saved
+            var path =
+                ChooseImageFileRequested?.Invoke();
+
+
+            if (string.IsNullOrWhiteSpace(path)
+                || !File.Exists(path))
+                return;
+
+
+            _pendingEditImageSourcePath =
+                path;
+
+            _pendingRemoveImage =
+                false;
+
+
+            // Preview the selected image
+            EditItemImagePath =
+                path;
         }
+
 
         [RelayCommand]
         private void RemoveEditItemImage()
         {
-            _pendingEditImageSourcePath = null;
-            _pendingRemoveImage = true;
-            EditItemImagePath = null;
+            _pendingEditImageSourcePath =
+                null;
+
+            _pendingRemoveImage =
+                true;
+
+            EditItemImagePath =
+                null;
         }
 
-        private string? _pendingEditImageSourcePath;
-        private bool _pendingRemoveImage;
+
+        // =========================================================
+        // SAVE EDITED ITEM
+        // =========================================================
 
         [RelayCommand]
         private async Task SaveEditedItemAsync()
         {
-            if (EditingItem is null) return;
+            EditItemStatusMessage =
+                string.Empty;
 
-            if (string.IsNullOrWhiteSpace(EditItemName))
+
+            if (EditingItem is null)
+                return;
+
+
+            if (string.IsNullOrWhiteSpace(
+                    EditItemName))
             {
-                StatusMessage = "اسم الصنف لا يمكن أن يكون فارغاً";
+                EditItemStatusMessage =
+                    "اسم الصنف لا يمكن أن يكون فارغاً";
+
                 return;
             }
 
-            if (!decimal.TryParse(EditItemPriceText, out var price) || price <= 0)
+
+            if (!decimal.TryParse(
+                    EditItemPriceText,
+                    out var price)
+                || price <= 0)
             {
-                StatusMessage = "الرجاء إدخال سعر صحيح";
+                EditItemStatusMessage =
+                    "الرجاء إدخال سعر صحيح";
+
                 return;
             }
+
+
+            if (EditItemCategory is null)
+            {
+                EditItemStatusMessage =
+                    "الرجاء اختيار القسم";
+
+                return;
+            }
+
 
             IsBusy = true;
+
             try
             {
-                var itemId = EditingItem.ItemId;
-                var nameEn = string.IsNullOrWhiteSpace(EditItemNameEn) ? null : EditItemNameEn;
+                var itemId =
+                    EditingItem.ItemId;
 
-                await _itemService.UpdateItemNameAsync(itemId, EditItemName, nameEn);
-                await _itemService.UpdateItemPriceAsync(itemId, price);
 
-                if (EditItemIsActive != EditingItem.IsActive)
-                    await _itemService.SetItemActiveAsync(itemId, EditItemIsActive);
+                var nameEn =
+                    string.IsNullOrWhiteSpace(
+                        EditItemNameEn)
+                        ? null
+                        : EditItemNameEn;
 
-                if (_pendingEditImageSourcePath != null)
+
+                // Update name
+                await _itemService
+                    .UpdateItemNameAsync(
+                        itemId,
+                        EditItemName,
+                        nameEn);
+
+
+                // Update price
+                await _itemService
+                    .UpdateItemPriceAsync(
+                        itemId,
+                        price);
+
+
+                // Update category
+                await _itemService
+                    .UpdateItemCategoryAsync(
+                        itemId,
+                        EditItemCategory.CategoryId);
+
+
+                // Update active state
+                if (EditItemIsActive !=
+                    EditingItem.IsActive)
                 {
-                    var extension = Path.GetExtension(_pendingEditImageSourcePath);
-                    var relativePath = $"Images/Items/{itemId}{extension}";
-                    var destinationFullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", "Items");
-                    Directory.CreateDirectory(destinationFullPath);
-                    File.Copy(_pendingEditImageSourcePath, Path.Combine(destinationFullPath, $"{itemId}{extension}"), overwrite: true);
-                    await _itemService.UpdateItemImagePathAsync(itemId, relativePath);
+                    await _itemService
+                        .SetItemActiveAsync(
+                            itemId,
+                            EditItemIsActive);
                 }
+
+
+                // Change image
+                if (!string.IsNullOrWhiteSpace(
+                        _pendingEditImageSourcePath))
+                {
+                    var extension =
+                        Path.GetExtension(
+                            _pendingEditImageSourcePath);
+
+                    var relativePath =
+                        $"Images/Items/{itemId}{extension}";
+
+
+                    var destinationFolder =
+                        Path.Combine(
+                            AppDomain.CurrentDomain.BaseDirectory,
+                            "Images",
+                            "Items");
+
+
+                    Directory.CreateDirectory(
+                        destinationFolder);
+
+
+                    var destinationPath =
+                        Path.Combine(
+                            destinationFolder,
+                            $"{itemId}{extension}");
+
+
+                    File.Copy(
+                        _pendingEditImageSourcePath,
+                        destinationPath,
+                        overwrite: true);
+
+
+                    await _itemService
+                        .UpdateItemImagePathAsync(
+                            itemId,
+                            relativePath);
+                }
+
+
+                // Remove image
                 else if (_pendingRemoveImage)
                 {
-                    await _itemService.RemoveItemImageAsync(itemId);
+                    await _itemService
+                        .RemoveItemImageAsync(
+                            itemId);
                 }
 
-                _pendingEditImageSourcePath = null;
-                _pendingRemoveImage = false;
 
-                StatusMessage = $"تم تحديث {EditItemName}";
-                IsItemEditOpen = false;
-                EditingItem = null;
+                _pendingEditImageSourcePath =
+                    null;
+
+                _pendingRemoveImage =
+                    false;
+
+
+                // Close edit window
+                IsItemEditOpen =
+                    false;
+
+                EditingItem =
+                    null;
+
+
+                EditItemStatusMessage =
+                    string.Empty;
+
+
                 await ReloadItemsAsync();
+            }
+            catch (Exception ex)
+            {
+                EditItemStatusMessage =
+                    $"حدث خطأ: {ex.Message}";
             }
             finally
             {
@@ -365,70 +826,163 @@ namespace SubZeroPOS.WPF.ViewModels
             }
         }
 
+
+        // =========================================================
+        // DELETE ITEM
+        // =========================================================
+
         [RelayCommand]
-        private async Task DeleteItemAsync(Item item)
+        private async Task DeleteItemAsync(
+            Item item)
         {
-            var result = System.Windows.MessageBox.Show(
-                $"هل أنت متأكد من حذف \"{item.ItemName}\" نهائياً؟ لا يمكن التراجع عن هذا الإجراء.",
-                "تأكيد الحذف",
-                System.Windows.MessageBoxButton.YesNo,
-                System.Windows.MessageBoxImage.Warning);
+            var result =
+                System.Windows.MessageBox.Show(
+                    $"هل أنت متأكد من حذف \"{item.ItemName}\" نهائياً؟ لا يمكن التراجع عن هذا الإجراء.",
+                    "تأكيد الحذف",
+                    System.Windows.MessageBoxButton.YesNo,
+                    System.Windows.MessageBoxImage.Warning);
 
-            if (result != System.Windows.MessageBoxResult.Yes) return;
 
-            var (success, errorMessage) = await _itemService.DeleteItemAsync(item.ItemId);
+            if (result !=
+                System.Windows.MessageBoxResult.Yes)
+                return;
+
+
+            var (success, errorMessage) =
+                await _itemService.DeleteItemAsync(
+                    item.ItemId);
+
 
             if (!success)
             {
-                System.Windows.MessageBox.Show(errorMessage, "تعذر الحذف",
-                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                System.Windows.MessageBox.Show(
+                    errorMessage,
+                    "تعذر الحذف",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Information);
+
                 return;
             }
 
-            StatusMessage = $"تم حذف {item.ItemName}";
+
+            AddItemStatusMessage =
+                $"تم حذف {item.ItemName}";
+
             await ReloadItemsAsync();
+
+
+            _ = ClearMessageAfterDelayAsync(
+                () => AddItemStatusMessage =
+                    string.Empty);
         }
 
-        // --- Category edit panel ---
+
+        // =========================================================
+        // OPEN EDIT CATEGORY
+        // =========================================================
 
         [RelayCommand]
-        private void OpenEditCategory(Category category)
+        private void OpenEditCategory(
+            Category category)
         {
-            EditingCategory = category;
-            EditCategoryName = category.NameAr;
-            EditCategoryNameEn = category.NameEn ?? string.Empty;
-            IsCategoryEditOpen = true;
+            EditCategoryStatusMessage =
+                string.Empty;
+
+
+            EditingCategory =
+                category;
+
+
+            EditCategoryName =
+                category.NameAr;
+
+
+            EditCategoryNameEn =
+                category.NameEn ?? string.Empty;
+
+
+            IsCategoryEditOpen =
+                true;
         }
+
 
         [RelayCommand]
         private void CancelEditCategory()
         {
-            IsCategoryEditOpen = false;
-            EditingCategory = null;
+            IsCategoryEditOpen =
+                false;
+
+            EditingCategory =
+                null;
+
+            EditCategoryStatusMessage =
+                string.Empty;
         }
+
+
+        // =========================================================
+        // SAVE EDITED CATEGORY
+        // =========================================================
 
         [RelayCommand]
         private async Task SaveEditedCategoryAsync()
         {
-            if (EditingCategory is null) return;
+            EditCategoryStatusMessage =
+                string.Empty;
 
-            if (string.IsNullOrWhiteSpace(EditCategoryName))
+
+            if (EditingCategory is null)
+                return;
+
+
+            if (string.IsNullOrWhiteSpace(
+                    EditCategoryName))
             {
-                StatusMessage = "اسم القسم لا يمكن أن يكون فارغاً";
+                EditCategoryStatusMessage =
+                    "اسم القسم لا يمكن أن يكون فارغاً";
+
                 return;
             }
 
+
             IsBusy = true;
+
             try
             {
-                var nameEn = string.IsNullOrWhiteSpace(EditCategoryNameEn) ? null : EditCategoryNameEn;
-                await _itemService.UpdateCategoryAsync(EditingCategory.CategoryId, EditCategoryName, nameEn);
+                var nameEn =
+                    string.IsNullOrWhiteSpace(
+                        EditCategoryNameEn)
+                        ? null
+                        : EditCategoryNameEn;
 
-                StatusMessage = $"تم تحديث قسم \"{EditCategoryName}\"";
-                IsCategoryEditOpen = false;
-                EditingCategory = null;
+
+                await _itemService
+                    .UpdateCategoryAsync(
+                        EditingCategory.CategoryId,
+                        EditCategoryName,
+                        nameEn);
+
+
+                // Close modal
+                IsCategoryEditOpen =
+                    false;
+
+                EditingCategory =
+                    null;
+
+
+                EditCategoryStatusMessage =
+                    string.Empty;
+
+
                 await ReloadCategoriesAsync();
-                await ReloadItemsAsync(); // item rows show Category.NameAr, refresh them too
+
+                await ReloadItemsAsync();
+            }
+            catch (Exception ex)
+            {
+                EditCategoryStatusMessage =
+                    $"حدث خطأ: {ex.Message}";
             }
             finally
             {
@@ -436,7 +990,29 @@ namespace SubZeroPOS.WPF.ViewModels
             }
         }
 
+
+        // =========================================================
+        // CLEAR MESSAGE AFTER DELAY
+        // =========================================================
+
+        private async Task ClearMessageAfterDelayAsync(
+            Action clearAction)
+        {
+            await Task.Delay(3000);
+
+            clearAction();
+        }
+
+
+        // =========================================================
+        // BACK
+        // =========================================================
+
         [RelayCommand]
-        private void Back() => BackRequested?.Invoke();
+        private void Back()
+        {
+            BackRequested?.Invoke();
+        }
     }
 }
+ 

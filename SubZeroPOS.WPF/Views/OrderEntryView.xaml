@@ -210,18 +210,20 @@
                             <ComboBox ItemsSource="{Binding OrderTypes}" SelectedItem="{Binding SelectedOrderType}"
                                       DisplayMemberPath="NameAr" Margin="0,0,0,10" Padding="8" />
 
+                            <!-- Delivery fee - only shown when order type is Delivery -->
+                            <StackPanel Visibility="{Binding IsDeliverySelected, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <TextBlock Text="رسوم التوصيل" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                                <TextBox Text="{Binding DeliveryFeeText, UpdateSourceTrigger=PropertyChanged}"
+                           Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,10" />
+
+                            </StackPanel>
+                            
                             <!-- Customer name -->
                             <TextBlock Text="اسم الزبون (اختياري)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                             <TextBox Text="{Binding CustomerName, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,10" />
 
-                            <!-- Delivery fee - only shown when order type is Delivery -->
-                            <StackPanel Visibility="{Binding IsDeliverySelected, Converter={StaticResource BoolToVisibilityConverter}}">
-                                <TextBlock Text="رسوم التوصيل" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
-                                <TextBox Text="{Binding DeliveryFeeText, UpdateSourceTrigger=PropertyChanged}"
-                                         Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,10" />
-                                
-                            </StackPanel>
+              
 
                             <!-- Notes -->
                             <TextBlock Text="ملاحظات (اختياري)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />

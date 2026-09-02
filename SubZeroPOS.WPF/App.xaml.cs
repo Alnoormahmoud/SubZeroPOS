@@ -50,6 +50,8 @@ namespace SubZeroPOS.WPF
                     services.AddTransient<IReportService, ReportService>();
                     services.AddTransient<IShiftService, ShiftService>();
                     services.AddTransient<IBackupService, BackupService>();
+                    services.AddTransient<MyAccountViewModel>();
+                    services.AddTransient<MyAccountView>();
 
                     // ViewModels
                     services.AddTransient<LoginViewModel>();
@@ -63,6 +65,8 @@ namespace SubZeroPOS.WPF
                     services.AddTransient<PreviousOrdersViewModel>();
                     services.AddTransient<ReportsViewModel>();
                     services.AddTransient<ShiftViewModel>();
+                    services.AddTransient<MyAccountViewModel>();
+
 
                     // Views
                     services.AddTransient<LoginView>();
@@ -76,6 +80,8 @@ namespace SubZeroPOS.WPF
                     services.AddTransient<PreviousOrdersView>();
                     services.AddTransient<ReportsView>();
                     services.AddTransient<ShiftView>();
+                    services.AddTransient<MyAccountView>();
+
 
                     // Main window
                     services.AddSingleton<MainWindow>();

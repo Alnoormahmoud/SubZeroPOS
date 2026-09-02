@@ -60,7 +60,7 @@ namespace SubZeroPOS.WPF.ViewModels
         private int totalPages = 1;
 
         [ObservableProperty]
-        private int totalFilteredCount;
+        public int totalFilteredCount;
 
         public string PageInfoText => $"الصفحة {CurrentPage} من {TotalPages} ({TotalFilteredCount} طلب)";
         public bool CanGoNext => CurrentPage < TotalPages;
@@ -219,8 +219,8 @@ namespace SubZeroPOS.WPF.ViewModels
                 FooterSecondary = settings.InvoiceFooterSecondary,
                 CurrencySymbol = settings.CurrencySymbol,
                 DateFormat = settings.DateFormat,
-                ShowCashierName = settings.ShowCashierNameOnInvoice
-            };
+                ShowCashierName = settings.ShowCashierNameOnInvoice,
+              };
 
             ViewInvoiceRequested?.Invoke(invoice);
         }

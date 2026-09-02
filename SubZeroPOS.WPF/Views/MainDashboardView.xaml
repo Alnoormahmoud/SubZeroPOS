@@ -22,14 +22,48 @@
                 <StackPanel>
                     <TextBlock Text="ساب زيرو" Foreground="{StaticResource TextPrimaryBrush}"
                                FontSize="15" FontWeight="Medium" />
-                    <TextBlock Text="{Binding WelcomeMessage}" Foreground="{StaticResource IceBlueBrush}"
-                               FontSize="11" />
+                    <TextBlock Text="{Binding WelcomeMessage}"
+           Foreground="{StaticResource IceBlueBrush}"
+           FontSize="13"
+                               Margin="0,5,0,0"
+           FontWeight="Medium" />
                 </StackPanel>
             </StackPanel>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal">
                 <TextBlock Text="{Binding CurrentDateTime}" Foreground="{StaticResource TextSecondaryBrush}"
                            FontSize="12" VerticalAlignment="Center" Margin="0,0,12,0" />
+
+
+                <Button Content="حسابي"
+                Command="{Binding MyAccountCommand}"
+                Background="{StaticResource SurfaceBrush}"
+                Foreground="{StaticResource TextPrimaryBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                Padding="10,6"
+                Cursor="Hand"
+                Margin="0,0,8,0">
+
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+
+                            <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8"
+                            Padding="{TemplateBinding Padding}">
+
+                                <ContentPresenter
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+
+                            </Border>
+
+                        </ControlTemplate>
+                    </Button.Template>
+
+                </Button>
 
                 <Button Content="الإعدادات" Command="{Binding OpenSettingsCommand}"
                         Visibility="{Binding IsManager, Converter={StaticResource BoolToVisibilityConverter}}"
@@ -121,7 +155,7 @@
             <!-- New Order - always visible (Cashier + Manager) -->
             <Button Grid.Row="0" Grid.Column="0" Command="{Binding NewOrderCommand}"
                     Background="{StaticResource AccentRedBrush}" Margin="0,0,6,10"
-                    Padding="20,18" Cursor="Hand" HorizontalContentAlignment="Right">
+                    Padding="20,18" Cursor="Hand" HorizontalContentAlignment="Right" IsDefault="True" >
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" CornerRadius="12" Padding="{TemplateBinding Padding}">
@@ -255,7 +289,7 @@
                     <TextBlock Text="الدخل مقابل المصروف" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
                 </StackPanel>
             </Button>
- 
+
         </Grid>
     </Grid>
 </UserControl>

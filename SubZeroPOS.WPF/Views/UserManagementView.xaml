@@ -54,7 +54,9 @@
             <!-- Add user form -->
             <Border Grid.Column="0" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1" CornerRadius="12" Padding="20" VerticalAlignment="Top">
-                <StackPanel>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="10">
+
+                    <StackPanel>
                     <TextBlock Text="إضافة مستخدم جديد" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
 
                     <TextBlock Text="الاسم الكامل" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
@@ -78,8 +80,59 @@
 
                     <Button Content="إضافة المستخدم" Command="{Binding CreateUserCommand}"
                             Style="{StaticResource PrimaryButtonStyle}"
-                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" IsDefault="True"/>
+                    <Separator Margin="0,20,0,20"
+           Background="{StaticResource BorderBrush}"/>
+
+                    <TextBlock Text="تعديل المستخدم"
+           Foreground="{StaticResource TextSecondaryBrush}"
+           FontSize="13"
+           Margin="0,0,0,12"/>
+
+                    <TextBlock Text="الاسم الكامل"
+           Foreground="{StaticResource TextSecondaryBrush}"
+           FontSize="11"
+           Margin="0,0,0,4"/>
+
+                    <TextBox Text="{Binding EditFullName, UpdateSourceTrigger=PropertyChanged}"
+         Style="{StaticResource DarkTextBoxStyle}"
+         Margin="0,0,0,12"/>
+
+                    <TextBlock Text="اسم المستخدم"
+           Foreground="{StaticResource TextSecondaryBrush}"
+           FontSize="11"
+           Margin="0,0,0,4"/>
+
+                    <TextBox Text="{Binding EditUsername, UpdateSourceTrigger=PropertyChanged}"
+         Style="{StaticResource DarkTextBoxStyle}"
+         Margin="0,0,0,12"/>
+
+                    <TextBlock Text="كلمة المرور الجديدة"
+           Foreground="{StaticResource TextSecondaryBrush}"
+           FontSize="11"
+           Margin="0,0,0,4"/>
+
+                    <TextBox Text="{Binding EditPassword, UpdateSourceTrigger=PropertyChanged}"
+         Style="{StaticResource DarkTextBoxStyle}"
+         Margin="0,0,0,12"/>
+
+                    <TextBlock Text="الصلاحية"
+           Foreground="{StaticResource TextSecondaryBrush}"
+           FontSize="11"
+           Margin="0,0,0,4"/>
+
+                    <ComboBox ItemsSource="{Binding Roles}"
+          SelectedItem="{Binding EditSelectedRole}"
+          DisplayMemberPath="RoleNameAr"
+          Margin="0,0,0,16"
+          Padding="8"/>
+
+                    <Button Content="حفظ التعديلات"
+        Command="{Binding UpdateUserCommand}"
+        Style="{StaticResource PrimaryButtonStyle}"
+        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"/>
                 </StackPanel>
+                </ScrollViewer>
             </Border>
 
             <!-- User list -->
@@ -97,19 +150,43 @@
                                 <Border Background="{StaticResource BackgroundBrush}" CornerRadius="8" Padding="12" Margin="0,0,0,8"
                                    Opacity="{Binding IsActive, Converter={StaticResource BoolToOpacityConverter}}">                                     
                                     <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <StackPanel Grid.Column="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
                                             <TextBlock Text="{Binding FullName}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="14" FontWeight="Medium" />
                                             <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
                                                 <TextBlock Text="{Binding Username}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,10,0" />
                                                 <TextBlock Text="{Binding Role.RoleNameAr}" Foreground="{StaticResource IceBlueBrush}" FontSize="11" />
                                             </StackPanel>
                                         </StackPanel>
-                                        <Button Grid.Column="1"
+                                            <Button Grid.Column="1"
+                                           Content="تعديل"
+                                                    FontSize="12"
+                                                                                       
+                                           Padding="10,6"
+                                           Cursor="Hand"
+                                           Margin="0,0,6,0"
+                                           Command="{Binding DataContext.SelectUserForEditCommand,
+                                                             RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                           CommandParameter="{Binding}"
+                                                Background="Transparent" Foreground="{StaticResource TextSecondaryBrush}"
+                                            BorderBrush="{StaticResource BorderBrush}"
+                                           BorderThickness="1">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                          BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+                                        
+                                            <Button Grid.Column="2"
                                                 Command="{Binding DataContext.ToggleActiveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                 CommandParameter="{Binding}"
                                                 Padding="10,6" Cursor="Hand">
@@ -138,7 +215,7 @@
                                             </Button.Style>
                                         </Button>
 
-                                        <Button Grid.Column="2" Content="حذف" FontSize="12" Padding="10,6" Cursor="Hand" Margin="6,0,0,0"
+                                        <Button Grid.Column="3" Content="حذف" FontSize="12" Padding="10,6" Cursor="Hand" Margin="6,0,0,0"
                                                 Command="{Binding DataContext.DeleteUserCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                 CommandParameter="{Binding}"
                                                 Background="Transparent" Foreground="{StaticResource TextSecondaryBrush}"

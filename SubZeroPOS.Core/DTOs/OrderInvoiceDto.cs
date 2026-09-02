@@ -69,34 +69,62 @@ namespace SubZeroPOS.Core.DTOs
             {
                 try
                 {
-                    // Use the saved date format.
-                    // hh = 12-hour format.
-                    string formattedDate = OrderDate.ToString(
-                        DateFormat,
-                        CultureInfo.InvariantCulture);
-
-                    // Replace English AM/PM with Arabic words.
-                    formattedDate = formattedDate
-                        .Replace("AM", "صباح")
-                        .Replace("PM", "مساء");
-
-                    return formattedDate;
+                    return FormatDateTime(
+                        OrderDate,
+                        DateFormat);
                 }
                 catch
                 {
-                    // Safe fallback.
-                    string formattedDate = OrderDate.ToString(
-                        "yyyy-MM-dd hh:mm tt",
-                        CultureInfo.InvariantCulture);
-
-                    formattedDate = formattedDate
-                        .Replace("AM", "صباح")
-                        .Replace("PM", "مساء");
-
-                    return formattedDate;
+                    return FormatDateTime(
+                        OrderDate,
+                        "yyyy-MM-dd hh:mm tt");
                 }
             }
         }
+
+
+        private static string FormatDateTime(
+            DateTime dateTime,
+            string format)
+        {
+            // Use English culture for Gregorian date
+            // and predictable AM/PM values.
+            var englishCulture =
+                new CultureInfo("en-US");
+
+
+            // Format the date first.
+            string formattedDate =
+                dateTime.ToString(
+                    format,
+                    englishCulture);
+
+
+            // Only add Arabic AM/PM
+            // if the selected format contains "tt".
+            if (!format.Contains("tt"))
+            {
+                return formattedDate;
+            }
+
+
+            // Determine AM or PM manually.
+            string arabicAmPm =
+                dateTime.Hour < 12
+                    ? "صباحًا"
+                    : "مساءً";
+
+
+            // Remove English AM/PM.
+            formattedDate = formattedDate
+                .Replace("AM", "")
+                .Replace("PM", "")
+                .Trim();
+
+
+            return $"{formattedDate} {arabicAmPm}";
+        }
+        
 
 
         // ==========================================

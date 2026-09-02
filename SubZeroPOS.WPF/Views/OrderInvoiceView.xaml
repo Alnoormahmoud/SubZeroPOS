@@ -299,7 +299,7 @@
                 </Button>
 
                 <Button Content="طلب جديد" Command="{Binding NewOrderCommand}"
-                        Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,0,8" />
+                        Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,0,8" IsDefault="True"  />
 
                 <Button Content="{Binding BackButtonLabel}" Command="{Binding GoBackCommand}"
                         Background="Transparent"

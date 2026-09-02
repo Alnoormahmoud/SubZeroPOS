@@ -20,6 +20,7 @@ namespace SubZeroPOS.WPF.ViewModels
 
         [ObservableProperty]
         private bool isShiftOpen;
+         
 
         [ObservableProperty]
         private string openingCashText = "0";
@@ -37,10 +38,10 @@ namespace SubZeroPOS.WPF.ViewModels
         private string openedAtText = string.Empty;
 
         [ObservableProperty]
-        private string openingCashDisplay = "0.000";
+        private string openingCashDisplay = "0";
 
         [ObservableProperty]
-        private string expectedCashDisplay = "0.000";
+        private string expectedCashDisplay = "0";
 
         [ObservableProperty]
         private string statusMessage = string.Empty;
@@ -62,22 +63,22 @@ namespace SubZeroPOS.WPF.ViewModels
         private string summaryBankOrderCount = "0";
 
         [ObservableProperty]
-        private string summaryTotalSales = "0.000";
+        private string summaryTotalSales = "0";
 
         [ObservableProperty]
-        private string summaryCashSales = "0.000";
+        private string summaryCashSales = "0";
 
         [ObservableProperty]
-        private string summaryBankSales = "0.000";
+        private string summaryBankSales = "0";
 
         [ObservableProperty]
-        private string summaryExpected = "0.000";
+        private string summaryExpected = "0";
 
         [ObservableProperty]
-        private string summaryActual = "0.000";
+        private string summaryActual = "0";
 
         [ObservableProperty]
-        private string summaryDifference = "0.000";
+        private string summaryDifference = "0";
 
         [ObservableProperty]
         private bool summaryHasShortage;
@@ -95,11 +96,11 @@ namespace SubZeroPOS.WPF.ViewModels
                 if (_openShift != null)
                 {
                     OpenedByName = _openShift.User?.FullName ?? "";
-                    OpenedAtText = _openShift.OpenedAt.ToString("yyyy-MM-dd HH:mm");
-                    OpeningCashDisplay = _openShift.OpeningCash.ToString("#,##0.000");
+                    OpenedAtText = _openShift.OpenedAt.ToString("yyyy-MM-dd hh:mm");
+                    OpeningCashDisplay = _openShift.OpeningCash.ToString("#,##0");
 
                     var expected = await _shiftService.CalculateExpectedCashAsync(_openShift.ShiftId);
-                    ExpectedCashDisplay = expected.ToString("#,##0.000");
+                    ExpectedCashDisplay = expected.ToString("#,##0");
                 }
             }
             finally
@@ -111,6 +112,12 @@ namespace SubZeroPOS.WPF.ViewModels
         [RelayCommand]
         private async Task OpenShiftAsync()
         {
+            if (_openShift != null)
+            {
+                StatusMessage = "الوردية مفتوحة بالفعل";
+                return;
+            }
+
             if (!decimal.TryParse(OpeningCashText, out var opening) || opening < 0)
             {
                 StatusMessage = "الرجاء إدخال مبلغ افتتاحي صحيح";
@@ -129,11 +136,11 @@ namespace SubZeroPOS.WPF.ViewModels
                 IsBusy = false;
             }
         }
-
         [RelayCommand]
         private async Task CloseShiftAsync()
         {
-            if (_openShift is null) return;
+            if (_openShift is null)
+                return;
 
             if (!decimal.TryParse(ActualCashText, out var actual) || actual < 0)
             {
@@ -142,36 +149,88 @@ namespace SubZeroPOS.WPF.ViewModels
             }
 
             IsBusy = true;
+
             try
             {
                 var closedShiftId = _openShift.ShiftId;
-                var (success, error) = await _shiftService.CloseShiftAsync(closedShiftId, actual, CloseNotes);
+
+                var (success, error) =
+                    await _shiftService.CloseShiftAsync(            
+                        closedShiftId,
+                        actual,
+                        CloseNotes);
+
                 if (!success)
                 {
                     StatusMessage = error ?? "حدث خطأ";
                     return;
                 }
 
-                // Build the closing summary popup before resetting the form
-                var summary = await _shiftService.GetShiftSummaryAsync(closedShiftId);
-                SummaryOrderCount = summary.TotalOrderCount.ToString();
-                SummaryCashOrderCount = summary.CashOrderCount.ToString();
-                SummaryBankOrderCount = summary.BankOrderCount.ToString();
-                SummaryTotalSales = summary.TotalSales.ToString("#,##0.000");
-                SummaryCashSales = summary.CashSales.ToString("#,##0.000");
-                SummaryBankSales = summary.BankSales.ToString("#,##0.000");
-                SummaryExpected = (summary.Shift?.ExpectedCash ?? 0).ToString("#,##0.000");
-                SummaryActual = (summary.Shift?.ActualCash ?? 0).ToString("#,##0.000");
+                // ==========================================
+                // Build closing summary
+                // ==========================================
 
-                var difference = (summary.Shift?.ActualCash ?? 0) - (summary.Shift?.ExpectedCash ?? 0);
-                SummaryDifference = difference.ToString("#,##0.000");
+                var summary =
+                    await _shiftService.GetShiftSummaryAsync(closedShiftId);
+
+                SummaryOrderCount =
+                    summary.TotalOrderCount.ToString();
+
+                SummaryCashOrderCount =
+                    summary.CashOrderCount.ToString();
+
+                SummaryBankOrderCount =
+                    summary.BankOrderCount.ToString();
+
+                SummaryTotalSales =
+                    summary.TotalSales.ToString("#,##0");
+
+                SummaryCashSales =
+                    summary.CashSales.ToString("#,##0");
+
+                SummaryBankSales =
+                    summary.BankSales.ToString("#,##0");
+
+                SummaryExpected =
+                    (summary.Shift?.ExpectedCash ?? 0)
+                    .ToString("#,##0");
+
+                SummaryActual =
+                    (summary.Shift?.ActualCash ?? 0)
+                    .ToString("#,##0");
+
+                var difference =
+                    (summary.Shift?.ActualCash ?? 0)
+                    - (summary.Shift?.ExpectedCash ?? 0);
+
+                SummaryDifference =
+                    difference.ToString("#,##0");
+
                 SummaryHasShortage = difference < 0;
 
-                ShowClosingSummary = true;
+                // ==========================================
+                // IMPORTANT:
+                // Immediately clear the current shift
+                // ==========================================
+
+                _openShift = null;
+                IsShiftOpen = false;
+
+                OpenedByName = string.Empty;
+                OpenedAtText = string.Empty;
+                OpeningCashDisplay = "0";
+                ExpectedCashDisplay = "0";
 
                 ActualCashText = string.Empty;
                 CloseNotes = string.Empty;
-                await InitializeAsync();
+
+                StatusMessage = "تم إغلاق الوردية بنجاح";
+
+                // ==========================================
+                // Show summary
+                // ==========================================
+
+                ShowClosingSummary = true;
             }
             finally
             {

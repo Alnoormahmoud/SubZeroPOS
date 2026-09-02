@@ -40,7 +40,7 @@
             <TextBlock Text="إلى:" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" VerticalAlignment="Center" Margin="0,0,8,0" />
             <DatePicker SelectedDate="{Binding ToDate}" Width="150" Style="{StaticResource DarkDatePickerStyle}" Margin="0,0,16,0" />
             <Button Content="عرض" Command="{Binding LoadReportCommand}"
-                    Background="{StaticResource AccentRedBrush}" Foreground="White" Padding="16,6" Cursor="Hand">
+                    Background="{StaticResource AccentRedBrush}" Foreground="White" Padding="16,6" Cursor="Hand" >
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
@@ -48,6 +48,11 @@
                         </Border>
                     </ControlTemplate>
                 </Button.Template>
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="IsDefault" Value="True" />
+                    </Style>
+                </Button.Style>
             </Button>
         </StackPanel>
 

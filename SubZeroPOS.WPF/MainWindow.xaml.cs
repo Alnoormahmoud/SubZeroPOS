@@ -1,6 +1,9 @@
-using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
+using SubZeroPOS.Core.Interfaces;
+using SubZeroPOS.Data.Services;
 using SubZeroPOS.WPF.ViewModels;
 using SubZeroPOS.WPF.Views;
+using System.Windows;
 
 namespace SubZeroPOS.WPF
 {
@@ -28,6 +31,11 @@ namespace SubZeroPOS.WPF
         private readonly ReportsViewModel _reportsViewModel;
         private readonly ShiftView _shiftView;
         private readonly ShiftViewModel _shiftViewModel;
+        private readonly IShiftService _shiftService;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly MyAccountView _myAccountView;
+        private readonly MyAccountViewModel _myAccountViewModel;
+
 
         public MainWindow(
             LoginView loginView,
@@ -51,7 +59,11 @@ namespace SubZeroPOS.WPF
             ReportsView reportsView,
             ReportsViewModel reportsViewModel,
             ShiftView shiftView,
-            ShiftViewModel shiftViewModel)
+            ShiftViewModel shiftViewModel,
+            IShiftService shiftService,
+            IServiceProvider serviceProvider,
+            MyAccountView myAccountView,
+            MyAccountViewModel myAccountViewModel)
         {
             InitializeComponent();
 
@@ -77,10 +89,13 @@ namespace SubZeroPOS.WPF
             _reportsViewModel = reportsViewModel;
             _shiftView = shiftView;
             _shiftViewModel = shiftViewModel;
+            _shiftService = shiftService;
+            _serviceProvider = serviceProvider;
+            _myAccountView = myAccountView;
+            _myAccountViewModel = myAccountViewModel;
 
             _loginView.DataContext = _loginViewModel;
-            _loginViewModel.LoginSucceeded += ShowDashboard;
-
+            _loginViewModel.LoginSucceeded += async () => await OnLoginSucceededAsync();
             _dashboardView.DataContext = _dashboardViewModel;
             _dashboardViewModel.LogoutRequested += ShowLogin;
             _dashboardViewModel.NewOrderRequested += ShowOrderEntry;
@@ -98,9 +113,10 @@ namespace SubZeroPOS.WPF
             _orderEntryViewModel.CancelOrderRequested += ShowDashboard;
             _orderEntryViewModel.OrderCompleted += invoice =>
             {
-                _orderInvoiceViewModel.SetOrder(invoice, ShowDashboard, "الرئيسية");
+                _orderInvoiceViewModel.SetOrder(invoice, ShowDashboard, "الرئيسية", autoPrint: invoice.AutoPrintReceipt);
                 ShowInvoice();
             };
+
 
             _expenseView.DataContext = _expenseViewModel;
             _expenseViewModel.BackRequested += ShowDashboard;
@@ -132,11 +148,44 @@ namespace SubZeroPOS.WPF
             _shiftView.DataContext = _shiftViewModel;
             _shiftViewModel.BackRequested += ShowDashboard;
 
+            _myAccountView.DataContext = _myAccountViewModel;
+            _myAccountViewModel.BackRequested += ShowDashboard;
+
+            _dashboardViewModel.MyAccountRequested += ShowMyAccount;
             // Placeholder handlers for screens not built yet.
 
             ShowLogin();
         }
 
+        private void ShowMyAccount()
+        {
+            RootContent.Children.Clear();
+
+            RootContent.Children.Add(_myAccountView);
+        }
+
+        private async System.Threading.Tasks.Task OnLoginSucceededAsync()
+        {
+            ShowDashboard();
+
+            var openShift = await _shiftService.GetOpenShiftAsync();
+            if (openShift == null)
+            {
+
+                var result = MessageBox.Show(
+                    "لا توجد وردية مفتوحة حالياً. هل تريد فتح وردية الآن؟",
+                    "فتح وردية",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    ShowShift();
+                    return;
+                }
+            }
+
+        }
         private void ShowLogin()
         {
             RootContent.Children.Clear();

@@ -35,6 +35,21 @@ namespace SubZeroPOS.WPF.ViewModels
         [ObservableProperty] private int totalPages = 1;
         [ObservableProperty] private int totalUserCount;
 
+        [ObservableProperty]
+        private User? selectedUser;
+
+        [ObservableProperty]
+        private string editFullName = string.Empty;
+
+        [ObservableProperty]
+        private string editUsername = string.Empty;
+
+        [ObservableProperty]
+        private string editPassword = string.Empty;
+
+        [ObservableProperty]
+        private Role? editSelectedRole;
+
         public string PageInfoText => $"الصفحة {CurrentPage} من {TotalPages}";
         public bool CanGoNext => CurrentPage < TotalPages;
         public bool CanGoPrevious => CurrentPage > 1;
@@ -60,6 +75,87 @@ namespace SubZeroPOS.WPF.ViewModels
             }
         }
 
+        partial void OnSelectedUserChanged(User? value)
+        {
+            if (value is null)
+                return;
+
+            EditFullName = value.FullName;
+            EditUsername = value.Username;
+            EditPassword = string.Empty;
+            EditSelectedRole = Roles.FirstOrDefault(
+                r => r.RoleId == value.RoleId);
+        }
+        [RelayCommand]
+        private async Task UpdateUserAsync()
+        {
+            StatusMessage = string.Empty;
+
+            if (SelectedUser is null)
+            {
+                StatusMessage = "اختر مستخدماً أولاً";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(EditFullName))
+            {
+                StatusMessage = "الاسم الكامل مطلوب";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(EditUsername))
+            {
+                StatusMessage = "اسم المستخدم مطلوب";
+                return;
+            }
+
+            if (EditSelectedRole is null)
+            {
+                StatusMessage = "الرجاء اختيار الصلاحية";
+                return;
+            }
+
+            IsBusy = true;
+
+            try
+            {
+                var result =
+                    await _userService.UpdateUserAsync(
+                        SelectedUser.UserId,
+                        EditFullName,
+                        EditUsername,
+                        EditSelectedRole.RoleId,
+                        string.IsNullOrWhiteSpace(EditPassword)
+                            ? null
+                            : EditPassword);
+
+                if (!result.Success)
+                {
+                    StatusMessage =
+                        result.ErrorMessage ?? "تعذر تحديث المستخدم";
+
+                    return;
+                }
+
+                StatusMessage = "تم تحديث المستخدم بنجاح";
+
+                EditPassword = string.Empty;
+
+                await ReloadUsersAsync();
+
+                SelectedUser = null;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
+        private void SelectUserForEdit(User user)
+        {
+            SelectedUser = user;
+        }
         private async Task ReloadUsersAsync()
         {
             _allUsers = await _userService.GetAllUsersAsync();

@@ -114,12 +114,12 @@
                                 </Button>
                             </Grid>
 
-                            <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource IceBlueBrush}"
+                            <TextBlock Text="{Binding AddItemStatusMessage}" Foreground="{StaticResource IceBlueBrush}"
                                        FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10" />
 
                             <Button Content="إضافة الصنف" Command="{Binding AddItemCommand}"
                                     Style="{StaticResource PrimaryButtonStyle}"
-                                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
+                                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" IsDefault="True" />
                         </StackPanel>
                     </Border>
 
@@ -139,7 +139,7 @@
                                         <ControlTemplate TargetType="Button">
                                             <ContentPresenter TextElement.Foreground="{StaticResource IceBlueBrush}" />
                                         </ControlTemplate>
-                                    </Button.Template>
+                                    </Button.Template>                              
                                 </Button>
                             </Grid>
 
@@ -150,9 +150,14 @@
                                 <TextBlock Text="الاسم بالإنجليزية (اختياري)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                                 <TextBox Text="{Binding NewCategoryNameEn, UpdateSourceTrigger=PropertyChanged}"
                                          Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
+                                <TextBlock Text="{Binding AddCategoryStatusMessage}"
+           Foreground="{StaticResource IceBlueBrush}"
+           FontSize="12"
+           TextWrapping="Wrap"
+           Margin="0,0,0,10" />
                                 <Button Content="إضافة القسم" Command="{Binding AddCategoryCommand}"
                                         Style="{StaticResource PrimaryButtonStyle}"
-                                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
+                                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" IsDefault="True" />
                             </StackPanel>
 
                             <ItemsControl ItemsSource="{Binding Categories}">
@@ -170,7 +175,7 @@
                                                     Command="{Binding DataContext.OpenEditCategoryCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                     CommandParameter="{Binding}"
                                                     Background="Transparent" Foreground="{StaticResource IceBlueBrush}"
-                                                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                                                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" >
                                                 <Button.Template>
                                                     <ControlTemplate TargetType="Button">
                                                         <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
@@ -178,7 +183,7 @@
                                                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                                                         </Border>
                                                     </ControlTemplate>
-                                                </Button.Template>
+                                                </Button.Template>                                             
                                             </Button>
                                             <Button Grid.Column="2" Content="حذف" FontSize="11" Padding="8,4" Cursor="Hand"
                                                     Command="{Binding DataContext.DeleteCategoryCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
@@ -253,14 +258,14 @@
                                             <Button Grid.Column="3" Content="تعديل" FontSize="12" Padding="12,6" Cursor="Hand" Margin="0,0,6,0"
                                                     Command="{Binding DataContext.OpenEditItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                     CommandParameter="{Binding}"
-                                                    Background="{StaticResource AccentRedBrush}" Foreground="White" BorderThickness="0">
+                                                    Background="{StaticResource AccentRedBrush}" Foreground="White" BorderThickness="0" >
                                                 <Button.Template>
                                                     <ControlTemplate TargetType="Button">
                                                         <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
                                                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                                                         </Border>
                                                     </ControlTemplate>
-                                                </Button.Template>
+                                                </Button.Template>                                 
                                             </Button>
 
                                             <Button Grid.Column="4" Content="حذف" FontSize="12" Padding="12,6" Cursor="Hand"
@@ -389,7 +394,7 @@
                         </Button>
                     </Grid>
 
-                    <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource IceBlueBrush}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10" />
+                    <TextBlock Text="{Binding EditItemStatusMessage}" Foreground="{StaticResource IceBlueBrush}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10" />
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -430,7 +435,7 @@
                     <TextBlock Text="الاسم بالإنجليزية (اختياري)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                     <TextBox Text="{Binding EditCategoryNameEn, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,16" />
 
-                    <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource IceBlueBrush}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10" />
+                    <TextBlock Text="{Binding EditCategoryStatusMessage}" Foreground="{StaticResource IceBlueBrush}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10" />
 
                     <Grid>
                         <Grid.ColumnDefinitions>

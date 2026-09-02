@@ -1,14 +1,16 @@
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
+using SubZeroPOS.Core.DTOs;
+using SubZeroPOS.WPF.ViewModels;
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Printing;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using PdfSharp.Drawing;
-using PdfSharp.Pdf;
-using SubZeroPOS.Core.DTOs;
-using SubZeroPOS.WPF.ViewModels;
 
 namespace SubZeroPOS.WPF.Views
 {
@@ -17,6 +19,21 @@ namespace SubZeroPOS.WPF.Views
         public OrderInvoiceView()
         {
             InitializeComponent();
+            Loaded += OrderInvoiceView_Loaded;
+
+        }
+
+        private void OrderInvoiceView_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is not OrderInvoiceViewModel vm)
+                return;
+
+            Dispatcher.BeginInvoke(
+                new Action(() =>
+                {
+                    vm.RequestAutomaticPrint();
+                }),
+                System.Windows.Threading.DispatcherPriority.Loaded);
         }
 
         // =========================================================
@@ -27,10 +44,66 @@ namespace SubZeroPOS.WPF.Views
         {
             if (DataContext is OrderInvoiceViewModel vm)
             {
-                vm.PrintRequested += PrintReceipt;
+                vm.PrintRequested += HandlePrintRequested;
+                vm.AutomaticPrintRequested += HandleAutomaticPrintRequested;
             }
         }
 
+        private void HandleAutomaticPrintRequested()
+        {
+            if (DataContext is not OrderInvoiceViewModel vm ||
+                vm.Order is null)
+            {
+                return;
+            }
+
+            // =========================================================
+            // AUTOMATIC PRINT
+            // =========================================================
+
+            if (vm.ShouldAutoPrint)
+            {
+                PrintReceipt();
+            }
+
+            // =========================================================
+            // OPEN PDF
+            // =========================================================
+
+            if (vm.Order.OpenPdfAfterPrinting)
+            {
+                try
+                {
+                    OpenReceiptAsPdf(vm.Order);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        ex.ToString(),
+                        "PDF Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void HandlePrintRequested()
+        {
+            if (DataContext is not OrderInvoiceViewModel vm ||
+                vm.Order is null)
+            {
+                return;
+            }
+
+            // =========================================================
+            // PRINT RECEIPT Only, no PDF generation
+            // =========================================================
+
+
+            PrintReceipt();           
+
+
+        }
         // =========================================================
         // PRINT RECEIPT
         // =========================================================
@@ -43,10 +116,7 @@ namespace SubZeroPOS.WPF.Views
                 return;
             }
 
-            var printDialog = new PrintDialog();
-
-            if (printDialog.ShowDialog() != true)
-                return;
+        
 
             // Build the professional RTL receipt.
             var document = BuildReceiptDocument(vm.Order);
@@ -59,21 +129,11 @@ namespace SubZeroPOS.WPF.Views
             // Print.
             IDocumentPaginatorSource paginatorSource = document;
 
-            printDialog.PrintDocument(paginatorSource.DocumentPaginator, "فاتورة ساب زيرو");
+            var printQueue = LocalPrintServer.GetDefaultPrintQueue();
 
-            // Open PDF only if enabled in settings.
-            if (vm.Order.OpenPdfAfterPrinting)
-            {
-                try
-                {
-                    OpenReceiptAsPdf(vm.Order);
-                }
-                catch
-                {
-                    // PDF generation is optional.
-                    // Printing has already succeeded.
-                }
-            }
+            var writer = PrintQueue.CreateXpsDocumentWriter(printQueue);
+
+            writer.Write(paginatorSource.DocumentPaginator);
         }
 
         // =========================================================
@@ -82,87 +142,177 @@ namespace SubZeroPOS.WPF.Views
 
         private void OpenReceiptAsPdf(OrderInvoiceDto order)
         {
-            ReceiptBorder.UpdateLayout();
+            // =========================================================
+            // 1. Build the SAME document used by PrintDialog
+            // =========================================================
 
-            double width = ReceiptBorder.ActualWidth;
-            double height = ReceiptBorder.ActualHeight;
+            var document = BuildReceiptDocument(order);
 
-            if (width <= 0 || height <= 0)
-                return;
+            // =========================================================
+            // 2. Measure the natural height
+            // =========================================================
 
-            double dpiScale = 2.0;
+            double measuredHeight =
+                MeasureDocumentHeight(
+                    document,
+                    document.PageWidth);
 
-            int pixelWidth = (int)(width * dpiScale);
+            document.PageHeight =
+                measuredHeight + 16;
 
-            int pixelHeight = (int)(height * dpiScale);
 
-            var renderBitmap = new RenderTargetBitmap(pixelWidth, pixelHeight, 96 * dpiScale, 96 * dpiScale, PixelFormats.Pbgra32);
+            // =========================================================
+            // 3. Get the SAME paginator
+            // =========================================================
 
-            renderBitmap.Render(ReceiptBorder);
+            IDocumentPaginatorSource paginatorSource =
+                document;
 
-            // Convert WPF visual to PNG.
-            var encoder = new PngBitmapEncoder();
+            DocumentPaginator paginator =
+                paginatorSource.DocumentPaginator;
 
-            encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
+            paginator.ComputePageCount();
 
-            byte[] pngBytes;
 
-            using (var ms = new MemoryStream())
+            // =========================================================
+            // 4. Create PDF
+            // =========================================================
+
+            string invoicesFolder =
+                @"C:\SZpdfs";
+
+            Directory.CreateDirectory(
+                invoicesFolder);
+
+            string pdfPath =
+                Path.Combine(
+                    invoicesFolder,
+                    $"SubZero_Invoice_{order.OrderId}.pdf");
+
+
+            using var pdfDocument =
+                new PdfDocument();
+
+
+            // =========================================================
+            // 5. Render paginator page(s)
+            // =========================================================
+
+            for (int pageIndex = 0;
+                 pageIndex < paginator.PageCount;
+                 pageIndex++)
             {
-                encoder.Save(ms);
-                pngBytes = ms.ToArray();
+                DocumentPage documentPage =
+                    paginator.GetPage(pageIndex);
+
+                if (documentPage == DocumentPage.Missing)
+                    continue;
+
+
+                Size pageSize =
+                    documentPage.Size;
+
+
+                double dpiScale = 2.0;
+
+                int pixelWidth =
+                    (int)Math.Ceiling(
+                        pageSize.Width * dpiScale);
+
+                int pixelHeight =
+                    (int)Math.Ceiling(
+                        pageSize.Height * dpiScale);
+
+
+                var renderBitmap =
+                    new RenderTargetBitmap(
+                        pixelWidth,
+                        pixelHeight,
+                        96 * dpiScale,
+                        96 * dpiScale,
+                        PixelFormats.Pbgra32);
+
+
+                // IMPORTANT:
+                // Render the paginator page, NOT ReceiptBorder.
+                renderBitmap.Render(
+                    documentPage.Visual);
+
+
+                // =====================================================
+                // PNG
+                // =====================================================
+
+                var encoder =
+                    new PngBitmapEncoder();
+
+                encoder.Frames.Add(
+                    BitmapFrame.Create(
+                        renderBitmap));
+
+
+                using var imageStream =
+                    new MemoryStream();
+
+                encoder.Save(
+                    imageStream);
+
+                imageStream.Position = 0;
+
+
+                // =====================================================
+                // PDF page
+                // =====================================================
+
+                var pdfPage =
+                    pdfDocument.AddPage();
+
+                pdfPage.Width =
+                    XUnit.FromPoint(
+                        pageSize.Width * 0.75);
+
+                pdfPage.Height =
+                    XUnit.FromPoint(
+                        pageSize.Height * 0.75);
+
+
+                using var gfx =
+                    XGraphics.FromPdfPage(
+                        pdfPage);
+
+                using var ximage =
+                    XImage.FromStream(
+                        imageStream);
+
+
+                gfx.DrawImage(
+                    ximage,
+                    0,
+                    0,
+                    pdfPage.Width.Point,
+                    pdfPage.Height.Point);
             }
 
-            using var pdfDocument = new PdfDocument();
 
-            var page = pdfDocument.AddPage();
+            // =========================================================
+            // 6. Save
+            // =========================================================
 
-            // WPF uses DIP (96 DPI).
-            // PDF uses points (72 DPI).
-            page.Width = XUnit.FromPoint(width * 0.75);
+            pdfDocument.Save(
+                pdfPath);
 
-            page.Height = XUnit.FromPoint(height * 0.75);
 
-            using var gfx = XGraphics.FromPdfPage(page);
+            // =========================================================
+            // 7. Open automatically
+            // =========================================================
 
-            using var imageStream = new MemoryStream(pngBytes);
-
-            var ximage = XImage.FromStream(imageStream);
-
-            gfx.DrawImage(ximage, 0, 0, page.Width.Point, page.Height.Point);
-
-            string tempPath = Path.Combine(Path.GetTempPath(), $"SubZero_Invoice_{order.OrderId}.pdf");
-
-            if (File.Exists(tempPath)) File.Delete(tempPath);
-
-            pdfDocument.Save(tempPath);
-
-            // Open PDF.
-            string[] possibleEdgePaths =
-            {
-                @"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
-                @"C:\Program Files\Microsoft\Edge\Application\msedge.exe"
-            };
-
-            string? edgePath = Array.Find(possibleEdgePaths, File.Exists);
-
-            if (edgePath != null)
-            {
-                System.Diagnostics.Process.Start(
-                    new System.Diagnostics.ProcessStartInfo(edgePath, $"\"{tempPath}\"")
-                    {
-                        UseShellExecute = true
-                    }); 
-            }
-            else
-            {
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(tempPath)
+            Process.Start(
+                new ProcessStartInfo
                 {
+                    FileName = pdfPath,
                     UseShellExecute = true
                 });
-            }
         }
-
         // =========================================================
         // MEASURE DOCUMENT
         // =========================================================
@@ -290,7 +440,7 @@ namespace SubZeroPOS.WPF.Views
             // Customer name
             if (order.ShowCustomerNameOnInvoice && !string.IsNullOrWhiteSpace(order.CustomerName))
             {
-                AddDetailRow( detailsTable,  "اسم العميل", order.CustomerName,true);
+                AddDetailRow( detailsTable,  "اسم الزبون", order.CustomerName,true);
             }
 
             // Cashier

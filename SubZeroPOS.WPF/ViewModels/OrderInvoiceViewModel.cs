@@ -13,28 +13,65 @@ namespace SubZeroPOS.WPF.ViewModels
         [ObservableProperty]
         private string backButtonLabel = "الرئيسية";
 
+        [ObservableProperty]
+        private bool shouldAutoPrint;
+
         public event Action? NewOrderRequested;
         public event Action? PrintRequested;
+        public event Action? AutomaticPrintRequested;
 
-        // Whoever navigates here sets this - checkout flow sends back to the
-        // dashboard, Previous Orders sends back to itself. Defaults to
-        // dashboard if nothing sets it.
         private Action? _backAction;
 
-        public void SetOrder(OrderInvoiceDto invoice, Action? backAction = null, string backLabel = "الرئيسية")
+        public void SetOrder(
+            OrderInvoiceDto invoice,
+            Action? backAction = null,
+            string backLabel = "الرئيسية",
+            bool autoPrint = false)
         {
             Order = invoice;
+
             _backAction = backAction;
+
             BackButtonLabel = backLabel;
+
+            ShouldAutoPrint = autoPrint;
         }
 
         [RelayCommand]
-        private void NewOrder() => NewOrderRequested?.Invoke();
+        private void NewOrder()
+        {
+            NewOrderRequested?.Invoke();
+        }
 
         [RelayCommand]
-        private void GoBack() => _backAction?.Invoke();
+        private void GoBack()
+        {
+            _backAction?.Invoke();
+        }
 
+        // Manual printing.
         [RelayCommand]
-        private void Print() => PrintRequested?.Invoke();
+        private void Print()
+        {
+            if (Order is null)
+                return;
+
+            PrintRequested?.Invoke();
+        }
+
+        // Automatic printing after confirming a new order.
+        public void RequestAutomaticPrint()
+        {
+            if (Order is null)
+                return;
+            // Run only if at least one output option is enabled.
+            if (!ShouldAutoPrint && !Order!.OpenPdfAfterPrinting)
+                return;
+
+            AutomaticPrintRequested?.Invoke();
+
+            // Prevent printing twice.
+            ShouldAutoPrint = false;
+         }
     }
 }

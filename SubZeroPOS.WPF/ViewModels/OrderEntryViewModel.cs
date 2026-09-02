@@ -17,7 +17,7 @@ namespace SubZeroPOS.WPF.ViewModels
         private readonly IItemService _itemService;
         private readonly IOrderService _orderService;
         private readonly IRestaurantSettingsService _settingsService;
-
+ 
         // Pseudo-category representing "show everything" - not a real DB row.
         private static readonly Category AllCategory = new()
         {
@@ -90,6 +90,8 @@ namespace SubZeroPOS.WPF.ViewModels
     CartTotal + (TryParseMoney(DeliveryFeeText, out var fee) ? fee : 0);
 
         public event Action<OrderInvoiceDto>? OrderCompleted;
+ 
+
 
         public async Task InitializeAsync()
         {
@@ -407,7 +409,6 @@ namespace SubZeroPOS.WPF.ViewModels
                 SelectedOrderType = OrderTypes.Count > 0 ? OrderTypes[0] : null;
                 SelectedPaymentMethod = PaymentMethods[0];
                 StatusMessage = "تم حفظ الطلب بنجاح";
-
                 OrderCompleted?.Invoke(invoice);
             }
             catch (Exception ex)

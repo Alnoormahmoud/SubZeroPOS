@@ -84,12 +84,7 @@
                             </Button.Template>
                         </Button>
                     </StackPanel>
-
-                    <TextBlock Grid.Column="2" VerticalAlignment="Center">
-                        <Run Text="{Binding Orders.Count, Mode=OneWay}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
-                        <Run Text=" طلب  •  " Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
-                        <Run Text="{Binding TotalForRange, Mode=OneWay}" Foreground="{StaticResource IceBlueBrush}" FontSize="14" FontWeight="Medium" />
-                    </TextBlock>
+ 
                 </Grid>
 
                 <!-- Row 2: type/payment filters + search -->
@@ -109,6 +104,11 @@
                                 </Border>
                             </ControlTemplate>
                         </Button.Template>
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="IsDefault" Value="True" />
+                            </Style>
+                        </Button.Style>
                     </Button>
                 </StackPanel>
             </StackPanel>
