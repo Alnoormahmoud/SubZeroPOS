@@ -325,7 +325,9 @@
         <Grid Grid.RowSpan="2" Background="#CC000000" Visibility="{Binding IsItemEditOpen, Converter={StaticResource BoolToVisibilityConverter}}">
             <Border Width="420" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1" CornerRadius="14" Padding="24" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <StackPanel>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="10">
+
+                    <StackPanel>
                     <TextBlock Text="تعديل الصنف" Foreground="{StaticResource TextPrimaryBrush}" FontSize="16" FontWeight="Medium" Margin="0,0,0,16" />
 
                     <TextBlock Text="اسم الصنف" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
@@ -419,6 +421,7 @@
                                 IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
                     </Grid>
                 </StackPanel>
+                </ScrollViewer>
             </Border>
         </Grid>
 

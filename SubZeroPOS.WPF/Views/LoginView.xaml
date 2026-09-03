@@ -3,7 +3,39 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              FlowDirection="RightToLeft"
               Background="{StaticResource BackgroundBrush}">
-          
+
+    <UserControl.Resources>
+
+        <Style x:Key="DeveloperLinkStyle"
+           TargetType="{x:Type Hyperlink}">
+
+            <!-- Normal -->
+            <Setter Property="Foreground"
+                Value="{StaticResource IceBlueBrush}" />
+
+            <Setter Property="TextDecorations"
+                Value="{x:Null}" />
+
+            <Style.Triggers>
+
+                <!-- Hover -->
+                <Trigger Property="IsMouseOver"
+                     Value="True">
+
+                    <Setter Property="Foreground"
+                        Value="{StaticResource AccentRedBrush}" />
+
+                    <Setter Property="TextDecorations"
+                        Value="Underline" />
+
+                </Trigger>
+
+            </Style.Triggers>
+
+        </Style>
+
+    </UserControl.Resources>
+
 
     <Grid>
         <Border Width="360"
@@ -65,7 +97,57 @@
                         IsDefault="True" 
                         IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
 
+
+                <!-- System Branding -->
+                <StackPanel Margin="0,18,0,0"
+            HorizontalAlignment="Center">
+
+                    <!-- System Name -->
+                    <TextBlock Text="SubZeroPOS"
+               Foreground="{StaticResource TextSecondaryBrush}"
+               FontSize="11"
+               FontWeight="SemiBold"
+               HorizontalAlignment="Center" />
+
+                    <!-- System Description -->
+                    <TextBlock Text="نظام متكامل لإدارة المبيعات ونقاط البيع"
+               Foreground="{StaticResource TextSecondaryBrush}"
+               FontSize="10"
+               Opacity="0.75"
+               HorizontalAlignment="Center"
+               Margin="0,3,0,0" />
+
+                    <!-- Version -->
+                    <TextBlock Text="الإصدار 1.0.0"
+               Foreground="{StaticResource TextSecondaryBrush}"
+               FontSize="10"
+               Opacity="0.65"
+               HorizontalAlignment="Center"
+               Margin="0,3,0,0" />
+
+                    <!-- Developer -->
+                    <TextBlock HorizontalAlignment="Center"
+           Margin="0,5,0,0"
+           FontSize="9">
+
+    <Run Text="تم التطوير بواسطة "
+         Foreground="{StaticResource TextSecondaryBrush}"
+         />
+
+    <Hyperlink NavigateUri="https://github.com/Alnoormahmoud"
+               RequestNavigate="Hyperlink_RequestNavigate"
+               Style="{StaticResource DeveloperLinkStyle}">
+
+        <Run Text="Alnoor Mahmoud" />
+
+    </Hyperlink>
+
+                    </TextBlock>
+                </StackPanel>
+
             </StackPanel>
         </Border>
     </Grid>
 </UserControl>
+
+    

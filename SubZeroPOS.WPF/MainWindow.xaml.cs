@@ -3,8 +3,9 @@ using SubZeroPOS.Core.Interfaces;
 using SubZeroPOS.Data.Services;
 using SubZeroPOS.WPF.ViewModels;
 using SubZeroPOS.WPF.Views;
+using System.ComponentModel;
 using System.Windows;
-
+ 
 namespace SubZeroPOS.WPF
 {
     public partial class MainWindow : Window
@@ -66,6 +67,8 @@ namespace SubZeroPOS.WPF
             MyAccountViewModel myAccountViewModel)
         {
             InitializeComponent();
+
+            Closing += MainWindow_Closing;
 
             _loginView = loginView;
             _loginViewModel = loginViewModel;
@@ -164,6 +167,58 @@ namespace SubZeroPOS.WPF
             RootContent.Children.Add(_myAccountView);
         }
 
+        private bool _allowClose;
+        private bool _isCheckingClose;
+
+        private async void MainWindow_Closing(
+     object? sender,
+     CancelEventArgs e)
+        {
+            if (_allowClose)
+                return;
+
+            // Cancel the close immediately.
+            e.Cancel = true;
+
+            // Prevent multiple checks if the user clicks X repeatedly.
+            if (_isCheckingClose)
+                return;
+
+            _isCheckingClose = true;
+
+            try
+            {
+                var openShift =
+                    await _shiftService.GetOpenShiftAsync();
+
+                if (openShift != null)
+                {
+                    MessageBox.Show(
+                        "لا يمكن إغلاق البرنامج قبل إغلاق الوردية الحالية يرجى إغلاق الوردية أولاً.",
+                        "وردية مفتوحة",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+
+                    return;
+                }
+
+                // No open shift → allow the window to close.
+                _allowClose = true;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"حدث خطأ أثناء التحقق من الوردية:\n{ex.Message}",
+                    "خطأ",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+            finally
+            {
+                _isCheckingClose = false;
+            }
+        }
         private async System.Threading.Tasks.Task OnLoginSucceededAsync()
         {
             ShowDashboard();

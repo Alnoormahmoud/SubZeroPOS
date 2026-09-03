@@ -34,7 +34,9 @@
         <Border Grid.Row="1" Width="420" HorizontalAlignment="Right" VerticalAlignment="Top"
                 Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1" CornerRadius="12" Padding="24">
-            <StackPanel>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="10">
+
+                <StackPanel>
 
                 <!-- OPEN SHIFT FORM - shown when no shift is currently open -->
                 <StackPanel Visibility="{Binding IsShiftOpen, Converter={StaticResource InverseBoolConverter}}">
@@ -109,6 +111,8 @@
                 </StackPanel>
 
             </StackPanel>
+            </ScrollViewer>
+
         </Border>
         <!-- Closing summary popup - shown right after a shift is closed -->
         <Border Background="#CC000000" Visibility="{Binding ShowClosingSummary, Converter={StaticResource BoolToVisibilityConverter}}"
