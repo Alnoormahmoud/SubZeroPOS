@@ -21,5 +21,6 @@ namespace SubZeroPOS.Core.Interfaces
         public decimal TotalSales { get; set; }
         public decimal CashSales { get; set; }
         public decimal BankSales { get; set; }
+        public decimal TotalExpenses { get; set; } = 0;
     }
 }

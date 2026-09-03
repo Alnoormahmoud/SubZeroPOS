@@ -88,6 +88,11 @@ namespace SubZeroPOS.Data.Services
 
             var shift = await context.ShiftClosings.Include(s => s.User).FirstOrDefaultAsync(s => s.ShiftId == shiftId);
             if (shift is null) return new ShiftSummary();
+            var totalExpenses = await context.Expenses
+    .Where(e =>
+        e.ExpenseDate >= shift.OpenedAt &&
+        e.ExpenseDate <= shift.ClosedAt)
+    .SumAsync(e => (decimal?)e.Amount) ?? 0;
 
             var orders = await context.Orders
                 .Where(o => o.ShiftId == shiftId && o.StatusCode == "Completed")
@@ -101,7 +106,8 @@ namespace SubZeroPOS.Data.Services
                 BankOrderCount = orders.Count(o => o.PaymentMethodCode == "Bankak"),
                 TotalSales = orders.Sum(o => o.TotalAmount),
                 CashSales = orders.Where(o => o.PaymentMethodCode == "Cash").Sum(o => o.TotalAmount),
-                BankSales = orders.Where(o => o.PaymentMethodCode == "Bankak").Sum(o => o.TotalAmount)
+                BankSales = orders.Where(o => o.PaymentMethodCode == "Bankak").Sum(o => o.TotalAmount),
+                TotalExpenses = totalExpenses
             };
         }
     }

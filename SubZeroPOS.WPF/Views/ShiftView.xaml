@@ -245,11 +245,53 @@
                     FontSize="13"/>
                     </Grid>
 
+                    <!-- Total Expenses -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+    Grid.Column="0"
+    Text="اجمالي المصروفات"
+    Foreground="{StaticResource TextSecondaryBrush}"
+    FontSize="13"/>
+
+                        <TextBlock
+    Grid.Column="1"
+    Text="{Binding SummaryTotalExpensesDisplay}"
+    Foreground="{StaticResource TextPrimaryBrush}"
+    FontSize="13"/>
+                    </Grid>
+
                     <Rectangle
                 Height="1"
                 Fill="{StaticResource BorderBrush}"
                 Margin="0,0,0,16"/>
 
+
+                    <!-- Opening cash -->
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+  Grid.Column="0"
+  Text="المبلغ الافتتاحي"
+  Foreground="{StaticResource TextSecondaryBrush}"
+  FontSize="13"/>
+
+                        <TextBlock
+  Grid.Column="1"
+  Text="{Binding SummaryOpeningCashDisplay}"
+    Foreground="{StaticResource TextPrimaryBrush}"
+  FontSize="13"
+  FontWeight="Bold"/>
+                        
+                    </Grid>
                     <!-- Expected cash -->
                     <Grid Margin="0,0,0,8">
                         <Grid.ColumnDefinitions>

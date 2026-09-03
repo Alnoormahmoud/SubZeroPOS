@@ -83,6 +83,12 @@ namespace SubZeroPOS.WPF.ViewModels
         [ObservableProperty]
         private bool summaryHasShortage;
 
+        [ObservableProperty]
+        private string summaryOpeningCashDisplay = "0";
+
+        [ObservableProperty]
+        private string summaryTotalExpensesDisplay = "0";
+
         public event Action? BackRequested;
 
         public async Task InitializeAsync()
@@ -207,6 +213,11 @@ namespace SubZeroPOS.WPF.ViewModels
                     difference.ToString("#,##0");
 
                 SummaryHasShortage = difference < 0;
+
+                SummaryOpeningCashDisplay = (summary.Shift?.OpeningCash ?? 0).ToString("#,##0");
+
+
+                SummaryTotalExpensesDisplay =   summary.TotalExpenses.ToString("#,##0");
 
                 // ==========================================
                 // IMPORTANT:
