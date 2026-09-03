@@ -235,6 +235,9 @@ namespace SubZeroPOS.WPF.ViewModels
                 ActualCashText = string.Empty;
                 CloseNotes = string.Empty;
 
+                //make the opening cash text clear for the next shift
+                OpeningCashText = "0";
+
                 StatusMessage = "تم إغلاق الوردية بنجاح";
 
                 // ==========================================
