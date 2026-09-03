@@ -25,7 +25,7 @@ namespace SubZeroPOS.WPF.ViewModels
             _orderService = orderService;
             _settingsService = settingsService;
 
-            OrderTypeFilterOptions = new ObservableCollection<string> { "الكل", "صالة", "توصيل", "استلام" };
+            OrderTypeFilterOptions = new ObservableCollection<string> { "الكل", "محلي", "توصيل", "سفري" };
             PaymentFilterOptions = new ObservableCollection<string> { "الكل", "نقدي", "بنكك" };
             SelectedOrderTypeFilter = OrderTypeFilterOptions[0];
             SelectedPaymentFilter = PaymentFilterOptions[0];
@@ -129,9 +129,9 @@ namespace SubZeroPOS.WPF.ViewModels
             {
                 var typeCode = SelectedOrderTypeFilter switch
                 {
-                    "صالة" => "DineIn",
-                    "توصيل" => "Delivery",
-                    "استلام" => "Pickup",
+                    "محلي" => "DINE_IN",
+                    "توصيل" => "DELIVERY",
+                    "سفري" => "TAKE_AWAY",
                     _ => null
                 };
                 if (typeCode != null)

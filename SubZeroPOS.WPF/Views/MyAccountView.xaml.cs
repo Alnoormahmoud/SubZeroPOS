@@ -10,23 +10,42 @@ namespace SubZeroPOS.WPF.Views
         {
             InitializeComponent();
 
-            Loaded +=
-                MyAccountView_Loaded;
+            Loaded += MyAccountView_Loaded;
         }
 
-
+ 
         private async void MyAccountView_Loaded(
-            object sender,
-            RoutedEventArgs e)
+    object sender,
+    RoutedEventArgs e)
         {
+            CurrentPasswordBox.Clear();
+            NewPasswordBox.Clear();
+            ConfirmPasswordBox.Clear();
+            CurrentPasswordBox.Focus();
+
             if (DataContext
                 is MyAccountViewModel vm)
             {
+                vm.PasswordChangedSuccessfully -=
+                    Vm_PasswordChangedSuccessfully;
+
+                vm.PasswordChangedSuccessfully +=
+                    Vm_PasswordChangedSuccessfully;
+
                 await vm.InitializeAsync();
             }
         }
 
+        private void Vm_PasswordChangedSuccessfully()
+        {
+            CurrentPasswordBox.Clear();
+            NewPasswordBox.Clear();
+            ConfirmPasswordBox.Clear();
 
+            //return cursur to the first password box
+            CurrentPasswordBox.Focus();
+
+        }
         private void ChangePassword_Click(
             object sender,
             RoutedEventArgs e)

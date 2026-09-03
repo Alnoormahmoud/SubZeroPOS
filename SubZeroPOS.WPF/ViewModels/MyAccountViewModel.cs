@@ -68,7 +68,7 @@ namespace SubZeroPOS.WPF.ViewModels
 
 
         public event Action? BackRequested;
-
+        public event Action? PasswordChangedSuccessfully;
 
         // ==========================================
         // Initialize
@@ -166,6 +166,7 @@ namespace SubZeroPOS.WPF.ViewModels
                     return;
                 }
 
+        
 
                 // Update the current session immediately.
                 CurrentSession.FullName =
@@ -174,6 +175,7 @@ namespace SubZeroPOS.WPF.ViewModels
 
                 StatusMessage =
                     "تم تحديث بيانات الحساب بنجاح.";
+
             }
             finally
             {
@@ -253,16 +255,12 @@ namespace SubZeroPOS.WPF.ViewModels
                     return;
                 }
 
+ ;
+                // Clear the password fields after successful change.
+         
 
-                // Clear password fields.
-                CurrentPassword =
-                    string.Empty;
+                PasswordChangedSuccessfully?.Invoke();
 
-                NewPassword =
-                    string.Empty;
-
-                ConfirmPassword =
-                    string.Empty;
 
 
                 StatusMessage =

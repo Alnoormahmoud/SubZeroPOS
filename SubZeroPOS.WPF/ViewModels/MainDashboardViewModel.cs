@@ -193,14 +193,16 @@ namespace SubZeroPOS.WPF.ViewModels
             if (openShift != null)
             {
                 System.Windows.MessageBox.Show(
-                    "تنبيه: هناك وردية مفتوحة حالياً ولم يتم إغلاقها بعد.",
+                    "تنبيه: لا يمكن تسجيل الخروج أثناء وجود وردية مفتوحة. يرجى إغلاق الوردية أولاً..",
                     "وردية مفتوحة",
                     System.Windows.MessageBoxButton.OK,
                     System.Windows.MessageBoxImage.Warning);
+                return;
             }
 
             CurrentSession.Clear();
             LogoutRequested?.Invoke();
+
         }
 
         [RelayCommand]
