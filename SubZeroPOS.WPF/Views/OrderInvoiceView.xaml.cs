@@ -109,6 +109,8 @@ namespace SubZeroPOS.WPF.Views
         // =========================================================
 
         private void PrintReceipt()
+        
+        
         {
             if (DataContext is not OrderInvoiceViewModel vm ||
                 vm.Order is null)
@@ -129,11 +131,61 @@ namespace SubZeroPOS.WPF.Views
             // Print.
             IDocumentPaginatorSource paginatorSource = document;
 
-            var printQueue = LocalPrintServer.GetDefaultPrintQueue();
+            // =========================================
+            // SELECT SAVED PRINTER
+            // =========================================
 
-            var writer = PrintQueue.CreateXpsDocumentWriter(printQueue);
+            if (string.IsNullOrWhiteSpace(vm.Order.PrinterName))
+            {
+                MessageBox.Show(
+                    "لم يتم تحديد طابعة في الإعدادات.",
+                    "الطابعة",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
 
-            writer.Write(paginatorSource.DocumentPaginator);
+                return;
+            }
+
+            var printServer = new LocalPrintServer();
+
+            PrintQueue printQueue;
+
+            try
+            {
+                printQueue =
+                    printServer.GetPrintQueue(
+                        vm.Order.PrinterName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"تعذر الوصول إلى الطابعة:\n\n" +
+                    $"{vm.Order.PrinterName}\n\n" +
+                    $"{ex.Message}",
+                    "خطأ في الطابعة",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+
+                return;
+            }
+
+            var writer =
+                PrintQueue.CreateXpsDocumentWriter(
+                    printQueue);
+
+            // =========================================
+            // COPIES
+            // =========================================
+
+
+            int copies =
+                Math.Max(1, vm.Order.ReceiptCopies);
+
+            for (int i = 0; i < copies; i++)
+            {
+                writer.Write(
+                    paginatorSource.DocumentPaginator);
+            }
         }
 
         // =========================================================

@@ -34,7 +34,7 @@ namespace SubZeroPOS.Data.Services
 
             settings = new RestaurantSettings
             {
-                RestaurantName = "سوب زيرو",
+                RestaurantName = "ساب زيرو",
 
                 InvoiceFooterPrimary =
                     "شكراً لزيارتكم",
@@ -58,7 +58,12 @@ namespace SubZeroPOS.Data.Services
 
                 AutoPrintReceipt = false,
 
-                OpenPdfAfterPrinting = false
+                OpenPdfAfterPrinting = false,
+
+                ReceiptCopies = 1,
+
+                PrinterName = string.Empty,
+
             };
 
             context.RestaurantSettings.Add(settings);
@@ -151,6 +156,11 @@ namespace SubZeroPOS.Data.Services
 
                 existing.OpenPdfAfterPrinting =
                     settings.OpenPdfAfterPrinting;
+
+                existing.ReceiptCopies =
+                    settings.ReceiptCopies;
+
+                existing.PrinterName = settings.PrinterName;
             }
 
 

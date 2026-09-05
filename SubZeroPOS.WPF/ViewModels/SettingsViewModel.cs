@@ -7,6 +7,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Drawing.Printing;
 
 namespace SubZeroPOS.WPF.ViewModels
 {
@@ -153,6 +154,20 @@ namespace SubZeroPOS.WPF.ViewModels
                         WidthMillimeters = 80
                     }
                 };
+
+            // ==========================================
+            // receipt copy count options
+            // ==========================================
+            ReceiptCopyOptions =
+                new ObservableCollection<int>
+                {
+                    1, 2, 3, 4, 5
+                };
+
+            // ==========================================
+            // Load installed printers
+            // ==========================================
+            LoadPrinters();
         }
 
 
@@ -162,6 +177,15 @@ namespace SubZeroPOS.WPF.ViewModels
 
         public ObservableCollection<CurrencyOption>
             Currencies
+        {
+            get;
+        }
+
+        // ==============================================
+        // Receipt copy count options
+        // ==============================================
+        public ObservableCollection<int>
+            ReceiptCopyOptions
         {
             get;
         }
@@ -178,6 +202,18 @@ namespace SubZeroPOS.WPF.ViewModels
             ReceiptPaperSizes
         {
             get;
+        }
+
+        public ObservableCollection<string> Printers { get; } = new();
+
+        private void LoadPrinters()
+        {
+            Printers.Clear();
+
+            foreach (string printer in PrinterSettings.InstalledPrinters)
+            {
+                Printers.Add(printer);
+            }
         }
 
 
@@ -282,6 +318,13 @@ namespace SubZeroPOS.WPF.ViewModels
 
         [ObservableProperty]
         private bool isBackupRunning;
+
+        [ObservableProperty]
+        private int selectedReceiptCopyCount = 1;
+
+        [ObservableProperty]
+        private string selectedPrinter = string.Empty;
+
 
 
         // ==============================================
@@ -397,6 +440,15 @@ namespace SubZeroPOS.WPF.ViewModels
                 OpenPdfAfterPrinting =
                     settings.OpenPdfAfterPrinting;
 
+                SelectedReceiptCopyCount =
+                    settings.ReceiptCopies;
+
+      
+                SelectedPrinter =
+    Printers.FirstOrDefault(
+        p => p == settings.PrinterName)
+    ?? Printers.FirstOrDefault()
+    ?? string.Empty;
 
                 StatusMessage = string.Empty;
             }
@@ -436,6 +488,7 @@ namespace SubZeroPOS.WPF.ViewModels
                 await _settingsService.SaveSettingsAsync(
                     new RestaurantSettings
                     {
+
                         SettingsId = _settingsId,
 
 
@@ -531,9 +584,19 @@ namespace SubZeroPOS.WPF.ViewModels
                             AutoPrintReceipt,
 
                         OpenPdfAfterPrinting =
-                            OpenPdfAfterPrinting
+                            OpenPdfAfterPrinting,
+
+                        ReceiptCopies =
+                            SelectedReceiptCopyCount,
+
+                        PrinterName =
+                            SelectedPrinter
+                            ?? string.Empty
+
+
                     });
 
+                SubZeroPOS.WPF.Session.CurrencyHolder.Symbol = SelectedCurrency?.Symbol ?? "ج.س";
 
                 StatusMessage =
                     "تم حفظ الإعدادات بنجاح";

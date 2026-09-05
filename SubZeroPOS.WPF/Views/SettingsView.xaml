@@ -89,6 +89,25 @@
           Margin="0,0,0,16"
           Padding="8" />
 
+                    <!-- Number of Copies -->
+                    <TextBlock Text="عدد نسخ الفاتورة"
+           Foreground="{StaticResource TextSecondaryBrush}"
+           FontSize="11"
+           Margin="0,0,0,4" />
+
+                    <ComboBox ItemsSource="{Binding ReceiptCopyOptions}"
+          SelectedItem="{Binding SelectedReceiptCopyCount}"
+          Margin="0,0,0,16"
+          Padding="8" />
+
+                    <TextBlock Text="اسم الطابعة"
+           Foreground="{StaticResource TextSecondaryBrush}"
+   FontSize="11"
+   Margin="0,0,0,4" />
+                    <ComboBox ItemsSource="{Binding Printers}"
+          SelectedItem="{Binding SelectedPrinter, UpdateSourceTrigger=PropertyChanged}"
+                              Margin="0,5,0,12"     Padding="8" />
+
 
                     <!-- Print Options -->
 

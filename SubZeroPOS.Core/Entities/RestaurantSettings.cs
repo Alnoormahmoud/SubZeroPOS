@@ -40,5 +40,9 @@ namespace SubZeroPOS.Core.Entities
         public bool AutoPrintReceipt { get; set; } = false;
 
         public bool OpenPdfAfterPrinting { get; set; } = false;
+
+        public int ReceiptCopies { get; set; } = 1;
+
+        public string PrinterName { get; set; } = string.Empty;
     }
 }

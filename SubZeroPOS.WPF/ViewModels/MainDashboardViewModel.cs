@@ -157,9 +157,8 @@ namespace SubZeroPOS.WPF.ViewModels
             // ========================================================
             // Today's Sales
             // ========================================================
-            TodaysSales = completedOrders
-                .Sum(o => o.TotalAmount)
-                .ToString("#,##0");
+
+            TodaysSales = $"{completedOrders.Sum(o => o.TotalAmount):#,##0} {Session.CurrencyHolder.Symbol}";
 
 
             // ========================================================
@@ -174,9 +173,7 @@ namespace SubZeroPOS.WPF.ViewModels
             var expenses = await _expenseService
                 .GetExpensesByDateRangeAsync(today, today);
 
-            TodaysExpenses = expenses
-                .Sum(e => e.Amount)
-                .ToString("#,##0");
+            TodaysExpenses = $"{expenses.Sum(e => e.Amount):#,##0} {Session.CurrencyHolder.Symbol}";
         }
 
 

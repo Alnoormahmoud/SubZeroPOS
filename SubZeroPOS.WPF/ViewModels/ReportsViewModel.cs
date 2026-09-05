@@ -94,9 +94,10 @@ namespace SubZeroPOS.WPF.ViewModels
             {
                 var summary = await _reportService.GetSummaryAsync(FromDate, ToDate);
 
-                TotalIncome = summary.TotalIncome.ToString("#,##0");
-                TotalExpenses = summary.TotalExpenses.ToString("#,##0");
-                NetProfit = summary.NetProfit.ToString("#,##0");
+       
+                TotalIncome = $"{summary.TotalIncome:#,##0} {Session.CurrencyHolder.Symbol}";
+                TotalExpenses = $"{summary.TotalExpenses:#,##0} {Session.CurrencyHolder.Symbol}";
+                NetProfit = $"{summary.NetProfit:#,##0} {Session.CurrencyHolder.Symbol}";
                 TotalOrders = summary.TotalOrders.ToString();
 
                 ExpensesByCategory.Clear();
@@ -115,6 +116,8 @@ namespace SubZeroPOS.WPF.ViewModels
                         BarHeight = maxDaily > 0 ? (double)(d.Total / maxDaily) * MaxDailyBarHeight : 0
                     });
                 }
+
+
 
                 // Top selling items (already sorted by revenue, top 8)
                 TopItemsChart.Clear();

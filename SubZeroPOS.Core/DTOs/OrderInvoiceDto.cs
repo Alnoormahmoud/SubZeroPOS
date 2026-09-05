@@ -158,5 +158,9 @@ namespace SubZeroPOS.Core.DTOs
             !string.IsNullOrWhiteSpace(CustomerName);
 
         public bool AutoPrintReceipt { get; set; }
+
+        public int ReceiptCopies { get; set; } = 1;
+
+        public string PrinterName { get; set; } = string.Empty;
     }
 }

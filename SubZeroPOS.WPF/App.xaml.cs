@@ -15,31 +15,21 @@ namespace SubZeroPOS.WPF
         // TODO: move this to appsettings.json once the project is stable.
         // For now it's centralized here so it's the one place to edit
         // when deploying to your friend's machine.
-      //  private const string ConnectionString =            "Server=.\\SQLEXPRESS;Database=SubZeroPOS;Trusted_Connection=True;TrustServerCertificate=True;";
-        private const string ConnectionString =           "Server=.;Database=SubZeroPOS;Trusted_Connection=True;TrustServerCertificate=True;";
+        //  private const string ConnectionString = "Server=.\\SQLEXPRESS;Database=SubZeroPOS;Trusted_Connection=True;TrustServerCertificate=True;";
+        private const string ConnectionString = "Server=.;Database=SubZeroPOS;Trusted_Connection=True;TrustServerCertificate=True;";
 
 
         private IHost? _host;
 
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
             _host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
-                    // Database
-                    // Using a Factory (not AddDbContext) is important for WPF specifically:
-                    // WPF has no natural per-request scope like web apps do, so a single
-                    // AddDbContext instance can end up shared/reused across ViewModels for
-                    // the app's whole lifetime. If two operations ever overlap on the same
-                    // DbContext, the SQL connection can get corrupted ("session is in the
-                    // kill state" errors). The factory gives each operation its own
-                    // short-lived context instead.
                     services.AddDbContextFactory<SubZeroDbContext>(options =>
                         options.UseSqlServer(ConnectionString));
-
-                    // Services (Core interface -> Data implementation)
 
                     services.AddTransient<IAuthService, AuthService>();
                     services.AddTransient<IItemService, ItemService>();
@@ -50,8 +40,6 @@ namespace SubZeroPOS.WPF
                     services.AddTransient<IReportService, ReportService>();
                     services.AddTransient<IShiftService, ShiftService>();
                     services.AddTransient<IBackupService, BackupService>();
-                    services.AddTransient<MyAccountViewModel>();
-                    services.AddTransient<MyAccountView>();
 
                     // ViewModels
                     services.AddTransient<LoginViewModel>();
@@ -67,7 +55,6 @@ namespace SubZeroPOS.WPF
                     services.AddTransient<ShiftViewModel>();
                     services.AddTransient<MyAccountViewModel>();
 
-
                     // Views
                     services.AddTransient<LoginView>();
                     services.AddTransient<MainDashboardView>();
@@ -82,20 +69,35 @@ namespace SubZeroPOS.WPF
                     services.AddTransient<ShiftView>();
                     services.AddTransient<MyAccountView>();
 
-
-                    // Main window
                     services.AddSingleton<MainWindow>();
                 })
                 .Build();
 
+            // Create the window
             var mainWindow = _host.Services.GetRequiredService<MainWindow>();
-            mainWindow.Show();
-        }
 
-        protected override void OnExit(ExitEventArgs e)
-        {
-            _host?.Dispose();
-            base.OnExit(e);
+            // Show it FIRST
+            mainWindow.Show();
+
+            // Then load settings
+            try
+            {
+                var settingsService =
+                    _host.Services.GetRequiredService<IRestaurantSettingsService>();
+
+                var settings = await settingsService.GetSettingsAsync();
+
+                SubZeroPOS.WPF.Session.CurrencyHolder.Symbol =
+                    settings.CurrencySymbol;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Failed to load restaurant settings.\n\n{ex.Message}",
+                    "Startup Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
         }
     }
 }

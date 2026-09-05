@@ -568,7 +568,7 @@ namespace SubZeroPOS.WPF.ViewModels
                 item.NameEn ?? string.Empty;
 
             EditItemPriceText =
-                item.Price.ToString("#,##0");
+                item.Price.ToString("#,##0") + " ";
 
             EditItemCategory =
                 Categories.FirstOrDefault(

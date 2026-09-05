@@ -220,7 +220,9 @@ namespace SubZeroPOS.WPF.ViewModels
                 CurrencySymbol = settings.CurrencySymbol,
                 DateFormat = settings.DateFormat,
                 ShowCashierName = settings.ShowCashierNameOnInvoice,
-              };
+                ReceiptCopies = settings.ReceiptCopies,
+                PrinterName = settings.PrinterName,
+            };
 
             ViewInvoiceRequested?.Invoke(invoice);
         }

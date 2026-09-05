@@ -292,7 +292,7 @@ namespace SubZeroPOS.WPF.ViewModels
 
                 var invoice = new OrderInvoiceDto
                 {
-// ==========================================
+ // ==========================================
 // Order information
 // ==========================================
 
@@ -396,6 +396,10 @@ namespace SubZeroPOS.WPF.ViewModels
                     AutoPrintReceipt =
     restaurantSettings.AutoPrintReceipt,
 
+                    ReceiptCopies =
+                    restaurantSettings.ReceiptCopies,
+
+                    PrinterName = restaurantSettings.PrinterName,
 
                 };
 
