@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SubZeroPOS.Core.Entities;
 using SubZeroPOS.Core.Interfaces;
+using System.Globalization;
 
 namespace SubZeroPOS.WPF.ViewModels
 {
@@ -222,8 +223,7 @@ namespace SubZeroPOS.WPF.ViewModels
 
             TotalItemCount = _allItems.Count;
 
-            CurrentPage = 1;
-
+ 
             UpdatePagedItems();
         }
 
@@ -321,10 +321,10 @@ namespace SubZeroPOS.WPF.ViewModels
                 return;
             }
 
-            if (!decimal.TryParse(
-                    NewItemPriceText,
-                    out var price)
-                || price <= 0)
+     
+            if (!TryParsePrice(
+        NewItemPriceText,
+        out var Price))
             {
                 AddItemStatusMessage =
                     "الرجاء إدخال سعر صحيح";
@@ -353,7 +353,7 @@ namespace SubZeroPOS.WPF.ViewModels
                     await _itemService.AddItemAsync(
                         SelectedNewItemCategory.CategoryId,
                         NewItemName,
-                        price,
+                        Price,
                         nameEn);
 
 
@@ -568,7 +568,7 @@ namespace SubZeroPOS.WPF.ViewModels
                 item.NameEn ?? string.Empty;
 
             EditItemPriceText =
-                item.Price.ToString("#,##0") + " ";
+     FormatPrice(item.Price);
 
             EditItemCategory =
                 Categories.FirstOrDefault(
@@ -674,17 +674,17 @@ namespace SubZeroPOS.WPF.ViewModels
             }
 
 
-            if (!decimal.TryParse(
-                    EditItemPriceText,
-                    out var price)
-                || price <= 0)
+   
+
+            if (!TryParsePrice(
+    EditItemPriceText,
+    out var price))
             {
                 EditItemStatusMessage =
                     "الرجاء إدخال سعر صحيح";
 
                 return;
             }
-
 
             if (EditItemCategory is null)
             {
@@ -719,12 +719,12 @@ namespace SubZeroPOS.WPF.ViewModels
 
 
                 // Update price
+     
+
                 await _itemService
-                    .UpdateItemPriceAsync(
-                        itemId,
-                        price);
-
-
+    .UpdateItemPriceAsync(
+        itemId,
+        price);
                 // Update category
                 await _itemService
                     .UpdateItemCategoryAsync(
@@ -754,29 +754,46 @@ namespace SubZeroPOS.WPF.ViewModels
                     var relativePath =
                         $"Images/Items/{itemId}{extension}";
 
-
                     var destinationFolder =
                         Path.Combine(
                             AppDomain.CurrentDomain.BaseDirectory,
                             "Images",
                             "Items");
 
-
                     Directory.CreateDirectory(
                         destinationFolder);
-
 
                     var destinationPath =
                         Path.Combine(
                             destinationFolder,
                             $"{itemId}{extension}");
 
+                    // Delete the old physical image if it exists
+                    // and has a different extension.
+                    if (!string.IsNullOrWhiteSpace(
+                            EditingItem.ImagePath))
+                    {
+                        var oldImagePath =
+                            Path.Combine(
+                                AppDomain.CurrentDomain.BaseDirectory,
+                                EditingItem.ImagePath.Replace(
+                                    '/',
+                                    Path.DirectorySeparatorChar));
+
+                        if (File.Exists(oldImagePath) &&
+                            !string.Equals(
+                                oldImagePath,
+                                destinationPath,
+                                StringComparison.OrdinalIgnoreCase))
+                        {
+                            File.Delete(oldImagePath);
+                        }
+                    }
 
                     File.Copy(
                         _pendingEditImageSourcePath,
                         destinationPath,
                         overwrite: true);
-
 
                     await _itemService
                         .UpdateItemImagePathAsync(
@@ -1001,6 +1018,42 @@ namespace SubZeroPOS.WPF.ViewModels
             await Task.Delay(3000);
 
             clearAction();
+        }
+
+        private static bool TryParsePrice(string text, out decimal price)
+        {
+            price = 0;
+
+            if (string.IsNullOrWhiteSpace(text))
+                return false;
+
+            // First try the user's current culture
+            if (decimal.TryParse(
+                    text,
+                    NumberStyles.Number,
+                    CultureInfo.CurrentCulture,
+                    out price))
+            {
+                return price > 0;
+            }
+
+            // Also support English-style numbers such as:
+            // 1,500.50
+            if (decimal.TryParse(
+                    text,
+                    NumberStyles.Number,
+                    CultureInfo.InvariantCulture,
+                    out price))
+            {
+                return price > 0;
+            }
+
+            return false;
+        }
+
+        private static string FormatPrice(decimal price)
+        {
+            return price.ToString("#,##0", CultureInfo.CurrentCulture);
         }
 
 

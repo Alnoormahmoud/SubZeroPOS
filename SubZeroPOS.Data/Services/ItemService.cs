@@ -171,6 +171,16 @@ namespace SubZeroPOS.Data.Services
 
             var item = await context.Items.FindAsync(itemId);
             if (item is null) return (false, "الصنف غير موجود");
+            // Also delete the physical file if it exists, so orphaned images
+            // don't pile up in the Images/Items folder over time.
+            if (!string.IsNullOrWhiteSpace(item.ImagePath))
+            {
+                var fullPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, item.ImagePath);
+                if (System.IO.File.Exists(fullPath))
+                {
+                    try { System.IO.File.Delete(fullPath); } catch { /* non-critical */ }
+                }
+            }
 
             // Items referenced by past orders can't be truly deleted (would
             // corrupt order history / break the foreign key) - only items with

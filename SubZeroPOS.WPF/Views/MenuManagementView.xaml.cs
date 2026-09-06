@@ -10,15 +10,28 @@ namespace SubZeroPOS.WPF.Views
         public MenuManagementView()
         {
             InitializeComponent();
+
             Loaded += MenuManagementView_Loaded;
+            Unloaded += MenuManagementView_Unloaded;
         }
 
         private async void MenuManagementView_Loaded(object sender, RoutedEventArgs e)
         {
             if (DataContext is MenuManagementViewModel vm)
             {
+                // Prevent duplicate subscriptions
+                vm.ChooseImageFileRequested -= ChooseImageFile;
                 vm.ChooseImageFileRequested += ChooseImageFile;
+
                 await vm.InitializeAsync();
+            }
+        }
+
+        private void MenuManagementView_Unloaded(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is MenuManagementViewModel vm)
+            {
+                vm.ChooseImageFileRequested -= ChooseImageFile;
             }
         }
 
@@ -27,21 +40,19 @@ namespace SubZeroPOS.WPF.Views
             var dialog = new OpenFileDialog
             {
                 Title = "اختيار صورة الصنف",
-                Filter = "كل صور الصور|*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.webp;*.tiff;*.tif;*.ico|" +
-                          "JPEG|*.jpg;*.jpeg|" +
-                          "PNG|*.png|" +
-                          "BMP|*.bmp|" +
-                          "GIF|*.gif|" +
-                          "WEBP|*.webp|" +
-                          "كل الملفات|*.*"
+                Filter =
+                    "كل الصور|*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.webp;*.tiff;*.tif;*.ico|" +
+                    "JPEG|*.jpg;*.jpeg|" +
+                    "PNG|*.png|" +
+                    "BMP|*.bmp|" +
+                    "GIF|*.gif|" +
+                    "WEBP|*.webp|" +
+                    "كل الملفات|*.*"
             };
 
-            return dialog.ShowDialog() == true ? dialog.FileName : null;
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
+            return dialog.ShowDialog() == true
+                ? dialog.FileName
+                : null;
         }
     }
 }
