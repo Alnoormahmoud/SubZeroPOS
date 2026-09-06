@@ -42,8 +42,6 @@ namespace SubZeroPOS.WPF
         services.AddTransient<IReportService, ReportService>();
         services.AddTransient<IShiftService, ShiftService>();
         services.AddTransient<IBackupService, BackupService>();
-        services.AddDbContextFactory<SubZeroDbContext>(options =>
-
 
         // ViewModels
         services.AddTransient<LoginViewModel>();
