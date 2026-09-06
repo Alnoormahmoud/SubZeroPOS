@@ -44,5 +44,7 @@ namespace SubZeroPOS.Core.Entities
         public int ReceiptCopies { get; set; } = 1;
 
         public string PrinterName { get; set; } = string.Empty;
+
+        public string Theme { get; set; } = "SubZero Dark";
     }
 }

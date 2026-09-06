@@ -1,0 +1,5 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=.;Database=SubZeroPOS;Trusted_Connection=True;TrustServerCertificate=True;"
+  }
+}

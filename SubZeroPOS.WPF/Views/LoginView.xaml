@@ -2,7 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              FlowDirection="RightToLeft"
-              Background="{StaticResource BackgroundBrush}">
+              Background="{DynamicResource BackgroundBrush}">
 
     <UserControl.Resources>
 
@@ -11,7 +11,7 @@
 
             <!-- Normal -->
             <Setter Property="Foreground"
-                Value="{StaticResource IceBlueBrush}" />
+                Value="{DynamicResource IceBlueBrush}" />
 
             <Setter Property="TextDecorations"
                 Value="{x:Null}" />
@@ -23,7 +23,7 @@
                      Value="True">
 
                     <Setter Property="Foreground"
-                        Value="{StaticResource AccentRedBrush}" />
+                        Value="{DynamicResource AccentRedBrush}" />
 
                     <Setter Property="TextDecorations"
                         Value="Underline" />
@@ -41,8 +41,8 @@
         <Border Width="360"
                 Padding="28"
                 CornerRadius="14"
-                Background="{StaticResource SurfaceBrush}"
-                BorderBrush="{StaticResource BorderBrush}"
+                Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
                 BorderThickness="1"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center">
@@ -53,38 +53,38 @@
                        Width="200" HorizontalAlignment="Center" Margin="0,10,0,19" />
 
                 <TextBlock Text="تسجيل الدخول"
-                           Foreground="{StaticResource TextSecondaryBrush}"
+                           Foreground="{DynamicResource TextSecondaryBrush}"
                            FontSize="13"
                            HorizontalAlignment="Center" Margin="0,0,0,20" />
 
                 <!-- Username -->
                 <TextBlock Text="اسم المستخدم"
-                           Foreground="{StaticResource TextSecondaryBrush}"
+                           Foreground="{DynamicResource TextSecondaryBrush}"
                            FontSize="12" Margin="0,0,0,4" />
                 <TextBox x:Name="UsernameBox"
-                         Style="{StaticResource DarkTextBoxStyle}"
+                         Style="{DynamicResource DarkTextBoxStyle}"
                          Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"
                          Margin="0,0,0,14" />
 
                 <!-- Password -->
                 <TextBlock Text="كلمة المرور"
-                           Foreground="{StaticResource TextSecondaryBrush}"
+                           Foreground="{DynamicResource TextSecondaryBrush}"
                            FontSize="12" Margin="0,0,0,4" />
                 <PasswordBox x:Name="PasswordBox"
-                              Style="{StaticResource DarkPasswordBoxStyle}"
+                              Style="{DynamicResource DarkPasswordBoxStyle}"
                              Margin="0,0,0,10" />
 
                 <DockPanel Margin="0,0,0,10" LastChildFill="False">
                     <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
                         <CheckBox IsChecked="{Binding RememberMe}" VerticalAlignment="Bottom"    FlowDirection="LeftToRight" HorizontalAlignment="left"/>
-                        <TextBlock Text="تذكرني" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13"
+                        <TextBlock Text="تذكرني" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="13"
                                    VerticalAlignment="Center" Margin="6,0,0,0" />
                     </StackPanel>
                 </DockPanel>
 
                 <!-- Error message -->
                 <TextBlock Text="{Binding ErrorMessage}"
-                           Foreground="{StaticResource AccentRedBrush}"
+                           Foreground="{DynamicResource AccentRedBrush}"
                            FontSize="12"
                            TextWrapping="Wrap"
                            Margin="0,10,0,15"
@@ -92,7 +92,7 @@
 
                 <!-- Login button -->
                 <Button Content="تسجيل الدخول"
-                        Style="{StaticResource PrimaryButtonStyle}"
+                        Style="{DynamicResource PrimaryButtonStyle}"
                         Click="LoginButton_Click"
                         IsDefault="True" 
                         IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
@@ -104,14 +104,14 @@
 
                     <!-- System Name -->
                     <TextBlock Text="SubZeroPOS"
-               Foreground="{StaticResource TextSecondaryBrush}"
+               Foreground="{DynamicResource TextSecondaryBrush}"
                FontSize="11"
                FontWeight="SemiBold"
                HorizontalAlignment="Center" />
 
                     <!-- System Description -->
                     <TextBlock Text="نظام متكامل لإدارة المبيعات ونقاط البيع"
-               Foreground="{StaticResource TextSecondaryBrush}"
+               Foreground="{DynamicResource TextSecondaryBrush}"
                FontSize="10"
                Opacity="0.75"
                HorizontalAlignment="Center"
@@ -119,7 +119,7 @@
 
                     <!-- Version -->
                     <TextBlock Text="الإصدار 1.0.0"
-               Foreground="{StaticResource TextSecondaryBrush}"
+               Foreground="{DynamicResource TextSecondaryBrush}"
                FontSize="10"
                Opacity="0.65"
                HorizontalAlignment="Center"
@@ -131,12 +131,12 @@
            FontSize="9">
 
     <Run Text="تم التطوير بواسطة "
-         Foreground="{StaticResource TextSecondaryBrush}"
+         Foreground="{DynamicResource TextSecondaryBrush}"
          />
 
     <Hyperlink NavigateUri="https://github.com/Alnoormahmoud"
                RequestNavigate="Hyperlink_RequestNavigate"
-               Style="{StaticResource DeveloperLinkStyle}">
+               Style="{DynamicResource DeveloperLinkStyle}">
 
         <Run Text="Alnoor Mahmoud" />
 

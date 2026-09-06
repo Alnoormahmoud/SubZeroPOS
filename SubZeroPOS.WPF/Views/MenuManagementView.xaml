@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:converters="clr-namespace:SubZeroPOS.WPF.Converters"
              FlowDirection="RightToLeft"
-             Background="{StaticResource BackgroundBrush}">
+             Background="{DynamicResource BackgroundBrush}">
 
     <UserControl.Resources>
 
@@ -24,15 +24,15 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal">
-                <TextBlock Text="إدارة القائمة" Foreground="{StaticResource TextPrimaryBrush}"
+                <TextBlock Text="إدارة القائمة" Foreground="{DynamicResource TextPrimaryBrush}"
                            FontSize="18" FontWeight="Medium" VerticalAlignment="Center" Margin="0,0,10,0" />
-                <TextBlock Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" VerticalAlignment="Center">
+                <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" FontSize="13" VerticalAlignment="Center">
                     <Run Text="(" /><Run Text="{Binding TotalItemCount, Mode=OneWay}" /><Run Text=" صنف)" />
                 </TextBlock>
             </StackPanel>
             <Button Grid.Column="1" Content="رجوع" Command="{Binding BackCommand}"
-                    Background="{StaticResource SurfaceBrush}" Foreground="{StaticResource TextPrimaryBrush}"
-                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Padding="12,6" Cursor="Hand">
+                    Background="{DynamicResource SurfaceBrush}" Foreground="{DynamicResource TextPrimaryBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="12,6" Cursor="Hand">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
@@ -56,28 +56,28 @@
                 <StackPanel>
 
                     <!-- Add item form -->
-                    <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
+                    <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}"
                             BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,0,0,14">
                         <StackPanel>
-                            <TextBlock Text="إضافة صنف جديد" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
+                            <TextBlock Text="إضافة صنف جديد" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
 
-                            <TextBlock Text="القسم" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                            <TextBlock Text="القسم" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                             <ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedNewItemCategory}"
                                       DisplayMemberPath="NameAr" Margin="0,0,0,12" Padding="8" />
 
-                            <TextBlock Text="اسم الصنف" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                            <TextBlock Text="اسم الصنف" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                             <TextBox Text="{Binding NewItemName, UpdateSourceTrigger=PropertyChanged}"
-                                     Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
+                                     Style="{DynamicResource DarkTextBoxStyle}" Margin="0,0,0,12" />
 
-                            <TextBlock Text="الاسم بالإنجليزية (اختياري)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                            <TextBlock Text="الاسم بالإنجليزية (اختياري)" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                             <TextBox Text="{Binding NewItemNameEn, UpdateSourceTrigger=PropertyChanged}"
-                                     Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
+                                     Style="{DynamicResource DarkTextBoxStyle}" Margin="0,0,0,12" />
 
-                            <TextBlock Text="السعر" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                            <TextBlock Text="السعر" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                             <TextBox Text="{Binding NewItemPriceText, UpdateSourceTrigger=PropertyChanged}"
-                                     Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
+                                     Style="{DynamicResource DarkTextBoxStyle}" Margin="0,0,0,12" />
 
-                            <TextBlock Text="صورة الصنف (اختياري)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                            <TextBlock Text="صورة الصنف (اختياري)" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                             <Grid Margin="0,0,0,16">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -85,11 +85,11 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" Text="{Binding NewItemImageFilePath, TargetNullValue='لم يتم اختيار صورة'}"
-                                           Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"
                                            TextTrimming="CharacterEllipsis" />
                                 <Button Grid.Column="1" Content="اختيار صورة" Command="{Binding ChooseImageCommand}"
-                                        Background="{StaticResource SurfaceBrush}" Foreground="{StaticResource TextPrimaryBrush}"
-                                        BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Padding="10,6" Cursor="Hand" Margin="6,0,0,0">
+                                        Background="{DynamicResource SurfaceBrush}" Foreground="{DynamicResource TextPrimaryBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="10,6" Cursor="Hand" Margin="6,0,0,0">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
                                             <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
@@ -101,30 +101,30 @@
                                 </Button>
                                 <Button Grid.Column="2" Content="إزالة" Command="{Binding RemoveNewItemImageCommand}"
                                         Visibility="{Binding NewItemImageFilePath, Converter={StaticResource StringToVisibilityConverter}}"
-                                        Background="Transparent" Foreground="{StaticResource AccentRedBrush}"
-                                        BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Padding="10,6" Cursor="Hand" Margin="6,0,0,0">
+                                        Background="Transparent" Foreground="{DynamicResource AccentRedBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="10,6" Cursor="Hand" Margin="6,0,0,0">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
                                             <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
                                                     BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Padding="{TemplateBinding Padding}">
-                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.Foreground="{StaticResource AccentRedBrush}" />
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.Foreground="{DynamicResource AccentRedBrush}" />
                                             </Border>
                                         </ControlTemplate>
                                     </Button.Template>
                                 </Button>
                             </Grid>
 
-                            <TextBlock Text="{Binding AddItemStatusMessage}" Foreground="{StaticResource IceBlueBrush}"
+                            <TextBlock Text="{Binding AddItemStatusMessage}" Foreground="{DynamicResource IceBlueBrush}"
                                        FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10" />
 
                             <Button Content="إضافة الصنف" Command="{Binding AddItemCommand}"
-                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    Style="{DynamicResource PrimaryButtonStyle}"
                                     IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" IsDefault="True" />
                         </StackPanel>
                     </Border>
 
                     <!-- Categories: simple list, just name + Edit + Delete -->
-                    <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
+                    <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}"
                             BorderThickness="1" CornerRadius="12" Padding="20">
                         <StackPanel>
                             <Grid Margin="0,0,0,12">
@@ -132,31 +132,31 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="الأقسام" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="0" Text="الأقسام" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="13" VerticalAlignment="Center" />
                                 <Button Grid.Column="1" Content="+ إضافة قسم" Command="{Binding ToggleAddCategoryFormCommand}"
-                                        Background="Transparent" Foreground="{StaticResource IceBlueBrush}" BorderThickness="0" Cursor="Hand" FontSize="12">
+                                        Background="Transparent" Foreground="{DynamicResource IceBlueBrush}" BorderThickness="0" Cursor="Hand" FontSize="12">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
-                                            <ContentPresenter TextElement.Foreground="{StaticResource IceBlueBrush}" />
+                                            <ContentPresenter TextElement.Foreground="{DynamicResource IceBlueBrush}" />
                                         </ControlTemplate>
                                     </Button.Template>                              
                                 </Button>
                             </Grid>
 
                             <StackPanel Visibility="{Binding ShowAddCategoryForm, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,0,0,14">
-                                <TextBlock Text="اسم القسم" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                                <TextBlock Text="اسم القسم" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                                 <TextBox Text="{Binding NewCategoryName, UpdateSourceTrigger=PropertyChanged}"
-                                         Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,10" />
-                                <TextBlock Text="الاسم بالإنجليزية (اختياري)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                                         Style="{DynamicResource DarkTextBoxStyle}" Margin="0,0,0,10" />
+                                <TextBlock Text="الاسم بالإنجليزية (اختياري)" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                                 <TextBox Text="{Binding NewCategoryNameEn, UpdateSourceTrigger=PropertyChanged}"
-                                         Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
+                                         Style="{DynamicResource DarkTextBoxStyle}" Margin="0,0,0,12" />
                                 <TextBlock Text="{Binding AddCategoryStatusMessage}"
-           Foreground="{StaticResource IceBlueBrush}"
+           Foreground="{DynamicResource IceBlueBrush}"
            FontSize="12"
            TextWrapping="Wrap"
            Margin="0,0,0,10" />
                                 <Button Content="إضافة القسم" Command="{Binding AddCategoryCommand}"
-                                        Style="{StaticResource PrimaryButtonStyle}"
+                                        Style="{DynamicResource PrimaryButtonStyle}"
                                         IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" IsDefault="True" />
                             </StackPanel>
 
@@ -169,13 +169,13 @@
                                                 <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="{Binding NameAr}" Foreground="{StaticResource TextPrimaryBrush}"
+                                            <TextBlock Grid.Column="0" Text="{Binding NameAr}" Foreground="{DynamicResource TextPrimaryBrush}"
                                                        FontSize="13" VerticalAlignment="Center" />
                                             <Button Grid.Column="1" Content="تعديل" FontSize="11" Padding="8,4" Cursor="Hand" Margin="0,0,6,0"
                                                     Command="{Binding DataContext.OpenEditCategoryCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                     CommandParameter="{Binding}"
-                                                    Background="Transparent" Foreground="{StaticResource IceBlueBrush}"
-                                                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" >
+                                                    Background="Transparent" Foreground="{DynamicResource IceBlueBrush}"
+                                                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" >
                                                 <Button.Template>
                                                     <ControlTemplate TargetType="Button">
                                                         <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
@@ -188,8 +188,8 @@
                                             <Button Grid.Column="2" Content="حذف" FontSize="11" Padding="8,4" Cursor="Hand"
                                                     Command="{Binding DataContext.DeleteCategoryCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                     CommandParameter="{Binding}"
-                                                    Background="Transparent" Foreground="{StaticResource TextSecondaryBrush}"
-                                                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                                                    Background="Transparent" Foreground="{DynamicResource TextSecondaryBrush}"
+                                                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                                                 <Button.Template>
                                                     <ControlTemplate TargetType="Button">
                                                         <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
@@ -210,7 +210,7 @@
             </ScrollViewer>
 
             <!-- Item list: simplified row - thumbnail, name, price, Edit, Delete -->
-            <Border Grid.Column="2" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
+            <Border Grid.Column="2" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1" CornerRadius="12" Padding="12">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -222,7 +222,7 @@
                         <ItemsControl ItemsSource="{Binding Items}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="{StaticResource BackgroundBrush}" CornerRadius="8" Padding="10" Margin="0,0,0,8"
+                                    <Border Background="{DynamicResource BackgroundBrush}" CornerRadius="8" Padding="10" Margin="0,0,0,8"
                                             Opacity="{Binding IsActive, Converter={StaticResource BoolToOpacityConverter}}">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -237,7 +237,7 @@
                                                 <Grid>
                                                     <Image Source="{Binding ImagePath, Converter={StaticResource ItemImagePathConverter}}" Stretch="UniformToFill"
                                                            Visibility="{Binding ImagePath, Converter={StaticResource StringToVisibilityConverter}}" />
-                                                    <Border Background="{StaticResource AccentRedBrush}"
+                                                    <Border Background="{DynamicResource AccentRedBrush}"
                                                             Visibility="{Binding HasNoImage, Converter={StaticResource BoolToVisibilityConverter}}">
                                                         <TextBlock Text="{Binding ItemName}" Foreground="White" FontSize="9" FontWeight="Bold"
                                                                    TextWrapping="Wrap" TextAlignment="Center" Margin="2"
@@ -247,18 +247,18 @@
                                             </Border>
 
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding ItemName}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="14" FontWeight="Medium" />
-                                                <TextBlock Text="{Binding Category.NameAr}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,2,0,0" />
+                                                <TextBlock Text="{Binding ItemName}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14" FontWeight="Medium" />
+                                                <TextBlock Text="{Binding Category.NameAr}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,2,0,0" />
                                             </StackPanel>
 
                                             <TextBlock Grid.Column="2" Text="{Binding Price, StringFormat={}{0:N0}}"
-                                                       Foreground="{StaticResource IceBlueBrush}" FontSize="14" FontWeight="Medium"
+                                                       Foreground="{DynamicResource IceBlueBrush}" FontSize="14" FontWeight="Medium"
                                                        VerticalAlignment="Center" Margin="0,0,14,0" />
 
                                             <Button Grid.Column="3" Content="تعديل" FontSize="12" Padding="12,6" Cursor="Hand" Margin="0,0,6,0"
                                                     Command="{Binding DataContext.OpenEditItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                     CommandParameter="{Binding}"
-                                                    Background="{StaticResource AccentRedBrush}" Foreground="White" BorderThickness="0" >
+                                                    Background="{DynamicResource AccentRedBrush}" Foreground="White" BorderThickness="0" >
                                                 <Button.Template>
                                                     <ControlTemplate TargetType="Button">
                                                         <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
@@ -271,8 +271,8 @@
                                             <Button Grid.Column="4" Content="حذف" FontSize="12" Padding="12,6" Cursor="Hand"
                                                     Command="{Binding DataContext.DeleteItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                     CommandParameter="{Binding}"
-                                                    Background="Transparent" Foreground="{StaticResource TextSecondaryBrush}"
-                                                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                                                    Background="Transparent" Foreground="{DynamicResource TextSecondaryBrush}"
+                                                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                                                 <Button.Template>
                                                     <ControlTemplate TargetType="Button">
                                                         <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
@@ -292,8 +292,8 @@
                     <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0">
                         <Button Content="السابق" Command="{Binding PreviousPageCommand}" IsEnabled="{Binding CanGoPrevious}"
                                 Padding="14,6" Cursor="Hand" Margin="0,0,10,0"
-                                Background="{StaticResource BackgroundBrush}" Foreground="{StaticResource TextPrimaryBrush}"
-                                BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                                Background="{DynamicResource BackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
@@ -303,11 +303,11 @@
                                 </ControlTemplate>
                             </Button.Template>
                         </Button>
-                        <TextBlock Text="{Binding PageInfoText}" Foreground="{StaticResource TextSecondaryBrush}"
+                        <TextBlock Text="{Binding PageInfoText}" Foreground="{DynamicResource TextSecondaryBrush}"
                                    FontSize="13" VerticalAlignment="Center" Margin="0,0,10,0" />
                         <Button Content="التالي" Command="{Binding NextPageCommand}" IsEnabled="{Binding CanGoNext}"
                                 Padding="14,6" Cursor="Hand"
-                                Background="{StaticResource AccentRedBrush}" Foreground="White" BorderThickness="0">
+                                Background="{DynamicResource AccentRedBrush}" Foreground="White" BorderThickness="0">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
@@ -323,37 +323,37 @@
 
         <!-- Edit Item modal overlay -->
         <Grid Grid.RowSpan="2" Background="#CC000000" Visibility="{Binding IsItemEditOpen, Converter={StaticResource BoolToVisibilityConverter}}">
-            <Border Width="420" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
+            <Border Width="420" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1" CornerRadius="14" Padding="24" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="10">
 
                     <StackPanel>
-                    <TextBlock Text="تعديل الصنف" Foreground="{StaticResource TextPrimaryBrush}" FontSize="16" FontWeight="Medium" Margin="0,0,0,16" />
+                    <TextBlock Text="تعديل الصنف" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="16" FontWeight="Medium" Margin="0,0,0,16" />
 
-                    <TextBlock Text="اسم الصنف" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
-                    <TextBox Text="{Binding EditItemName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
+                    <TextBlock Text="اسم الصنف" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                    <TextBox Text="{Binding EditItemName, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource DarkTextBoxStyle}" Margin="0,0,0,12" />
 
-                    <TextBlock Text="الاسم بالإنجليزية (اختياري)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
-                    <TextBox Text="{Binding EditItemNameEn, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
+                    <TextBlock Text="الاسم بالإنجليزية (اختياري)" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                    <TextBox Text="{Binding EditItemNameEn, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource DarkTextBoxStyle}" Margin="0,0,0,12" />
 
-                    <TextBlock Text="القسم" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                    <TextBlock Text="القسم" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                     <ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding EditItemCategory}"
                               DisplayMemberPath="NameAr" Margin="0,0,0,12" Padding="8" />
 
-                    <TextBlock Text="السعر" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
-                    <TextBox Text="{Binding EditItemPriceText, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
+                    <TextBlock Text="السعر" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                    <TextBox Text="{Binding EditItemPriceText, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource DarkTextBoxStyle}" Margin="0,0,0,12" />
 
                     <CheckBox Content="مفعّل" IsChecked="{Binding EditItemIsActive}" FlowDirection="LeftToRight" HorizontalAlignment="Left"
-                              Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,0,0,12" />
+                              Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" Margin="0,0,0,12" />
 
-                    <TextBlock Text="صورة الصنف" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                    <TextBlock Text="صورة الصنف" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
 
                     <Border Width="90" Height="90" CornerRadius="10" ClipToBounds="True"
                             HorizontalAlignment="Right" Margin="0,0,0,10">
                         <Grid>
                             <Image Source="{Binding EditItemImagePath, Converter={StaticResource ItemImagePathConverter}}" Stretch="UniformToFill"
                                    Visibility="{Binding EditItemImagePath, Converter={StaticResource StringToVisibilityConverter}}" />
-                            <Border Background="{StaticResource AccentRedBrush}"
+                            <Border Background="{DynamicResource AccentRedBrush}"
                                     Visibility="{Binding EditItemHasNoImage, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <TextBlock Text="{Binding EditItemName}" Foreground="White" FontSize="11" FontWeight="Bold"
                                            TextWrapping="Wrap" TextAlignment="Center" Margin="4"
@@ -369,10 +369,10 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="{Binding EditItemImagePath, TargetNullValue='لا توجد صورة'}"
-                                   Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                   Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
                         <Button Grid.Column="1" Content="تغيير" Command="{Binding ChangeEditItemImageCommand}" Margin="6,0,0,0" Padding="10,6" Cursor="Hand"
-                                Background="{StaticResource BackgroundBrush}" Foreground="{StaticResource TextPrimaryBrush}"
-                                BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                                Background="{DynamicResource BackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
@@ -383,20 +383,20 @@
                             </Button.Template>
                         </Button>
                         <Button Grid.Column="2" Content="إزالة" Command="{Binding RemoveEditItemImageCommand}" Margin="6,0,0,0" Padding="10,6" Cursor="Hand"
-                                Background="Transparent" Foreground="{StaticResource AccentRedBrush}"
-                                BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                                Background="Transparent" Foreground="{DynamicResource AccentRedBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
                                             BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Padding="{TemplateBinding Padding}">
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.Foreground="{StaticResource AccentRedBrush}" />
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.Foreground="{DynamicResource AccentRedBrush}" />
                                     </Border>
                                 </ControlTemplate>
                             </Button.Template>
                         </Button>
                     </Grid>
 
-                    <TextBlock Text="{Binding EditItemStatusMessage}" Foreground="{StaticResource IceBlueBrush}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10" />
+                    <TextBlock Text="{Binding EditItemStatusMessage}" Foreground="{DynamicResource IceBlueBrush}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10" />
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -405,8 +405,8 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Button Grid.Column="0" Content="إلغاء" Command="{Binding CancelEditItemCommand}" Padding="12" Cursor="Hand"
-                                Background="{StaticResource BackgroundBrush}" Foreground="{StaticResource TextPrimaryBrush}"
-                                BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                                Background="{DynamicResource BackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
@@ -417,7 +417,7 @@
                             </Button.Template>
                         </Button>
                         <Button Grid.Column="2" Content="حفظ" Command="{Binding SaveEditedItemCommand}"
-                                Style="{StaticResource PrimaryButtonStyle}"
+                                Style="{DynamicResource PrimaryButtonStyle}"
                                 IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
                     </Grid>
                 </StackPanel>
@@ -427,18 +427,18 @@
 
         <!-- Edit Category modal overlay -->
         <Grid Grid.RowSpan="2" Background="#CC000000" Visibility="{Binding IsCategoryEditOpen, Converter={StaticResource BoolToVisibilityConverter}}">
-            <Border Width="360" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
+            <Border Width="360" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1" CornerRadius="14" Padding="24" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <StackPanel>
-                    <TextBlock Text="تعديل القسم" Foreground="{StaticResource TextPrimaryBrush}" FontSize="16" FontWeight="Medium" Margin="0,0,0,16" />
+                    <TextBlock Text="تعديل القسم" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="16" FontWeight="Medium" Margin="0,0,0,16" />
 
-                    <TextBlock Text="اسم القسم" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
-                    <TextBox Text="{Binding EditCategoryName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
+                    <TextBlock Text="اسم القسم" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                    <TextBox Text="{Binding EditCategoryName, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource DarkTextBoxStyle}" Margin="0,0,0,12" />
 
-                    <TextBlock Text="الاسم بالإنجليزية (اختياري)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
-                    <TextBox Text="{Binding EditCategoryNameEn, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,16" />
+                    <TextBlock Text="الاسم بالإنجليزية (اختياري)" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                    <TextBox Text="{Binding EditCategoryNameEn, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource DarkTextBoxStyle}" Margin="0,0,0,16" />
 
-                    <TextBlock Text="{Binding EditCategoryStatusMessage}" Foreground="{StaticResource IceBlueBrush}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10" />
+                    <TextBlock Text="{Binding EditCategoryStatusMessage}" Foreground="{DynamicResource IceBlueBrush}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10" />
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -447,8 +447,8 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Button Grid.Column="0" Content="إلغاء" Command="{Binding CancelEditCategoryCommand}" Padding="12" Cursor="Hand"
-                                Background="{StaticResource BackgroundBrush}" Foreground="{StaticResource TextPrimaryBrush}"
-                                BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                                Background="{DynamicResource BackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
@@ -459,7 +459,7 @@
                             </Button.Template>
                         </Button>
                         <Button Grid.Column="2" Content="حفظ" Command="{Binding SaveEditedCategoryCommand}"
-                                Style="{StaticResource PrimaryButtonStyle}"
+                                Style="{DynamicResource PrimaryButtonStyle}"
                                 IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
                     </Grid>
                 </StackPanel>

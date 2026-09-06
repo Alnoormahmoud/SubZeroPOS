@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              FlowDirection="RightToLeft"
              DataContextChanged="OnDataContextChanged"
-             Background="{StaticResource BackgroundBrush}">
+             Background="{DynamicResource BackgroundBrush}">
 
     <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -12,8 +12,8 @@
                 CornerRadius="14"
                 FlowDirection="RightToLeft"
                 TextElement.FontFamily="Segoe UI"
-                Background="{StaticResource SurfaceBrush}"
-                BorderBrush="{StaticResource BorderBrush}"
+                Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
                 BorderThickness="1"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Top"
@@ -31,60 +31,60 @@
                             Converter={StaticResource BoolToVisibilityConverter}}" />
 
                     <!-- Restaurant info -->
-                <TextBlock Text="{Binding Order.RestaurantAddress}" Foreground="{StaticResource TextSecondaryBrush}"
+                <TextBlock Text="{Binding Order.RestaurantAddress}" Foreground="{DynamicResource TextSecondaryBrush}"
                            FontSize="11" HorizontalAlignment="Center" TextWrapping="Wrap"
                            Visibility="{Binding Order.RestaurantAddress, Converter={StaticResource StringToVisibilityConverter}}" Margin="0,0,0,2" />
-                <TextBlock Text="{Binding Order.RestaurantPhone}" Foreground="{StaticResource TextSecondaryBrush}"
+                <TextBlock Text="{Binding Order.RestaurantPhone}" Foreground="{DynamicResource TextSecondaryBrush}"
                            FontSize="11" HorizontalAlignment="Center"
                            Visibility="{Binding Order.RestaurantPhone, Converter={StaticResource StringToVisibilityConverter}}" Margin="0,0,0,10" />
 
 
-                <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,5,0,15" />
+                <Rectangle Height="1" Fill="{DynamicResource BorderBrush}" Margin="0,5,0,15" />
 
                 <Border Width="48" Height="48" CornerRadius="24"
-                        Background="{StaticResource AccentRedBrush}"
+                        Background="{DynamicResource AccentRedBrush}"
                         HorizontalAlignment="Center" Margin="0,0,0,10">
                     <TextBlock Text="✓" Foreground="White" FontSize="22" FontWeight="Bold"
                                HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Border>
-                <TextBlock Text="تم حفظ الطلب بنجاح" Foreground="{StaticResource TextPrimaryBrush}"
+                <TextBlock Text="تم حفظ الطلب بنجاح" Foreground="{DynamicResource TextPrimaryBrush}"
                            FontSize="17" FontWeight="Medium" HorizontalAlignment="Center" Margin="0, 2,0,8" />
            
                     <TextBlock Text="{Binding Order.OrderId,
                   StringFormat='رقم الطلب: {0}'}"
-           Foreground="{StaticResource TextSecondaryBrush}"
+           Foreground="{DynamicResource TextSecondaryBrush}"
            FontSize="12"
            HorizontalAlignment="Center"
            Margin="0,0,0,16"
            Visibility="{Binding Order.ShowOrderNumberOnInvoice,
                                 Converter={StaticResource BoolToVisibilityConverter}}" />
 
-                    <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,5,0,20" />
+                    <Rectangle Height="1" Fill="{DynamicResource BorderBrush}" Margin="0,5,0,20" />
 
                 <Grid Margin="0,0,0,4" Visibility="{Binding Order.ShowCashierName, Converter={StaticResource BoolToVisibilityConverter}}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="الكاشير" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
-                    <TextBlock Grid.Column="1" Text="{Binding Order.CashierName}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
+                    <TextBlock Grid.Column="0" Text="الكاشير" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" />
+                    <TextBlock Grid.Column="1" Text="{Binding Order.CashierName}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12" />
                 </Grid>
                 <Grid Margin="0,0,0,4">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="التاريخ والوقت" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                    <TextBlock Grid.Column="0" Text="التاريخ والوقت" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" />
                     <TextBlock Grid.Column="1" Text="{Binding Order.OrderDateFormatted}"
-                               Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
+                               Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12" />
                 </Grid>
                 <Grid Margin="0,0,0,4">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="نوع الطلب" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
-                    <TextBlock Grid.Column="1" Text="{Binding Order.OrderTypeNameAr}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
+                    <TextBlock Grid.Column="0" Text="نوع الطلب" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" />
+                    <TextBlock Grid.Column="1" Text="{Binding Order.OrderTypeNameAr}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12" />
                 </Grid>
                 <Grid Margin="0,0,0,4" Visibility="{Binding Order.ShouldShowCustomerName,
                            Converter={StaticResource BoolToVisibilityConverter}}">
@@ -92,20 +92,20 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="اسم الزبون" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
+                    <TextBlock Grid.Column="0" Text="اسم الزبون" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" />
                     
-                    <TextBlock Grid.Column="1" Text="{Binding Order.CustomerName}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
+                    <TextBlock Grid.Column="1" Text="{Binding Order.CustomerName}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12" />
                 </Grid>
                 <Grid Margin="0,0,0,14">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="طريقة الدفع" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" />
-                    <TextBlock Grid.Column="1" Text="{Binding Order.PaymentMethodNameAr}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
+                    <TextBlock Grid.Column="0" Text="طريقة الدفع" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" />
+                    <TextBlock Grid.Column="1" Text="{Binding Order.PaymentMethodNameAr}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12" />
                 </Grid>
 
-                <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,10" />
+                <Rectangle Height="1" Fill="{DynamicResource BorderBrush}" Margin="0,0,0,10" />
 
                     <StackPanel Margin="0,0,0,10">
 
@@ -133,14 +133,14 @@
                Text="الصنف"
                FontSize="11"
                FontWeight="Bold"
-               Foreground="{StaticResource TextSecondaryBrush}" />
+               Foreground="{DynamicResource TextSecondaryBrush}" />
 
 
                             <TextBlock Grid.Column="1"
                Text="الكمية"
                FontSize="11"
                FontWeight="Bold"
-               Foreground="{StaticResource TextSecondaryBrush}"
+               Foreground="{DynamicResource TextSecondaryBrush}"
                HorizontalAlignment="Center" />
 
 
@@ -148,7 +148,7 @@
                Text="السعر"
                FontSize="11"
                FontWeight="Bold"
-               Foreground="{StaticResource TextSecondaryBrush}"
+               Foreground="{DynamicResource TextSecondaryBrush}"
                HorizontalAlignment="Center" />
 
 
@@ -156,14 +156,14 @@
                Text="الإجمالي"
                FontSize="11"
                FontWeight="Bold"
-               Foreground="{StaticResource TextSecondaryBrush}"
+               Foreground="{DynamicResource TextSecondaryBrush}"
                HorizontalAlignment="Left" />
 
                         </Grid>
 
 
                         <Rectangle Height="1"
-           Fill="{StaticResource BorderBrush}"
+           Fill="{DynamicResource BorderBrush}"
            Margin="0,5,0,5" />
 
 
@@ -194,7 +194,7 @@
                                         <TextBlock Grid.Column="0"
                            Text="{Binding ItemName}"
                            FontSize="12"
-                           Foreground="{StaticResource TextPrimaryBrush}"
+                           Foreground="{DynamicResource TextPrimaryBrush}"
                            TextWrapping="Wrap" />
 
 
@@ -203,7 +203,7 @@
                                         <TextBlock Grid.Column="1"
                            Text="{Binding Quantity}"
                            FontSize="12"
-                           Foreground="{StaticResource TextPrimaryBrush}"
+                           Foreground="{DynamicResource TextPrimaryBrush}"
                            HorizontalAlignment="Center" />
 
 
@@ -213,7 +213,7 @@
                            Text="{Binding UnitPrice,
                                           StringFormat={}{0:N0}}"
                            FontSize="12"
-                           Foreground="{StaticResource TextPrimaryBrush}"
+                           Foreground="{DynamicResource TextPrimaryBrush}"
                            HorizontalAlignment="Center" />
 
 
@@ -224,7 +224,7 @@
                                           StringFormat={}{0:N0}}"
                            FontSize="12"
                            FontWeight="SemiBold"
-                           Foreground="{StaticResource IceBlueBrush}"
+                           Foreground="{DynamicResource IceBlueBrush}"
                            HorizontalAlignment="Left" />
 
                                     </Grid>
@@ -243,26 +243,26 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="رسوم التوصيل" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" />
+                    <TextBlock Grid.Column="0" Text="رسوم التوصيل" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="13" />
                         <TextBlock Grid.Column="1" Text="{Binding Order.DeliveryFee, StringFormat={}{0:N0}}"
-                               Foreground="{StaticResource IceBlueBrush}" FontSize="13" />
+                               Foreground="{DynamicResource IceBlueBrush}" FontSize="13" />
                 </Grid>
 
                 <StackPanel Margin="0,0,0,10" Visibility="{Binding Order.Notes, Converter={StaticResource StringToVisibilityConverter}}">
-                    <TextBlock Text="ملاحظات" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,2" />
-                    <TextBlock Text="{Binding Order.Notes}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" TextWrapping="Wrap" />
+                    <TextBlock Text="ملاحظات" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,2" />
+                    <TextBlock Text="{Binding Order.Notes}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12" TextWrapping="Wrap" />
                 </StackPanel>
 
-                <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,10" />
+                <Rectangle Height="1" Fill="{DynamicResource BorderBrush}" Margin="0,0,0,10" />
 
                 <Grid Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="الإجمالي" Foreground="{StaticResource TextPrimaryBrush}"
+                    <TextBlock Grid.Column="0" Text="الإجمالي" Foreground="{DynamicResource TextPrimaryBrush}"
                                FontSize="16" FontWeight="Medium" />
-                    <TextBlock Grid.Column="1" FontSize="16" FontWeight="Medium" Foreground="{StaticResource TextPrimaryBrush}">
+                    <TextBlock Grid.Column="1" FontSize="16" FontWeight="Medium" Foreground="{DynamicResource TextPrimaryBrush}">
                         <Run Text="{Binding Order.TotalAmount, StringFormat={}{0:N0}}" />
                      
   
@@ -271,20 +271,20 @@
                     </TextBlock>
                 </Grid>
 
-                <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,10" />
+                <Rectangle Height="1" Fill="{DynamicResource BorderBrush}" Margin="0,0,0,10" />
 
                 <!-- Footer thank-you / policy messages, configurable in Settings -->
-                <TextBlock Text="{Binding Order.FooterPrimary}" Foreground="{StaticResource TextPrimaryBrush}"
+                <TextBlock Text="{Binding Order.FooterPrimary}" Foreground="{DynamicResource TextPrimaryBrush}"
                            FontSize="13" FontWeight="Medium" HorizontalAlignment="Center" TextWrapping="Wrap"
                            Visibility="{Binding Order.FooterPrimary, Converter={StaticResource StringToVisibilityConverter}}" Margin="0,0,0,4" />
-                <TextBlock Text="{Binding Order.FooterSecondary}" Foreground="{StaticResource TextSecondaryBrush}"
+                <TextBlock Text="{Binding Order.FooterSecondary}" Foreground="{DynamicResource TextSecondaryBrush}"
                            FontSize="11" HorizontalAlignment="Center" TextWrapping="Wrap"
                            Visibility="{Binding Order.FooterSecondary, Converter={StaticResource StringToVisibilityConverter}}" Margin="0,0,0,16" />
 
                 <Button Content="طباعة الفاتورة" Command="{Binding PrintCommand}"
-                        Background="{StaticResource SurfaceBrush}"
-                        Foreground="{StaticResource TextPrimaryBrush}"
-                        BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                        Background="{DynamicResource SurfaceBrush}"
+                        Foreground="{DynamicResource TextPrimaryBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                         Padding="12" Margin="0,0,0,8" Cursor="Hand">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
@@ -299,11 +299,11 @@
                 </Button>
 
                 <Button Content="طلب جديد" Command="{Binding NewOrderCommand}"
-                        Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,0,8" IsDefault="True"  />
+                        Style="{DynamicResource PrimaryButtonStyle}" Margin="0,0,0,8" IsDefault="True"  />
 
                 <Button Content="{Binding BackButtonLabel}" Command="{Binding GoBackCommand}"
                         Background="Transparent"
-                        Foreground="{StaticResource TextSecondaryBrush}"
+                        Foreground="{DynamicResource TextSecondaryBrush}"
                         BorderThickness="0" Padding="8" Cursor="Hand">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">

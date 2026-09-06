@@ -2,7 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              FlowDirection="RightToLeft"
-             Background="{StaticResource BackgroundBrush}">
+             Background="{DynamicResource BackgroundBrush}">
 
     <Grid Margin="16">
         <Grid.RowDefinitions>
@@ -18,12 +18,12 @@
             <StackPanel Grid.Column="0" Orientation="Horizontal">
                 <Image Source="pack://siteoforigin:,,,/Images/Branding/logo_icon.png" Stretch="Uniform"
                        Width="26" Height="26" Margin="0,0,10,0" />
-                <TextBlock Text="الإعدادات" Foreground="{StaticResource TextPrimaryBrush}"
+                <TextBlock Text="الإعدادات" Foreground="{DynamicResource TextPrimaryBrush}"
                            FontSize="18" FontWeight="Medium" VerticalAlignment="Center" />
             </StackPanel>
             <Button Grid.Column="1" Content="رجوع" Command="{Binding BackCommand}"
-                    Background="{StaticResource SurfaceBrush}" Foreground="{StaticResource TextPrimaryBrush}"
-                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Padding="12,6" Cursor="Hand">
+                    Background="{DynamicResource SurfaceBrush}" Foreground="{DynamicResource TextPrimaryBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="12,6" Cursor="Hand">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
@@ -36,29 +36,39 @@
         </Grid>
 
         <Border Grid.Row="1" Width="500" HorizontalAlignment="Right" VerticalAlignment="Stretch"
-                Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
+                Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}"
                 BorderThickness="1" CornerRadius="12" Padding="20">
             <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="10">
             <StackPanel>
-                <TextBlock Text="بيانات المطعم" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
+                    <TextBlock Text="المظهر"
+           Foreground="{DynamicResource TextSecondaryBrush}"
+           FontSize="11"
+           Margin="0,0,0,4" />
 
-                <TextBlock Text="اسم المطعم" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                    <ComboBox ItemsSource="{Binding Themes}"
+          SelectedItem="{Binding SelectedTheme, UpdateSourceTrigger=PropertyChanged}"
+          Margin="0,5,0,12"
+          Padding="8" />
+                    <TextBlock Text="بيانات المطعم" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
+
+                <TextBlock Text="اسم المطعم" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                 <TextBox Text="{Binding RestaurantName, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
+                         Style="{DynamicResource DarkTextBoxStyle}" Margin="0,0,0,12" />
 
-                <TextBlock Text="رقم الهاتف" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                <TextBlock Text="رقم الهاتف" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                 <TextBox Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
+                         Style="{DynamicResource DarkTextBoxStyle}" Margin="0,0,0,12" />
 
-                <TextBlock Text="العنوان" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                <TextBlock Text="العنوان" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                 <TextBox Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
+                         Style="{DynamicResource DarkTextBoxStyle}" Margin="0,0,0,12" />
+                
 
-                <TextBlock Text="العملة" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                <TextBlock Text="العملة" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                 <ComboBox ItemsSource="{Binding Currencies}" SelectedItem="{Binding SelectedCurrency}"
                           DisplayMemberPath="DisplayName" Margin="0,0,0,20" Padding="8" />
 
-                <TextBlock Text="تنسيق التاريخ والوقت في الفاتورة" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                <TextBlock Text="تنسيق التاريخ والوقت في الفاتورة" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                 <ComboBox ItemsSource="{Binding DateFormats}" SelectedItem="{Binding SelectedDateFormat}"
                           DisplayMemberPath="DisplayName" Margin="0,0,0,20" Padding="8" />
 
@@ -68,18 +78,18 @@
                     <!-- ========================================= -->
 
                     <Rectangle Height="1"
-           Fill="{StaticResource BorderBrush}"
+           Fill="{DynamicResource BorderBrush}"
            Margin="0,0,0,16" />
 
                     <TextBlock Text="إعدادات الطباعة والفاتورة"
-           Foreground="{StaticResource TextSecondaryBrush}"
+           Foreground="{DynamicResource TextSecondaryBrush}"
            FontSize="13"
            FontWeight="SemiBold"
            Margin="0,0,0,12" />
 
                     <!-- Paper Width -->
                     <TextBlock Text="حجم ورق الفاتورة"
-           Foreground="{StaticResource TextSecondaryBrush}"
+           Foreground="{DynamicResource TextSecondaryBrush}"
            FontSize="11"
            Margin="0,0,0,4" />
 
@@ -91,7 +101,7 @@
 
                     <!-- Number of Copies -->
                     <TextBlock Text="عدد نسخ الفاتورة"
-           Foreground="{StaticResource TextSecondaryBrush}"
+           Foreground="{DynamicResource TextSecondaryBrush}"
            FontSize="11"
            Margin="0,0,0,4" />
 
@@ -101,7 +111,7 @@
           Padding="8" />
 
                     <TextBlock Text="اسم الطابعة"
-           Foreground="{StaticResource TextSecondaryBrush}"
+           Foreground="{DynamicResource TextSecondaryBrush}"
    FontSize="11"
    Margin="0,0,0,4" />
                     <ComboBox ItemsSource="{Binding Printers}"
@@ -113,14 +123,14 @@
 
                     <CheckBox Content="إظهار اسم الكاشير في الفاتورة" IsChecked="{Binding ShowCashierNameOnInvoice}"
               FlowDirection="LeftToRight" HorizontalAlignment="left"
-              Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,20" />
+              Foreground="{DynamicResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,20" />
 
 
                     <CheckBox Content="إظهار شعار المطعم في الفاتورة"
           IsChecked="{Binding ShowLogoOnInvoice}"
                           FlowDirection="LeftToRight" HorizontalAlignment="left"
 
-          Foreground="{StaticResource TextSecondaryBrush}"
+          Foreground="{DynamicResource TextSecondaryBrush}"
           FontSize="13"
           Margin="0,0,0,20" />
 
@@ -128,7 +138,7 @@
                     <CheckBox Content="إظهار رقم الطلب في الفاتورة"
           IsChecked="{Binding ShowOrderNumberOnInvoice}"
           FlowDirection="LeftToRight" HorizontalAlignment="left"
-          Foreground="{StaticResource TextSecondaryBrush}"
+          Foreground="{DynamicResource TextSecondaryBrush}"
           FontSize="13"
           Margin="0,0,0,20" />
 
@@ -136,7 +146,7 @@
                     <CheckBox Content="إظهار اسم الزبون في الفاتورة"
           IsChecked="{Binding ShowCustomerNameOnInvoice}"
           FlowDirection="LeftToRight" HorizontalAlignment="left"
-          Foreground="{StaticResource TextSecondaryBrush}"
+          Foreground="{DynamicResource TextSecondaryBrush}"
           FontSize="13"
           Margin="0,0,0,20" />
 
@@ -144,7 +154,7 @@
                     <CheckBox Content="طباعة الفاتوره تلقائياً بعد حفظ الطلب"
           IsChecked="{Binding AutoPrintReceipt}"
           FlowDirection="LeftToRight" HorizontalAlignment="left"
-          Foreground="{StaticResource TextSecondaryBrush}"
+          Foreground="{DynamicResource TextSecondaryBrush}"
           FontSize="13"
           Margin="0,0,0,20" />
 
@@ -152,20 +162,20 @@
                     <CheckBox Content="من الفاتوره بعد الطباعة PDF فتح نسخة"
           IsChecked="{Binding OpenPdfAfterPrinting}"
           FlowDirection="LeftToRight" HorizontalAlignment="left"
-          Foreground="{StaticResource TextSecondaryBrush}"
+          Foreground="{DynamicResource TextSecondaryBrush}"
           FontSize="13"
           Margin="0,0,0,20" />
 
-                    <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,16" />
+                    <Rectangle Height="1" Fill="{DynamicResource BorderBrush}" Margin="0,0,0,16" />
 
-                    <TextBlock Text="النسخ الاحتياطي" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
+                    <TextBlock Text="النسخ الاحتياطي" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
 
                     <TextBlock Text="ينشئ نسخة كاملة من قاعدة البيانات على جهاز السيرفر مباشرة"
-           Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,12" />
+           Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,12" />
 
                     <Button Content="إنشاء نسخة احتياطية الآن" Command="{Binding BackupNowCommand}"
-        Background="{StaticResource SurfaceBrush}" Foreground="{StaticResource TextPrimaryBrush}"
-        BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+        Background="{DynamicResource SurfaceBrush}" Foreground="{DynamicResource TextPrimaryBrush}"
+        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
         Padding="12" Margin="0,0,0,10" Cursor="Hand"
         IsEnabled="{Binding IsBackupRunning, Converter={StaticResource InverseBoolConverter}}">
                         <Button.Template>
@@ -178,27 +188,27 @@
                         </Button.Template>
                     </Button>
 
-                    <TextBlock Text="{Binding BackupStatusMessage}" Foreground="{StaticResource IceBlueBrush}"
+                    <TextBlock Text="{Binding BackupStatusMessage}" Foreground="{DynamicResource IceBlueBrush}"
            FontSize="11" TextWrapping="Wrap" Margin="0,0,0,16" />
 
-                    <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,16" />
+                    <Rectangle Height="1" Fill="{DynamicResource BorderBrush}" Margin="0,0,0,16" />
 
-                <TextBlock Text="نصوص الفاتورة" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
+                <TextBlock Text="نصوص الفاتورة" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,12" />
 
-                <TextBlock Text="رسالة الشكر (أسفل الفاتورة)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                <TextBlock Text="رسالة الشكر (أسفل الفاتورة)" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                 <TextBox Text="{Binding InvoiceFooterPrimary, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource DarkTextBoxStyle}" Margin="0,0,0,12" />
+                         Style="{DynamicResource DarkTextBoxStyle}" Margin="0,0,0,12" />
 
-                <TextBlock Text="ملاحظة إضافية (اختياري)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
+                <TextBlock Text="ملاحظة إضافية (اختياري)" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4" />
                 <TextBox Text="{Binding InvoiceFooterSecondary, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource DarkTextBoxStyle}" TextWrapping="Wrap" AcceptsReturn="True"
+                         Style="{DynamicResource DarkTextBoxStyle}" TextWrapping="Wrap" AcceptsReturn="True"
                          Height="50" Margin="0,0,0,16" />
 
-                <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource IceBlueBrush}"
+                <TextBlock Text="{Binding StatusMessage}" Foreground="{DynamicResource IceBlueBrush}"
                            FontSize="12" TextWrapping="Wrap" Margin="0,0,0,10" />
 
                 <Button Content="حفظ الإعدادات" Command="{Binding SaveCommand}"
-                        Style="{StaticResource PrimaryButtonStyle}"
+                        Style="{DynamicResource PrimaryButtonStyle}"
                         IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" IsDefault="True" />
             </StackPanel>
             </ScrollViewer>

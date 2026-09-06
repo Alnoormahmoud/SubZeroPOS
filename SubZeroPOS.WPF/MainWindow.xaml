@@ -5,7 +5,7 @@
         WindowState="Maximized"
         MinHeight="650" MinWidth="1000"
         WindowStartupLocation="CenterScreen"
-        Background="{StaticResource BackgroundBrush}">
+        Background="{DynamicResource BackgroundBrush}">
 
     <Grid x:Name="RootContent" />
 

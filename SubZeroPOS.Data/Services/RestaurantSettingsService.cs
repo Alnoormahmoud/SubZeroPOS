@@ -161,6 +161,8 @@ namespace SubZeroPOS.Data.Services
                     settings.ReceiptCopies;
 
                 existing.PrinterName = settings.PrinterName;
+
+                existing.Theme = settings.Theme;
             }
 
 

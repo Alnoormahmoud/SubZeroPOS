@@ -16,6 +16,11 @@ namespace SubZeroPOS.WPF
         // For now it's centralized here so it's the one place to edit
         // when deploying to your friend's machine.
         //  private const string ConnectionString = "Server=.\\SQLEXPRESS;Database=SubZeroPOS;Trusted_Connection=True;TrustServerCertificate=True;";
+
+        services.AddDbContextFactory<SubZeroDbContext>(options =>
+    options.UseSqlServer(
+        context.Configuration.GetConnectionString("DefaultConnection")));
+
         private const string ConnectionString = "Server=.;Database=SubZeroPOS;Trusted_Connection=True;TrustServerCertificate=True;";
 
 
@@ -76,8 +81,6 @@ namespace SubZeroPOS.WPF
             // Create the window
             var mainWindow = _host.Services.GetRequiredService<MainWindow>();
 
-            // Show it FIRST
-            mainWindow.Show();
 
             // Then load settings
             try
@@ -87,16 +90,38 @@ namespace SubZeroPOS.WPF
 
                 var settings = await settingsService.GetSettingsAsync();
 
-                SubZeroPOS.WPF.Session.CurrencyHolder.Symbol =
+                Session.CurrencyHolder.Symbol =
                     settings.CurrencySymbol;
+
+                ThemeManager.ApplyTheme(settings.Theme);
+                mainWindow.Show();
+
             }
             catch (Exception ex)
             {
+ 
+                var error = ex;
+
+                string message = "";
+
+                while (error != null)
+                {
+                    message +=
+                        $"Exception: {error.GetType().FullName}\n" +
+                        $"Message: {error.Message}\n\n";
+
+                    error = error.InnerException;
+                }
+
+                message += $"Stack Trace:\n{ex.StackTrace}";
+
                 MessageBox.Show(
-                    $"Failed to load restaurant settings.\n\n{ex.Message}",
-                    "Startup Error",
+                    message,
+                    "SubZeroPOS - Startup Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
+
+                Shutdown();
             }
         }
     }

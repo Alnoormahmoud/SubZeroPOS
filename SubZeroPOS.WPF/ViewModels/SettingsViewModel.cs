@@ -155,6 +155,8 @@ namespace SubZeroPOS.WPF.ViewModels
                     }
                 };
 
+
+
             // ==========================================
             // receipt copy count options
             // ==========================================
@@ -169,7 +171,31 @@ namespace SubZeroPOS.WPF.ViewModels
             // ==========================================
             LoadPrinters();
         }
+        public ObservableCollection<ThemeOption> Themes { get; } =
+            new()
+            {
+        new ThemeOption
+        {
+            Value = ThemeManager.SubZeroDark,
+            DisplayName = "الوضع الداكن"
+        },
 
+        new ThemeOption
+        {
+            Value = ThemeManager.Light,
+            DisplayName = "الوضع الفاتح"
+        },
+
+        new ThemeOption
+        {
+            Value = ThemeManager.BlueDark,
+            DisplayName = "الأزرق الداكن"
+        }
+            };
+
+        [ObservableProperty]
+        private ThemeOption? selectedTheme;
+ 
 
         // ==============================================
         // Collections
@@ -443,12 +469,16 @@ namespace SubZeroPOS.WPF.ViewModels
                 SelectedReceiptCopyCount =
                     settings.ReceiptCopies;
 
-      
+
                 SelectedPrinter =
     Printers.FirstOrDefault(
         p => p == settings.PrinterName)
     ?? Printers.FirstOrDefault()
     ?? string.Empty;
+
+                SelectedTheme =
+                Themes.FirstOrDefault(t => t.Value == settings.Theme)
+                ?? Themes.First();
 
                 StatusMessage = string.Empty;
             }
@@ -591,10 +621,17 @@ namespace SubZeroPOS.WPF.ViewModels
 
                         PrinterName =
                             SelectedPrinter
-                            ?? string.Empty
+                            ?? string.Empty,
+
+                        Theme =
+    SelectedTheme?.Value
+    ?? ThemeManager.SubZeroDark
 
 
                     });
+                ThemeManager.ApplyTheme(
+    SelectedTheme?.Value
+    ?? ThemeManager.SubZeroDark);
 
                 SubZeroPOS.WPF.Session.CurrencyHolder.Symbol = SelectedCurrency?.Symbol ?? "ج.س";
 
