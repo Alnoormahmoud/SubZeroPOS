@@ -16,6 +16,14 @@ namespace SubZeroPOS.Data.Configurations
                 .IsRequired()
                 .HasMaxLength(100)
                 .IsUnicode(true);
+
+            // Configure the relationship with Expense entity
+            builder.HasMany(ec => ec.Expenses)
+                .WithOne(e => e.ExpenseCategory)
+                .HasForeignKey(e => e.ExpenseCategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
         }
     }
 }

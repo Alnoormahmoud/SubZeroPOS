@@ -113,6 +113,30 @@ namespace SubZeroPOS.Data.Configurations
             builder.Property(s => s.OpenPdfAfterPrinting)
                 .IsRequired()
                 .HasDefaultValue(false);
+
+            // ==========================================
+            // Receipt copies
+            // ==========================================
+            builder.Property(s => s.ReceiptCopies)
+                .IsRequired()
+                .HasDefaultValue(1);
+
+            // ==========================================
+            // Printer name
+            // ==========================================
+            builder.Property(s => s.PrinterName)
+                .HasMaxLength(100)
+                .IsUnicode(true);
+
+            // ==========================================
+            // Theme
+            // ==========================================
+            builder.Property(s => s.Theme)
+                .IsRequired()
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValue("Light");
+
         }
     }
 }

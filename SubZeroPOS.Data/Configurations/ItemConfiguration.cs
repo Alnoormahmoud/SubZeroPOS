@@ -39,6 +39,15 @@ namespace SubZeroPOS.Data.Configurations
                 .WithMany(c => c.Items)
                 .HasForeignKey(i => i.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure the relationship with OrderItem
+            builder.HasMany(i => i.OrderItems)
+                .WithOne(oi => oi.Item)
+                .HasForeignKey(oi => oi.ItemId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
+
         }
     }
 }

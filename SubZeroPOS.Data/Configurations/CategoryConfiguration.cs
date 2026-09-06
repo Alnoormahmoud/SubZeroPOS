@@ -26,6 +26,14 @@ namespace SubZeroPOS.Data.Configurations
 
             builder.Property(c => c.IsActive)
                 .HasDefaultValue(true);
+
+            builder.HasMany(c => c.Items)
+                .WithOne(i => i.Category)
+                .HasForeignKey(i => i.CategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
+
         }
     }
 }

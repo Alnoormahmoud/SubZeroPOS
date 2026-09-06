@@ -38,6 +38,15 @@ namespace SubZeroPOS.Data.Configurations
             // matches: CREATE INDEX IX_Expenses_ExpenseDate ON Expenses(ExpenseDate);
             builder.HasIndex(e => e.ExpenseDate)
                 .HasDatabaseName("IX_Expenses_ExpenseDate");
+
+            // matches: CREATE INDEX IX_Expenses_ExpenseCategoryId ON Expenses(ExpenseCategoryId);
+            builder.HasIndex(e => e.ExpenseCategoryId)
+                .HasDatabaseName("IX_Expenses_ExpenseCategoryId");
+
+            // matches: CREATE INDEX IX_Expenses_EnteredByUserId ON Expenses(EnteredByUserId);
+            builder.HasIndex(e => e.EnteredByUserId)
+                .HasDatabaseName("IX_Expenses_EnteredByUserId");
+
         }
     }
 }

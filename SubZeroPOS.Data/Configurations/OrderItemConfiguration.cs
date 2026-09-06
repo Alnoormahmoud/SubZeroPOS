@@ -41,6 +41,19 @@ namespace SubZeroPOS.Data.Configurations
             // matches: CREATE INDEX IX_OrderItems_OrderId ON OrderItems(OrderId);
             builder.HasIndex(oi => oi.OrderId)
                 .HasDatabaseName("IX_OrderItems_OrderId");
+
+            // matches: CREATE INDEX IX_OrderItems_ItemId ON OrderItems(ItemId);
+            builder.HasIndex(oi => oi.ItemId)
+                .HasDatabaseName("IX_OrderItems_ItemId");
+
+            // matches: CREATE INDEX IX_OrderItems_OrderId_ItemId ON OrderItems(OrderId, ItemId);
+            builder.HasIndex(oi => new { oi.OrderId, oi.ItemId })
+                .HasDatabaseName("IX_OrderItems_OrderId_ItemId");
+
+            // matches: CREATE UNIQUE INDEX IX_OrderItems_OrderId_ItemId_Unique ON OrderItems(OrderId, ItemId);
+            builder.HasIndex(oi => new { oi.OrderId, oi.ItemId })
+                .IsUnique()
+                .HasDatabaseName("IX_OrderItems_OrderId_ItemId_Unique"); builder.HasIndex(oi => new { oi.OrderId, oi.ItemId });
         }
     }
 }

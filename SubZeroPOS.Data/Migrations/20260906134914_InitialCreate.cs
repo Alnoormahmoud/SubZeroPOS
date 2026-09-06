@@ -74,7 +74,10 @@ namespace SubZeroPOS.Data.Migrations
                     ShowCustomerNameOnInvoice = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     ReceiptPaperWidthMm = table.Column<int>(type: "int", nullable: false, defaultValue: 80),
                     AutoPrintReceipt = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    OpenPdfAfterPrinting = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
+                    OpenPdfAfterPrinting = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    ReceiptCopies = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
+                    PrinterName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Theme = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false, defaultValue: "Light")
                 },
                 constraints: table =>
                 {
@@ -174,11 +177,37 @@ namespace SubZeroPOS.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ShiftClosings",
+                columns: table => new
+                {
+                    ShiftId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    OpenedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ClosedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    OpeningCash = table.Column<decimal>(type: "decimal(10,2)", nullable: false, defaultValue: 0m),
+                    ExpectedCash = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
+                    ActualCash = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShiftClosings", x => x.ShiftId);
+                    table.ForeignKey(
+                        name: "FK_ShiftClosings_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
                     OrderId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    ShiftId = table.Column<int>(type: "int", nullable: true),
                     OrderTypeId = table.Column<int>(type: "int", nullable: false),
                     CustomerName = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
@@ -199,33 +228,14 @@ namespace SubZeroPOS.Data.Migrations
                         principalColumn: "OrderTypeId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
+                        name: "FK_Orders_ShiftClosings_ShiftId",
+                        column: x => x.ShiftId,
+                        principalTable: "ShiftClosings",
+                        principalColumn: "ShiftId",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
                         name: "FK_Orders_Users_CashierUserId",
                         column: x => x.CashierUserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ShiftClosings",
-                columns: table => new
-                {
-                    ShiftId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    OpenedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ClosedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    OpeningCash = table.Column<decimal>(type: "decimal(10,2)", nullable: false, defaultValue: 0m),
-                    ExpectedCash = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
-                    ActualCash = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
-                    Notes = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ShiftClosings", x => x.ShiftId);
-                    table.ForeignKey(
-                        name: "FK_ShiftClosings_Users_UserId",
-                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Restrict);
@@ -291,6 +301,12 @@ namespace SubZeroPOS.Data.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrderItems_OrderId_ItemId_Unique",
+                table: "OrderItems",
+                columns: new[] { "OrderId", "ItemId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Orders_CashierUserId",
                 table: "Orders",
                 column: "CashierUserId");
@@ -304,6 +320,21 @@ namespace SubZeroPOS.Data.Migrations
                 name: "IX_Orders_OrderTypeId",
                 table: "Orders",
                 column: "OrderTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_PaymentMethodCode",
+                table: "Orders",
+                column: "PaymentMethodCode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_ShiftId",
+                table: "Orders",
+                column: "ShiftId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_StatusCode",
+                table: "Orders",
+                column: "StatusCode");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderTypes_TypeCode",
@@ -347,9 +378,6 @@ namespace SubZeroPOS.Data.Migrations
                 name: "RestaurantSettings");
 
             migrationBuilder.DropTable(
-                name: "ShiftClosings");
-
-            migrationBuilder.DropTable(
                 name: "ExpenseCategories");
 
             migrationBuilder.DropTable(
@@ -363,6 +391,9 @@ namespace SubZeroPOS.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "OrderTypes");
+
+            migrationBuilder.DropTable(
+                name: "ShiftClosings");
 
             migrationBuilder.DropTable(
                 name: "Users");

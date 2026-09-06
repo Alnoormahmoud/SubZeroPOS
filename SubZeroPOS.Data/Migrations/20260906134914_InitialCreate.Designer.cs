@@ -12,7 +12,7 @@ using SubZeroPOS.Data;
 namespace SubZeroPOS.Data.Migrations
 {
     [DbContext(typeof(SubZeroDbContext))]
-    [Migration("20260829114039_InitialCreate")]
+    [Migration("20260906134914_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -89,9 +89,11 @@ namespace SubZeroPOS.Data.Migrations
 
                     b.HasKey("ExpenseId");
 
-                    b.HasIndex("EnteredByUserId");
+                    b.HasIndex("EnteredByUserId")
+                        .HasDatabaseName("IX_Expenses_EnteredByUserId");
 
-                    b.HasIndex("ExpenseCategoryId");
+                    b.HasIndex("ExpenseCategoryId")
+                        .HasDatabaseName("IX_Expenses_ExpenseCategoryId");
 
                     b.HasIndex("ExpenseDate")
                         .HasDatabaseName("IX_Expenses_ExpenseDate");
@@ -207,6 +209,9 @@ namespace SubZeroPOS.Data.Migrations
                         .HasColumnType("varchar(20)")
                         .HasDefaultValue("Cash");
 
+                    b.Property<int?>("ShiftId")
+                        .HasColumnType("int");
+
                     b.Property<string>("StatusCode")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
@@ -227,7 +232,17 @@ namespace SubZeroPOS.Data.Migrations
                     b.HasIndex("OrderDate")
                         .HasDatabaseName("IX_Orders_OrderDate");
 
-                    b.HasIndex("OrderTypeId");
+                    b.HasIndex("OrderTypeId")
+                        .HasDatabaseName("IX_Orders_OrderTypeId");
+
+                    b.HasIndex("PaymentMethodCode")
+                        .HasDatabaseName("IX_Orders_PaymentMethodCode");
+
+                    b.HasIndex("ShiftId")
+                        .HasDatabaseName("IX_Orders_ShiftId");
+
+                    b.HasIndex("StatusCode")
+                        .HasDatabaseName("IX_Orders_StatusCode");
 
                     b.ToTable("Orders", (string)null);
                 });
@@ -261,10 +276,15 @@ namespace SubZeroPOS.Data.Migrations
 
                     b.HasKey("OrderItemId");
 
-                    b.HasIndex("ItemId");
+                    b.HasIndex("ItemId")
+                        .HasDatabaseName("IX_OrderItems_ItemId");
 
                     b.HasIndex("OrderId")
                         .HasDatabaseName("IX_OrderItems_OrderId");
+
+                    b.HasIndex("OrderId", "ItemId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_OrderItems_OrderId_ItemId_Unique");
 
                     b.ToTable("OrderItems", (string)null);
                 });
@@ -359,6 +379,17 @@ namespace SubZeroPOS.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(20)");
 
+                    b.Property<string>("PrinterName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("ReceiptCopies")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
                     b.Property<int>("ReceiptPaperWidthMm")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
@@ -389,6 +420,14 @@ namespace SubZeroPOS.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
+
+                    b.Property<string>("Theme")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)")
+                        .HasDefaultValue("Light");
 
                     b.HasKey("SettingsId");
 
@@ -555,6 +594,11 @@ namespace SubZeroPOS.Data.Migrations
                         .HasForeignKey("OrderTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("SubZeroPOS.Core.Entities.ShiftClosing", null)
+                        .WithMany()
+                        .HasForeignKey("ShiftId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("CashierUser");
 

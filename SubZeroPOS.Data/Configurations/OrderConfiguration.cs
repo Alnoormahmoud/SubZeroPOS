@@ -66,6 +66,24 @@ namespace SubZeroPOS.Data.Configurations
                 .WithMany()
                 .HasForeignKey(o => o.ShiftId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            // matches: CREATE INDEX IX_Orders_ShiftId ON Orders(ShiftId);
+            builder.HasIndex(o => o.ShiftId)
+                .HasDatabaseName("IX_Orders_ShiftId");
+
+            // matches: CREATE INDEX IX_Orders_StatusCode ON Orders(StatusCode);
+            builder.HasIndex(o => o.StatusCode)
+                .HasDatabaseName("IX_Orders_StatusCode");
+
+            // matches: CREATE INDEX IX_Orders_PaymentMethodCode ON Orders(PaymentMethodCode);
+            builder.HasIndex(o => o.PaymentMethodCode)
+                .HasDatabaseName("IX_Orders_PaymentMethodCode");
+
+            // matches: CREATE INDEX IX_Orders_OrderTypeId ON Orders(OrderTypeId);
+            builder.HasIndex(o => o.OrderTypeId)
+                .HasDatabaseName("IX_Orders_OrderTypeId");
+
+
         }
     }
 }
