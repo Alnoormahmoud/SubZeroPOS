@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SubZeroPOS.Core.Interfaces;
@@ -88,7 +87,29 @@ namespace SubZeroPOS.WPF
                 // Start the Host
                 await _host.StartAsync();
 
-                // Load settings BEFORE showing the application
+                // ============================================================
+                // DATABASE MIGRATION
+                // ============================================================
+
+                var dbFactory =
+                    _host.Services
+                        .GetRequiredService<
+                            IDbContextFactory<SubZeroDbContext>>();
+
+                await using (var db =
+                    await dbFactory.CreateDbContextAsync())
+                {
+                    // Creates the database if it doesn't exist
+                    // and applies all pending migrations.
+                    await db.Database.MigrateAsync();
+
+                    await DatabaseSeeder.SeedAsync(db);
+                }
+
+                // ============================================================
+                // LOAD SETTINGS
+                // ============================================================
+
                 var settingsService =
                     _host.Services
                         .GetRequiredService<IRestaurantSettingsService>();
@@ -102,13 +123,20 @@ namespace SubZeroPOS.WPF
 
                 ThemeManager.ApplyTheme(settings.Theme);
 
-                // Create MainWindow only after settings are loaded
+                // ============================================================
+                // CREATE MAIN WINDOW
+                // ============================================================
+
                 var mainWindow =
                     _host.Services.GetRequiredService<MainWindow>();
 
                 MainWindow = mainWindow;
 
-                // Show only after everything is ready
+                // Show only after:
+                // 1. Host started
+                // 2. Database exists
+                // 3. All migrations are applied
+                // 4. Settings are loaded
                 mainWindow.Show();
             }
             catch (Exception ex)
