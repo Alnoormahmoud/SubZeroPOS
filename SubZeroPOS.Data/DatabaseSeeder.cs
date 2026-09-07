@@ -105,8 +105,17 @@ namespace SubZeroPOS.Data
     },
     new
     {
+        NameAr = "رواتب"
+    },
+    new
+    {
+        NameAr = "توصيل"
+    },
+    new
+    {
         NameAr = "أخرى"
     }
+
 };
 
             foreach (var categoryData in expenseCategories)
@@ -135,60 +144,7 @@ namespace SubZeroPOS.Data
                 .FirstAsync(u => u.Username == "admin" || u.Username == "عماد");
 
 
-            // كهرباء
-            await SeedExpenseAsync(
-                db,
-                "كهرباء",
-                "فاتورة الكهرباء الشهرية",
-                85000m,
-                DateTime.Now.AddDays(-10),
-                manager.UserId);
-
-            // مياه
-            await SeedExpenseAsync(
-                db,
-                "مياه",
-                "فاتورة المياه",
-                25000m,
-                DateTime.Now.AddDays(-8),
-                manager.UserId);
-
-            // مشتريات
-            await SeedExpenseAsync(
-                db,
-                "مشتريات",
-                "شراء مواد غذائية للمطعم",
-                150000m,
-                DateTime.Now.AddDays(-6),
-                manager.UserId);
-
-            // نظافة
-            await SeedExpenseAsync(
-                db,
-                "نظافة",
-                "شراء مواد وأدوات تنظيف",
-                35000m,
-                DateTime.Now.AddDays(-5),
-                manager.UserId);
-
-            // صيانة
-            await SeedExpenseAsync(
-                db,
-                "صيانة",
-                "صيانة الثلاجة",
-                60000m,
-                DateTime.Now.AddDays(-3),
-                manager.UserId);
-
-            // مواصلات
-            await SeedExpenseAsync(
-                db,
-                "مواصلات",
-                "مصاريف توصيل وشراء احتياجات",
-                20000m,
-                DateTime.Now.AddDays(-2),
-                manager.UserId);
-
+ 
             // ============================================================
             // RESTAURANT SETTINGS
             // ============================================================
@@ -203,7 +159,7 @@ namespace SubZeroPOS.Data
                     // Restaurant information
                     RestaurantName = "ساب زيرو",
                     Phone = "249119881277+",
-                    Address = "الخرطوم، سوبا الآراضي",
+                    Address = "الخرطوم، سوباالأراضي",
 
                     // Invoice footer
                     InvoiceFooterPrimary = "شكراً لزيارتكم",

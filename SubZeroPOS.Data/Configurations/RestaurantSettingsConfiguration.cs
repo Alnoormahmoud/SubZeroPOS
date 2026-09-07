@@ -137,6 +137,14 @@ namespace SubZeroPOS.Data.Configurations
                 .IsUnicode(false)
                 .HasDefaultValue("Light");
 
+            // ==========================================
+            // Weekly backup settings
+            // ==========================================
+            builder.Property(s => s.WeeklyBackupEnabled)
+                .IsRequired()
+                .HasDefaultValue(false);
+
+
         }
     }
 }

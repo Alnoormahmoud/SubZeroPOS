@@ -484,7 +484,7 @@ namespace SubZeroPOS.WPF.ViewModels
                 Themes.FirstOrDefault(t => t.Value == settings.Theme)
                 ?? Themes.First();
 
-                weeklyBackupEnabled =
+                WeeklyBackupEnabled =
     settings.WeeklyBackupEnabled;
 
                 StatusMessage = string.Empty;
@@ -632,7 +632,9 @@ namespace SubZeroPOS.WPF.ViewModels
 
                         Theme =
     SelectedTheme?.Value
-    ?? ThemeManager.SubZeroDark
+    ?? ThemeManager.SubZeroDark,
+
+                    WeeklyBackupEnabled = WeeklyBackupEnabled
 
 
                     });
@@ -640,7 +642,6 @@ namespace SubZeroPOS.WPF.ViewModels
     SelectedTheme?.Value
     ?? ThemeManager.SubZeroDark);
 
-                WeeklyBackupEnabled =    weeklyBackupEnabled;
 
                 SubZeroPOS.WPF.Session.CurrencyHolder.Symbol = SelectedCurrency?.Symbol ?? "ج.س";
 

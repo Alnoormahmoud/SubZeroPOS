@@ -44,7 +44,7 @@ namespace SubZeroPOS.Data.Services
                 CurrencyCode = "SDG",
                 CurrencySymbol = "ج.س",
 
-                DateFormat = "yyyy-MM-dd HH:mm",
+                DateFormat = "hh:mm dd-MM-yyyy",
 
                 ShowCashierNameOnInvoice = true,
 
@@ -56,13 +56,17 @@ namespace SubZeroPOS.Data.Services
 
                 ReceiptPaperWidthMm = 80,
 
-                AutoPrintReceipt = false,
+                AutoPrintReceipt = true,
 
-                OpenPdfAfterPrinting = false,
+                OpenPdfAfterPrinting = true,
 
                 ReceiptCopies = 1,
 
                 PrinterName = string.Empty,
+
+                Theme = "Blue Dark",
+
+                WeeklyBackupEnabled = true,
 
             };
 
@@ -163,6 +167,11 @@ namespace SubZeroPOS.Data.Services
                 existing.PrinterName = settings.PrinterName;
 
                 existing.Theme = settings.Theme;
+
+                // Backup
+                existing.WeeklyBackupEnabled =
+                    settings.WeeklyBackupEnabled;
+                existing.LastWeeklyBackup = settings.LastWeeklyBackup;
             }
 
 
