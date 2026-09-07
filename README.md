@@ -1,7 +1,7 @@
 # 🧊 SubZero POS — نظام ساب زيرو لنقاط البيع
 
 <p align="center">
-  <img src="docs/images/logo.png" alt="SubZero POS Logo" width="180">
+  <img src="docs/images/logo.jpg" alt="SubZero POS Logo" width="180">
 </p>
 
 <h2 align="center">نظام نقاط بيع وإدارة المبيعات والمخزون</h2>
