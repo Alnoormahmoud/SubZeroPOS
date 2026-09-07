@@ -46,5 +46,9 @@ namespace SubZeroPOS.Core.Entities
         public string PrinterName { get; set; } = string.Empty;
 
         public string Theme { get; set; } = "SubZero Dark";
+
+        public bool WeeklyBackupEnabled { get; set; } = false;
+
+        public DateTime? LastWeeklyBackup { get; set; }
     }
 }

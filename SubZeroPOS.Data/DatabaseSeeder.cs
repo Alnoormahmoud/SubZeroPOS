@@ -233,7 +233,10 @@ namespace SubZeroPOS.Data
                     PrinterName = string.Empty,
 
                     // Theme
-                    Theme = "Blue Dark"
+                    Theme = "Blue Dark",
+
+                    // Weekly backup
+                    WeeklyBackupEnabled = true,
                 };
 
                 db.Set<RestaurantSettings>().Add(settings);

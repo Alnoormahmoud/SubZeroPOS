@@ -1,13 +1,16 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Win32;
 using SubZeroPOS.Core.Entities;
 using SubZeroPOS.Core.Interfaces;
 using SubZeroPOS.Data.Services;
 using System;
 using System.Collections.ObjectModel;
+using System.Drawing.Printing;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Drawing.Printing;
+using System.Windows;
 
 namespace SubZeroPOS.WPF.ViewModels
 {
@@ -351,7 +354,8 @@ namespace SubZeroPOS.WPF.ViewModels
         [ObservableProperty]
         private string selectedPrinter = string.Empty;
 
-
+        [ObservableProperty]
+        private bool weeklyBackupEnabled;
 
         // ==============================================
         // Navigation event
@@ -479,6 +483,9 @@ namespace SubZeroPOS.WPF.ViewModels
                 SelectedTheme =
                 Themes.FirstOrDefault(t => t.Value == settings.Theme)
                 ?? Themes.First();
+
+                weeklyBackupEnabled =
+    settings.WeeklyBackupEnabled;
 
                 StatusMessage = string.Empty;
             }
@@ -633,6 +640,8 @@ namespace SubZeroPOS.WPF.ViewModels
     SelectedTheme?.Value
     ?? ThemeManager.SubZeroDark);
 
+                WeeklyBackupEnabled =    weeklyBackupEnabled;
+
                 SubZeroPOS.WPF.Session.CurrencyHolder.Symbol = SelectedCurrency?.Symbol ?? "ج.س";
 
                 StatusMessage =
@@ -660,23 +669,167 @@ namespace SubZeroPOS.WPF.ViewModels
             BackRequested?.Invoke();
         }
 
-        [RelayCommand]
+         [RelayCommand]
         private async Task BackupNowAsync()
         {
-            IsBackupRunning = true;
-            BackupStatusMessage = "جاري إنشاء النسخة الاحتياطية...";
-
             try
             {
-                var (success, message) = await _backupService.CreateBackupAsync();
-                BackupStatusMessage = success
-                    ? $"تم إنشاء النسخة الاحتياطية بنجاح:\n{message}"
-                    : message;
+                IsBackupRunning = true;
+
+                BackupStatusMessage =
+                    "جاري إنشاء النسخة الاحتياطية...";
+
+                Directory.CreateDirectory(BackupDirectory);
+
+                var timestamp =
+                    DateTime.Now.ToString("yyyy-MM-dd_HHmmss");
+
+                var backupPath =
+                    Path.Combine(
+                        BackupDirectory,
+                        $"SubZeroPOS_{timestamp}.bak");
+
+                var result =
+                    await _backupService.CreateBackupAsync(
+                        backupPath);
+
+                BackupStatusMessage =
+                    result.Message;
+
+                if (result.Success)
+                {
+                    MessageBox.Show(
+                        result.Message,
+                        "النسخ الاحتياطي",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show(
+                        result.Message,
+                        "خطأ",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                BackupStatusMessage =
+                    $"فشل النسخ الاحتياطي: {ex.Message}";
+
+                MessageBox.Show(
+                    BackupStatusMessage,
+                    "خطأ",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
             finally
             {
                 IsBackupRunning = false;
             }
         }
+        [RelayCommand]
+        private async Task RestoreBackupAsync()
+        {
+            var openDialog = new OpenFileDialog
+            {
+                Title = "اختيار النسخة الاحتياطية",
+                Filter = "Backup Files (*.bak)|*.bak",
+                Multiselect = false
+            };
+
+            if (openDialog.ShowDialog() != true)
+                return;
+
+            var result = MessageBox.Show(
+                "تحذير!\n\n" +
+                "استعادة النسخة الاحتياطية ستستبدل البيانات الحالية " +
+                "بالبيانات الموجودة في النسخة الاحتياطية.\n\n" +
+                "هل تريد المتابعة؟",
+                "تأكيد الاستعادة",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result != MessageBoxResult.Yes)
+                return;
+
+            try
+            {
+                IsBackupRunning = true;
+
+                BackupStatusMessage =
+                    "جاري استعادة قاعدة البيانات...";
+
+                var backupDirectory = BackupDirectory;
+
+                Directory.CreateDirectory(backupDirectory);
+
+                var temporaryBackupPath =
+                    Path.Combine(
+                        backupDirectory,
+                        "RestoreTemp.bak");
+
+                File.Copy(
+                    openDialog.FileName,
+                    temporaryBackupPath,
+                    true);
+
+                var restoreResult =
+                    await _backupService.RestoreBackupAsync(
+                        temporaryBackupPath);
+
+                BackupStatusMessage =
+                    restoreResult.Message;
+
+                if (restoreResult.Success)
+                {
+                    MessageBox.Show(
+                        restoreResult.Message,
+                        "استعادة قاعدة البيانات",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show(
+                        restoreResult.Message,
+                        "خطأ",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                }
+
+                try
+                {
+                    File.Delete(temporaryBackupPath);
+                }
+                catch
+                {
+                    // Ignore cleanup failure.
+                }
+            }
+            catch (Exception ex)
+            {
+                BackupStatusMessage =
+                    $"فشل الاستعادة: {ex.Message}";
+
+                MessageBox.Show(
+                    BackupStatusMessage,
+                    "خطأ",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+            finally
+            {
+                IsBackupRunning = false;
+            }
+        }
+
+        private static string BackupDirectory =>
+    Path.Combine(
+        Environment.GetFolderPath(
+            Environment.SpecialFolder.CommonApplicationData),
+        "SubZeroPOS",
+        "Backups");
     }
 }

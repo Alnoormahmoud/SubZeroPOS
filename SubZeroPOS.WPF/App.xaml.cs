@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using SubZeroPOS.Core.Interfaces;
 using SubZeroPOS.Data;
 using SubZeroPOS.Data.Services;
+using SubZeroPOS.WPF.Services;
 using SubZeroPOS.WPF.ViewModels;
 using SubZeroPOS.WPF.Views;
 using System.Windows;
@@ -50,6 +51,7 @@ namespace SubZeroPOS.WPF
                         services.AddTransient<IReportService, ReportService>();
                         services.AddTransient<IShiftService, ShiftService>();
                         services.AddTransient<IBackupService, BackupService>();
+                        services.AddSingleton<WeeklyBackupScheduler>();
 
                         // ViewModels
                         services.AddTransient<LoginViewModel>();
@@ -122,6 +124,12 @@ namespace SubZeroPOS.WPF
                     settings.CurrencySymbol;
 
                 ThemeManager.ApplyTheme(settings.Theme);
+
+                var weeklyBackupScheduler =
+    _host.Services
+        .GetRequiredService<WeeklyBackupScheduler>();
+
+                weeklyBackupScheduler.Start();
 
                 // ============================================================
                 // CREATE MAIN WINDOW

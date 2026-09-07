@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Data;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SubZeroPOS.Core.Interfaces;
 
@@ -11,50 +12,168 @@ namespace SubZeroPOS.Data.Services
     {
         private readonly IDbContextFactory<SubZeroDbContext> _contextFactory;
 
-        public BackupService(IDbContextFactory<SubZeroDbContext> contextFactory)
+        public BackupService(
+            IDbContextFactory<SubZeroDbContext> contextFactory)
         {
             _contextFactory = contextFactory;
         }
 
-        public async Task<(bool Success, string Message)> CreateBackupAsync()
+        public async Task<(bool Success, string Message)> CreateBackupAsync(
+            string backupPath)
         {
-            await using var context = await _contextFactory.CreateDbContextAsync();
+            if (string.IsNullOrWhiteSpace(backupPath))
+                return (false, "مسار النسخة الاحتياطية غير صالح");
 
             try
             {
-                // Find where SQL Server actually stores this database's data
-                // file - guaranteed the SQL Server service account can write
-                // there, so backing up into a "Backups" subfolder next to it
-                // avoids permission issues a random app-chosen folder might hit.
-                var dataFilePath = await context.Database
-                    .SqlQueryRaw<string>(
-                        "SELECT physical_name AS [Value] FROM sys.master_files WHERE database_id = DB_ID() AND type = 0")
-                    .FirstOrDefaultAsync();
+                backupPath = Path.GetFullPath(backupPath);
 
-                if (string.IsNullOrEmpty(dataFilePath))
-                    return (false, "تعذر تحديد موقع قاعدة البيانات على السيرفر");
+                var directory = Path.GetDirectoryName(backupPath);
 
-                var dataDir = Path.GetDirectoryName(dataFilePath);
-                var backupDir = Path.Combine(dataDir!, "Backups");
+                if (string.IsNullOrWhiteSpace(directory))
+                    return (false, "تعذر تحديد مجلد النسخة الاحتياطية");
 
-                // Ensure the folder exists (SQL Server itself creates it via
-                // this extended stored procedure, since the app process may
-                // not have direct filesystem access to the DB server).
-                await context.Database.ExecuteSqlRawAsync($"EXEC master.dbo.xp_create_subdir N'{backupDir}'");
+                Directory.CreateDirectory(directory);
 
-                var dbName = context.Database.GetDbConnection().Database;
-                var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HHmmss");
-                var backupFileName = $"{dbName}_{timestamp}.bak";
-                var backupFullPath = Path.Combine(backupDir, backupFileName);
+                await using var context =
+                    await _contextFactory.CreateDbContextAsync();
 
-                await context.Database.ExecuteSqlRawAsync(
-                    $"BACKUP DATABASE [{dbName}] TO DISK = N'{backupFullPath}' WITH INIT, COMPRESSION");
+                var connection =
+                    context.Database.GetDbConnection();
 
-                return (true, backupFullPath);
+                await connection.OpenAsync();
+
+                var databaseName = connection.Database;
+
+                if (string.IsNullOrWhiteSpace(databaseName))
+                    return (false, "تعذر تحديد اسم قاعدة البيانات");
+
+                var escapedDatabaseName =
+                    databaseName.Replace("]", "]]");
+
+                var escapedBackupPath =
+                    backupPath.Replace("'", "''");
+
+                var sql = $@"
+BACKUP DATABASE [{escapedDatabaseName}]
+TO DISK = N'{escapedBackupPath}'
+WITH INIT, FORMAT, STATS = 10;";
+
+                await using var command =
+                    connection.CreateCommand();
+
+                command.CommandText = sql;
+                command.CommandType = CommandType.Text;
+                command.CommandTimeout = 600;
+
+                await command.ExecuteNonQueryAsync();
+
+                return (
+                    true,
+                    $"تم إنشاء النسخة الاحتياطية بنجاح:\n{backupPath}"
+                );
             }
             catch (Exception ex)
             {
-                return (false, $"فشل النسخ الاحتياطي: {ex.Message}");
+                return (
+                    false,
+                    $"فشل إنشاء النسخة الاحتياطية:\n{ex.Message}"
+                );
+            }
+        }
+
+        public async Task<(bool Success, string Message)> RestoreBackupAsync(
+            string backupPath)
+        {
+            if (string.IsNullOrWhiteSpace(backupPath))
+                return (false, "ملف النسخة الاحتياطية غير صالح");
+
+            if (!File.Exists(backupPath))
+                return (false, "ملف النسخة الاحتياطية غير موجود");
+
+            try
+            {
+                backupPath = Path.GetFullPath(backupPath);
+
+                await using var context =
+                    await _contextFactory.CreateDbContextAsync();
+
+                var connection =
+                    context.Database.GetDbConnection();
+
+                await connection.OpenAsync();
+
+                var databaseName = connection.Database;
+
+                if (string.IsNullOrWhiteSpace(databaseName))
+                    return (false, "تعذر تحديد اسم قاعدة البيانات");
+
+                var escapedDatabaseName =
+                    databaseName.Replace("]", "]]");
+
+                var escapedBackupPath =
+                    backupPath.Replace("'", "''");
+
+                /*
+                 * We connect to the database's connection but execute
+                 * the restore commands against master.
+                 *
+                 * SQL Server must not have active connections to the
+                 * database while restoring it.
+                 */
+
+                var masterConnectionString =
+                    connection.ConnectionString
+                        .Replace(
+                            $"Database={databaseName}",
+                            "Database=master",
+                            StringComparison.OrdinalIgnoreCase)
+                        .Replace(
+                            $"Initial Catalog={databaseName}",
+                            "Initial Catalog=master",
+                            StringComparison.OrdinalIgnoreCase);
+
+                await using var masterConnection =
+                    new SqlConnection(masterConnectionString);
+
+                await masterConnection.OpenAsync();
+
+                var sql = $@"
+USE [master];
+
+ALTER DATABASE [{escapedDatabaseName}]
+SET SINGLE_USER
+WITH ROLLBACK IMMEDIATE;
+
+RESTORE DATABASE [{escapedDatabaseName}]
+FROM DISK = N'{escapedBackupPath}'
+WITH REPLACE, RECOVERY, STATS = 10;
+
+ALTER DATABASE [{escapedDatabaseName}]
+SET MULTI_USER;
+";
+
+                await using var command =
+                    masterConnection.CreateCommand();
+
+                command.CommandText = sql;
+                command.CommandType = CommandType.Text;
+                command.CommandTimeout = 600;
+
+                await command.ExecuteNonQueryAsync();
+
+                return (
+                    true,
+                    "تمت استعادة قاعدة البيانات بنجاح.\n\n" +
+                    "يرجى إعادة تشغيل البرنامج."
+                );
+            }
+            catch (Exception ex)
+            {
+                return (
+                    false,
+                    $"فشل استعادة النسخة الاحتياطية:\n{ex.Message}"
+                );
             }
         }
     }
