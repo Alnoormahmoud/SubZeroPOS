@@ -459,13 +459,13 @@ namespace SubZeroPOS.Data
             await SeedItemAsync(
                 db,
                 "السندوتشات",
-                "برست كامل",
+                "بروست كامل",
                 35000m);
 
             await SeedItemAsync(
                 db,
                 "السندوتشات",
-                "برست وسط",
+                "بروست وسط",
                 18000m);
 
 

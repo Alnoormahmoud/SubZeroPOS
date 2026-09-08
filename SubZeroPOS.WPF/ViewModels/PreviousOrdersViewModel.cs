@@ -129,9 +129,9 @@ namespace SubZeroPOS.WPF.ViewModels
             {
                 var typeCode = SelectedOrderTypeFilter switch
                 {
-                    "محلي" => "DINE_IN",
+                    "محلي" => "DINE-IN", 
                     "توصيل" => "DELIVERY",
-                    "سفري" => "TAKE_AWAY",
+                    "سفري" => "TAKE-AWAY",
                     _ => null
                 };
                 if (typeCode != null)
