@@ -30,7 +30,6 @@ The system provides functionality for:
 - Products
 - Categories
 - Inventory
-- Customers
 - Orders
 - Invoices
 - Receipts
@@ -65,7 +64,6 @@ During the trial, you can explore:
 - POS workflow
 - Product management
 - Inventory
-- Customers
 - Orders
 - Invoices
 - Printing
@@ -108,17 +106,6 @@ After the trial period, users who want to continue using the full version should
 - Product images
 - Automatic stock updates after sales
 - Inventory organization
-
----
-
-## 👥 Customer Management
-
-- Add customers
-- Edit customers
-- Search customers
-- Customer information
-- Customer order history
-- Customer information on invoices
 
 ---
 
@@ -302,6 +289,7 @@ The Core layer contains:
 The Data layer is responsible for:
 
 - Database access
+- DBContext
 - Entity Framework Core
 - SQL Server
 - Migrations
@@ -526,83 +514,99 @@ If you want to continue using SubZero POS after the evaluation period, contact t
 
 Below are screenshots demonstrating different parts of SubZero POS.
 
-## 1. Dashboard
+## 1. Login
 
-![SubZero POS Dashboard](docs/images/01-dashboard.png)
+![SubZero POS Login](docs/images/01-login.jpg)
+
+The login screen provides access control for system users.
+
+---
+
+## 2. Dashboard
+
+![SubZero POS Dashboard](docs/images/02-dashboard.jpg)
 
 The main dashboard provides an overview of the POS system and quick access to the main functions.
 
 ---
 
-## 2. Point of Sale
+## 3. Point of Sale
 
-![SubZero POS Point of Sale](docs/images/02-pos.png)
+![SubZero POS Point of Sale](docs/images/03-pos.jpg)
 
 The Point of Sale screen allows users to create orders and complete sales efficiently.
 
 ---
 
-## 3. Products
+## 4. Products
 
-![SubZero POS Products](docs/images/03-products.png)
+![SubZero POS Products](docs/images/04-products.jpg)
 
 Product management allows users to manage products, prices, categories, quantities, and images.
 
 ---
 
-## 4. Inventory
+## 5. Orders
 
-![SubZero POS Inventory](docs/images/04-inventory.png)
-
-The inventory section helps businesses monitor and manage available stock.
-
----
-
-## 5. Customers
-
-![SubZero POS Customers](docs/images/05-customers.png)
-
-Customer management provides access to customer information and order history.
-
----
-
-## 6. Orders
-
-![SubZero POS Orders](docs/images/06-orders.png)
+![SubZero POS Orders](docs/images/05-orders.jpg)
 
 The orders section allows users to review and manage sales orders.
 
 ---
 
-## 7. Invoice
+## 6. Invoice
 
-![SubZero POS Invoice](docs/images/07-invoice.png)
+![SubZero POS Invoice](docs/images/6-invoice.jpg)
 
 The invoice system provides printable and PDF-ready invoices.
 
 ---
 
-## 8. Shift Management
+## 7. Shift Management
 
-![SubZero POS Shifts](docs/images/08-shifts.png)
+![SubZero POS Shifts Management](docs/images/07-shifts.jpg)
 
 Shift management allows cashiers and managers to open and close shifts and review shift totals.
 
 ---
 
-## 9. Settings
+## 8. Users Management
 
-![SubZero POS Settings](docs/images/09-settings.png)
+![SubZero POS Users Management](docs/images/08-Users.jpg)
+
+Users management allows managers to Add Edit, Users Informations and Delete, Deactivate Users.
+
+---
+
+## 9. Account Management
+
+![SubZero POS Account Management](docs/images/09-Account.jpg)
+
+Accoount management allows Users to manage Their Own Data and Password.
+
+---
+
+## 10. Settings
+
+![SubZero POS Settings](docs/images/10-settings.jpg)
 
 The settings section allows the business to configure currencies, invoices, printing, backups, and other system options.
 
 ---
 
-## 10. Login
+## 11. Expenses
 
-![SubZero POS Login](docs/images/10-login.png)
+![SubZero POS Expenses](docs/images/11-Expenses.jpg)
 
-The login screen provides access control for system users.
+The Expenses screen allows users to create and manage Daily Expenses and Net Profit and also show the Top seled Items.
+
+---
+
+## 12. Reports
+
+![SubZero POS Reports](docs/images/12-Reports.jpg)
+
+The Reports section allows Manager to review sales and Expenses.
 
 ---
 
@@ -686,36 +690,6 @@ For production environments, it is recommended to keep multiple copies of import
 
 ---
 
-# 📁 Repository Structure
-
-SubZeroPOS/
-│
-├── SubZeroPOS.Core/
-│
-├── SubZeroPOS.Data/
-│
-├── SubZeroPOS.WPF/
-│
-├── Images/
-│
-├── docs/
-│   └── images/
-│       ├── logo.png
-│       ├── 01-dashboard.png
-│       ├── 02-pos.png
-│       ├── 03-products.png
-│       ├── 04-inventory.png
-│       ├── 05-customers.png
-│       ├── 06-orders.png
-│       ├── 07-invoice.png
-│       ├── 08-shifts.png
-│       ├── 09-settings.png
-│       └── 10-login.png
-│
-└── README.md
-
----
-
 # 🔄 Development Workflow
 
 The project was developed through the following workflow:
@@ -764,7 +738,9 @@ The main goals of SubZero POS are:
 
 ## Alnoor Mahmoud
 
-Software Developer / Junior Backend Developer
+CS Student at UoP
+
+Software engineer / Junior Backend Developer
 
 ### Areas of Interest
 
