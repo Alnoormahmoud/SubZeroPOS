@@ -564,7 +564,7 @@ The invoice system provides printable and PDF-ready invoices.
 
 ## 7. Shift Management
 
-![SubZero POS Shifts](docs/images/07-shifts.jpg)
+![SubZero POS Shifts Management](docs/images/07-shifts.jpg)
 
 Shift management allows cashiers and managers to open and close shifts and review shift totals.
 
@@ -572,7 +572,7 @@ Shift management allows cashiers and managers to open and close shifts and revie
 
 ## 8. Users Management
 
-![SubZero POS Shifts](docs/images/08-Users.jpg)
+![SubZero POS Users Management](docs/images/08-Users.jpg)
 
 Users management allows managers to Add Edit, Users Informations and Delete, Deactivate Users.
 
@@ -580,7 +580,7 @@ Users management allows managers to Add Edit, Users Informations and Delete, Dea
 
 ## 9. Account Management
 
-![SubZero POS Shifts](docs/images/09-Account.jpg)
+![SubZero POS Account Management](docs/images/09-Account.jpg)
 
 Accoount management allows Users to manage Their Own Data and Password.
 
@@ -596,7 +596,7 @@ The settings section allows the business to configure currencies, invoices, prin
 
 ## 11. Expenses
 
-![SubZero POS Inventory](docs/images/11-Expenses.jpg)
+![SubZero POS Expenses](docs/images/11-Expenses.jpg)
 
 The Expenses screen allows users to create and manage Daily Expenses and Net Profit and also show the Top seled Items.
 
@@ -604,7 +604,7 @@ The Expenses screen allows users to create and manage Daily Expenses and Net Pro
 
 ## 12. Reports
 
-![SubZero POS Customers](docs/images/12-Reports.jpg)
+![SubZero POS Reports](docs/images/12-Reports.jpg)
 
 The Reports section allows Manager to review sales and Expenses.
 
@@ -687,36 +687,6 @@ Available options include:
 Database backup functionality is included to help protect business data.
 
 For production environments, it is recommended to keep multiple copies of important backups and store at least one copy separately from the main computer.
-
----
-
-# 📁 Repository Structure
-
-SubZeroPOS/
-│
-├── SubZeroPOS.Core/
-│
-├── SubZeroPOS.Data/
-│
-├── SubZeroPOS.WPF/
-│
-├── Images/
-│
-├── docs/
-│   └── images/
-│       ├── logo.png
-│       ├── 01-dashboard.png
-│       ├── 02-pos.png
-│       ├── 03-products.png
-│       ├── 04-inventory.png
-│       ├── 05-customers.png
-│       ├── 06-orders.png
-│       ├── 07-invoice.png
-│       ├── 08-shifts.png
-│       ├── 09-settings.png
-│       └── 10-login.png
-│
-└── README.md
 
 ---
 
