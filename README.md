@@ -308,28 +308,6 @@ The WPF layer is responsible for:
 - User interaction
 - UI resources
 
-The overall structure is:
-
-SubZeroPOS
-│
-├── SubZeroPOS.Core
-│   ├── Entities
-│   ├── DTOs
-│   └── Interfaces
-│
-├── SubZeroPOS.Data
-│   ├── DbContext
-│   ├── Services
-│   ├── Migrations
-│   └── Database Configuration
-│
-└── SubZeroPOS.WPF
-    ├── Views
-    ├── ViewModels
-    ├── Converters
-    ├── Session
-    └── UI Resources
-
 ---
 
 # 💻 System Requirements
