@@ -541,6 +541,8 @@ The Point of Sale screen allows users to create orders and complete sales effici
 ## 4. Products
 
 ![SubZero POS Products](docs/images/04-products.jpg)
+![SubZero POS Products](docs/images/04-products1.jpg)
+![SubZero POS Products](docs/images/04-products2.jpg)
 
 Product management allows users to manage products, prices, categories, quantities, and images.
 
@@ -557,6 +559,7 @@ The orders section allows users to review and manage sales orders.
 ## 6. Invoice
 
 ![SubZero POS Invoice](docs/images/6-invoice.jpg)
+![SubZero POS Invoice](docs/images/6-invoice1.jpg)
 
 The invoice system provides printable and PDF-ready invoices.
 
@@ -565,6 +568,8 @@ The invoice system provides printable and PDF-ready invoices.
 ## 7. Shift Management
 
 ![SubZero POS Shifts Management](docs/images/07-shifts.jpg)
+![SubZero POS Shifts Management](docs/images/07-shifts1.jpg)
+
 
 Shift management allows cashiers and managers to open and close shifts and review shift totals.
 
@@ -589,6 +594,8 @@ Accoount management allows Users to manage Their Own Data and Password.
 ## 10. Settings
 
 ![SubZero POS Settings](docs/images/10-settings.jpg)
+![SubZero POS Settings](docs/images/10-settings1.jpg)
+
 
 The settings section allows the business to configure currencies, invoices, printing, backups, and other system options.
 
@@ -605,6 +612,8 @@ The Expenses screen allows users to create and manage Daily Expenses and Net Pro
 ## 12. Reports
 
 ![SubZero POS Reports](docs/images/12-Reports.jpg)
+![SubZero POS Reports](docs/images/12-Reports1.jpg)
+
 
 The Reports section allows Manager to review sales and Expenses.
 
